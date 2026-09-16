@@ -1,83 +1,187 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Color Prediction Game</title>
-    <!-- Telegram Web App API -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Win Go 1Min</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background: #121212; color: white; text-align: center; padding: 10px; margin: 0; }
-        .btn { padding: 15px 20px; margin: 5px; border: none; border-radius: 8px; font-size: 16px; color: white; cursor: pointer; font-weight: bold; width: 30%; transition: 0.2s;}
-        .btn:active { transform: scale(0.95); }
-        .red { background: #f44336; }
-        .green { background: #4caf50; }
-        .violet { background: #9c27b0; }
-        #timer { font-size: 45px; font-weight: bold; color: #ffeb3b; margin: 15px 0; }
-        #period { color: #00bcd4; }
-        .history-box { background: #1e1e1e; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
+        body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; }
+        
+        /* Header */
+        .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; }
+        
+        /* Ticket Banner */
+        .ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
+        .ticket-left, .ticket-right { display: flex; flex-direction: column; justify-content: space-between; }
+        .timer-box { display: flex; gap: 5px; margin-top: 10px; }
+        .timer-box span { background: white; color: #ff3e3e; padding: 5px 8px; border-radius: 5px; font-size: 22px; font-weight: bold; }
+        
+        /* Main Container */
+        .game-container { background: white; margin: 15px; border-radius: 15px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        /* Color Buttons */
+        .color-btns { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .c-btn { flex: 1; margin: 0 5px; padding: 12px 0; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .bg-green { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
+        .bg-violet { background-color: #9c27b0; box-shadow: 0 4px 0 #7b1fa2; }
+        .bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
+        .c-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Number Grid */
+        .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
+        .num-ball { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; margin: 0 auto; cursor: pointer; background: white; }
+        
+        /* Exact color replication for balls */
+        .num-green { border: 3px solid #17b15e; color: #17b15e; }
+        .num-red { border: 3px solid #ff2a2a; color: #ff2a2a; }
+        .num-0 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #ff2a2a 50%, #9c27b0 50%) border-box; color: #ff2a2a; }
+        .num-5 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #17b15e 50%, #9c27b0 50%) border-box; color: #17b15e; }
+
+        /* Multiplier & Big/Small */
+        .multiplier { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 5px; }
+        .mul-btn { background: #f0f0f0; border: none; padding: 8px; border-radius: 5px; font-weight: bold; color: #555; font-size: 14px; flex: 1; }
+        .mul-active { background: #17b15e; color: white; }
+        
+        .big-small { display: flex; gap: 10px; }
+        .bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-big { background-color: #ff9800; }
+        .btn-small { background-color: #2196f3; }
+
+        /* History Tabs */
+        .tabs { display: flex; margin: 15px; gap: 10px; }
+        .tab { flex: 1; padding: 10px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 14px; }
+        .tab-active { background: #ff3e3e; color: white; }
+
+        /* Table */
+        .history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; }
+        .history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
+        .history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body>
-    <h2>Period: <span id="period">Loading...</span></h2>
-    <div id="timer">--</div>
-    
-    <h3>Place Your Bet (₹10)</h3>
-    <div>
-        <button class="btn green" onclick="placeBet('Green')">Green</button>
-        <button class="btn violet" onclick="placeBet('Violet')">Violet</button>
-        <button class="btn red" onclick="placeBet('Red')">Red</button>
+
+    <!-- Header -->
+    <div class="header">
+        <i class="fas fa-chevron-left"></i>
+        <span>Win Go</span>
+        <div><i class="fas fa-headset"></i> &nbsp;<i class="fas fa-music"></i></div>
     </div>
 
-    <div class="history-box">
-        <h3 style="text-align: center; margin-top: 0; color: #bbb;">Game History</h3>
-        <ul id="history" style="list-style: none; padding: 0;"></ul>
+    <!-- Banner -->
+    <div class="ticket-banner">
+        <div class="ticket-left">
+            <div style="font-size: 14px;"><i class="fas fa-book"></i> How to play</div>
+            <div style="font-size: 18px; font-weight: bold; margin-top: 10px;">Win Go 1Min</div>
+        </div>
+        <div class="ticket-right" style="text-align: right;">
+            <div style="font-size: 14px;">Time remaining</div>
+            <div class="timer-box">
+                <span>0</span><span>0</span><b style="color:white;">:</b>
+                <span id="sec1">0</span><span id="sec2">0</span>
+            </div>
+            <div style="margin-top: 8px; font-weight: bold;" id="period-display">Loading...</div>
+        </div>
     </div>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="color-btns">
+            <button class="c-btn bg-green" onclick="placeBet('Green')">Green</button>
+            <button class="c-btn bg-violet" onclick="placeBet('Violet')">Violet</button>
+            <button class="c-btn bg-red" onclick="placeBet('Red')">Red</button>
+        </div>
+
+        <div class="number-grid">
+            <div class="num-ball num-0" onclick="placeBet('0')">0</div>
+            <div class="num-ball num-green" onclick="placeBet('1')">1</div>
+            <div class="num-ball num-red" onclick="placeBet('2')">2</div>
+            <div class="num-ball num-green" onclick="placeBet('3')">3</div>
+            <div class="num-ball num-red" onclick="placeBet('4')">4</div>
+            <div class="num-ball num-5" onclick="placeBet('5')">5</div>
+            <div class="num-ball num-red" onclick="placeBet('6')">6</div>
+            <div class="num-ball num-green" onclick="placeBet('7')">7</div>
+            <div class="num-ball num-red" onclick="placeBet('8')">8</div>
+            <div class="num-ball num-green" onclick="placeBet('9')">9</div>
+        </div>
+
+        <div class="multiplier">
+            <button class="mul-btn">Random</button>
+            <button class="mul-btn mul-active">X1</button>
+            <button class="mul-btn">X5</button>
+            <button class="mul-btn">X10</button>
+            <button class="mul-btn">X20</button>
+            <button class="mul-btn">X50</button>
+        </div>
+
+        <div class="big-small">
+            <button class="bs-btn btn-big" onclick="placeBet('Big')">Big</button>
+            <button class="bs-btn btn-small" onclick="placeBet('Small')">Small</button>
+        </div>
+    </div>
+
+    <!-- History Tabs -->
+    <div class="tabs">
+        <div class="tab tab-active">Game history</div>
+        <div class="tab">Chart</div>
+        <div class="tab">My history</div>
+    </div>
+
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Number</th>
+                <th>Big Small</th>
+                <th>Color</th>
+            </tr>
+        </thead>
+        <tbody id="history-body">
+            <!-- Data will come from server -->
+        </tbody>
+    </table>
 
     <script>
-        // Telegram UI Setup
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
-        // Aapka Live Render Backend Link
         const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
         function fetchGameStatus() {
             fetch(`${BACKEND_URL}/game-status`)
                 .then(res => res.json())
                 .then(data => {
-                    // UI mein Period aur Timer update karna
-                    document.getElementById("period").innerText = data.period;
-                    document.getElementById("timer").innerText = data.time + "s";
+                    document.getElementById("period-display").innerText = data.period;
                     
-                    // History Update karna
+                    // Split timer digits for the UI
+                    let timeStr = data.time.toString().padStart(2, '0');
+                    document.getElementById("sec1").innerText = timeStr[0];
+                    document.getElementById("sec2").innerText = timeStr[1];
+                    
                     let historyHTML = "";
                     data.results.forEach(res => {
-                        historyHTML += `<li style="padding: 8px 0; border-bottom: 1px solid #333; font-size: 15px;">
-                            Period ${res.period}: <b style="color:${res.color.toLowerCase()}">${res.color}</b> (Number: ${res.number})
-                        </li>`;
+                        let colorClass = res.color.toLowerCase();
+                        let bs = res.number > 4 ? "Big" : "Small";
+                        let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+                        
+                        historyHTML += `<tr>
+                            <td>${res.period}</td>
+                            <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
+                            <td>${bs}</td>
+                            <td><span class="dot" style="background-color: ${fontColor};"></span></td>
+                        </tr>`;
                     });
-                    document.getElementById("history").innerHTML = historyHTML;
+                    document.getElementById("history-body").innerHTML = historyHTML;
                 })
-                .catch(err => console.log("Server issue: ", err));
+                .catch(err => console.log(err));
         }
 
-        function placeBet(color) {
-            // Telegram app mein vibrate karwana
-            window.Telegram.WebApp.HapticFeedback.impactOccurred("medium");
-            
-            fetch(`${BACKEND_URL}/place-bet`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: 10, selection: color })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(`✅ Bet Placed on ${color}!`);
-            });
+        function placeBet(selection) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred("light");
+            alert(`✅ You selected: ${selection}\n(Aage hum yahan bet amount ka popup lagayenge)`);
         }
 
-        // Har 1 second mein server se naya time mangwana
         setInterval(fetchGameStatus, 1000);
         fetchGameStatus();
     </script>
