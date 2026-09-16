@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Color Prediction Game</title>
+    
+    <!-- Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #header {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            margin-bottom: 20px;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+        .balance-text { color: #ffd700; font-weight: bold; }
+        #result-box {
+            width: 120px; height: 120px;
+            background-color: #333; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-weight: bold; margin-bottom: 20px;
+            transition: 0.5s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        #status { font-size: 16px; margin-bottom: 20px; height: 25px; color: #aaaaaa; }
+        .btn-container { display: flex; gap: 15px; margin-bottom: 20px; }
+        .btn {
+            border: none; padding: 15px 30px; font-size: 18px;
+            font-weight: bold; border-radius: 10px; cursor: pointer;
+            color: white; width: 120px; transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-red { background-color: #f44336; box-shadow: 0 5px #b71c1c; }
+        .btn-green { background-color: #4CAF50; box-shadow: 0 5px #1b5e20; }
+        
+        /* Withdraw Button Design */
+        .btn-withdraw {
+            background-color: #ff9800; box-shadow: 0 5px #e65100;
+            width: 100%; max-width: 255px; margin-top: 10px;
+        }
+        
+        #history-container {
+            background: #1e1e1e; padding: 15px; border-radius: 10px;
+            width: 100%; max-width: 400px; box-sizing: border-box; margin-top: 20px;
+        }
+        .history-dots { display: flex; justify-content: center; gap: 10px; margin-top: 10px; height: 25px; }
+        .dot { width: 25px; height: 25px; border-radius: 50%; }
+        .dot-red { background-color: #f44336; }
+        .dot-green { background-color: #4CAF50; }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <span>Balance:</span>
+        <span class="balance-text">🪙 <span id="balance">1000</span></span>
+    </div>
+
+    <div id="result-box">?</div>
+    <div id="status">Select Red or Green (Bet: 50 🪙)</div>
+
+    <div class="btn-container">
+        <button class="btn btn-red" onclick="playGame('red')">RED</button>
+        <button class="btn btn-green" onclick="playGame('green')">GREEN</button>
+    </div>
+
+    <!-- Withdraw Button -->
+    <button class="btn btn-withdraw" onclick="requestWithdraw()">💸 Withdraw Points</button>
+
+    <div id="history-container">
+        <div>Recent Results</div>
+        <div class="history-dots" id="history"></div>
+    </div>
+
+    <script>
+        // Telegram UI Setup
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand(); 
+
+        let balance = 1000; // Starting balance set to 1000
+        const betAmount = 50;
+        let isSpinning = false;
+        let history = [];
+
+        function updateBalance() {
+            document.getElementById("balance").innerText = balance;
+        }
+
+        function updateHistory(color) {
+            history.push(color);
+            if (history.length > 8) history.shift(); 
+            
+            let historyHtml = "";
+            history.forEach(c => {
+                historyHtml += `<div class="dot dot-${c}"></div>`;
+            });
+            document.getElementById("history").innerHTML = historyHtml;
+        }
+
+        function playGame(userChoice) {
+            if (isSpinning) return;
+            
+            if (balance < betAmount) {
+                alert("Insufficient Balance! (Ad network implementation later)");
+                return;
+            }
+
+            isSpinning = true;
+            balance -= betAmount;
+            updateBalance();
+            
+            let resultBox = document.getElementById("result-box");
+            let statusText = document.getElementById("status");
+            
+            statusText.innerText = "Predicting...";
+            statusText.style.color = "#ffffff";
+            resultBox.innerText = "🔄";
+            resultBox.style.backgroundColor = "#555";
+            
+            if(window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred("medium");
+            }
+
+            setTimeout(() => {
+                // Frontend par random result. Asli "Kam amount wala jeetega" logic backend aane par active hoga.
+                let actualResult = Math.random() > 0.5 ? 'green' : 'red';
+                
+                resultBox.innerText = "";
+                resultBox.style.backgroundColor = actualResult === 'red' ? "#f44336" : "#4CAF50";
+
+                if (userChoice === actualResult) {
+                    let winAmount = betAmount * 2;
+                    balance += winAmount;
+                    statusText.innerText = `You Won! +${winAmount} 🪙`;
+                    statusText.style.color = "#4CAF50";
+                    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+                } else {
+                    statusText.innerText = `You Lost! -${betAmount} 🪙`;
+                    statusText.style.color = "#f44336";
+                    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("error");
+                }
+
+                updateBalance();
+                updateHistory(actualResult);
+                isSpinning = false;
+
+            }, 1500);
+        }
+
+        // Withdrawal Logic
+        function requestWithdraw() {
+            const minWithdraw = 5000;
+            if (balance >= minWithdraw) {
+                alert(`Withdrawal Request of ${balance} points submitted successfully!`);
+                balance = 0; 
+                updateBalance();
+                if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+            } else {
+                let pointsNeeded = minWithdraw - balance;
+                alert(`Minimum withdrawal is 5000 points. You need ${pointsNeeded} more points.`);
+                if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("warning");
+            }
+        }
+    </script>
+</body>
+</html>
+
