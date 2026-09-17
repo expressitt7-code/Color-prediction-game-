@@ -432,6 +432,235 @@
         fetchMyHistory(); 
         setInterval(fetchGameStatus, 1000);
         fetchGameStatus();
+        <!-- LOGIC SCRIPTS -->
+    <script>
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        
+        const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+        
+        // 🛠️ FIX: User ID hamesha ke liye fixed rahegi (Refresh hone par badlegi nahi)
+        let telegramId;
+        const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+        
+        if (tgUser) {
+            telegramId = tgUser.id.toString();
+        } else {
+            let savedGuestId = localStorage.getItem("guest_id");
+            if (!savedGuestId) {
+                savedGuestId = "guest_" + Math.floor(Math.random() * 1000000);
+                localStorage.setItem("guest_id", savedGuestId);
+            }
+            telegramId = savedGuestId;
+        }
+
+        let balance = 0.00;
+        let currentPeriod = 0;
+        let activeBets = []; 
+        let lastProcessedPeriod = 0;
+        let activeTab = 'game';
+
+        let popSelection = "";
+        let popBaseBet = 10;
+        let popQty = 1;
+        let popMul = 1;
+        let popTotal = 10;
+
+        async function fetchRealBalance() {
+            try {
+                const res = await fetch(`${BACKEND_URL}/get-balance`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    balance = data.balance;
+                    updateBalanceDisplays();
+                }
+            } catch (err) { }
+        }
+
+        async function fetchMyHistory() {
+            try {
+                const res = await fetch(`${BACKEND_URL}/my-history`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    activeBets = data.history; 
+                    if(activeTab === 'my') renderMyHistory();
+                }
+            } catch (err) { }
+        }
+
+        function updateBalanceDisplays() {
+            let formattedBal = balance.toFixed(2);
+            document.getElementById("header-balance").innerText = formattedBal;
+            document.getElementById("toggle-balance").innerText = formattedBal;
+            document.getElementById("footer-balance").innerText = formattedBal;
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+            if(tabName === 'game') {
+                document.getElementById('tab-game-hist').classList.add('tab-active');
+                document.getElementById('table-game-history').style.display = 'table';
+                document.getElementById('table-my-history').style.display = 'none';
+            } else {
+                document.getElementById('tab-my-hist').classList.add('tab-active');
+                document.getElementById('table-game-history').style.display = 'none';
+                document.getElementById('table-my-history').style.display = 'table';
+                fetchMyHistory(); 
+            }
+            window.Telegram.WebApp.HapticFeedback.selectionChanged();
+        }
+
+        function renderMyHistory() {
+            let myHistHTML = "";
+            activeBets.forEach(bet => {
+                let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+                myHistHTML += `<tr>
+                    <td style="font-size:12px;">${bet.period}</td>
+                    <td style="font-weight: bold;">${bet.selection}</td>
+                    <td>₹${bet.amount.toFixed(0)}</td>
+                    <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
+                </tr>`;
+            });
+            if(myHistHTML === "") {
+                myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
+            }
+            document.getElementById("my-history-body").innerHTML = myHistHTML;
+        }
+
+        function openPopup(selection, colorHex) {
+            popSelection = selection;
+            document.getElementById("pop-selection-text").innerText = selection;
+            document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
+            document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
+            popBaseBet = 10; popQty = 1; popMul = 1;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.preset-btn')[0].classList.add('active');
+            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.m-btn')[0].classList.add('active');
+            calculateTotal();
+            updateBalanceDisplays();
+            document.getElementById("bet-popup").style.display = "flex";
+        }
+
+        function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
+        
+        function setBase(amt, btn) {
+            popBaseBet = amt;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            calculateTotal();
+        }
+
+        function updateQty(change) {
+            if (popQty + change >= 1) popQty += change;
+            calculateTotal();
+        }
+
+        function setMul(m, btn) {
+            popMul = m;
+            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            popTotal = popBaseBet * popQty * popMul;
+            document.getElementById("calc-qty").value = popQty;
+            document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2);
+        }
+
+        async function placeFinalBet() {
+            if (balance < popTotal) {
+                alert("Insufficient Balance! Top up required.");
+                return;
+            }
+
+            const btn = document.getElementById("confirmBetBtn");
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegramId: telegramId,
+                        betSelection: popSelection,
+                        betAmount: popTotal,
+                        period: currentPeriod
+                    })
+                });
+
+                const data = await response.json();
+
+                if(data.success) {
+                    balance = data.newBalance; 
+                    updateBalanceDisplays();
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+                    closePopup();
+                    fetchMyHistory(); 
+                } else {
+                    alert(data.message || "Bet failed!");
+                }
+            } catch (error) {
+                alert("Server connection failed!");
+            }
+
+            btn.innerText = "CONFIRM BET";
+            btn.disabled = false;
+        }
+
+        function fetchGameStatus() {
+            fetch(`${BACKEND_URL}/game-status`)
+                .then(res => res.json())
+                .then(data => {
+                    currentPeriod = data.period;
+                    document.getElementById("period-display").innerText = currentPeriod;
+                    
+                    let timeStr = data.time.toString().padStart(2, '0');
+                    document.getElementById("sec1").innerText = timeStr[0];
+                    document.getElementById("sec2").innerText = timeStr[1];
+                    
+                    let historyHTML = "";
+                    data.results.forEach(res => {
+                        let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+                        let bs = res.number > 4 ? "Big" : "Small";
+                        historyHTML += `<tr>
+                            <td style="font-size:12px;">${res.period}</td>
+                            <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
+                            <td>${bs}</td>
+                            <td><span class="dot" style="background-color: ${fontColor};"></span></td>
+                        </tr>`;
+                    });
+                    document.getElementById("history-body").innerHTML = historyHTML;
+
+                    if(data.results.length > 0) {
+                        let latestResult = data.results[0];
+                        if(lastProcessedPeriod !== latestResult.period) {
+                            lastProcessedPeriod = latestResult.period;
+                            fetchRealBalance(); 
+                            fetchMyHistory(); 
+                        }
+                    }
+                })
+                .catch(err => console.log("Waiting..."));
+        }
+
+        // INITIALIZATION
+        fetchRealBalance();
+        fetchMyHistory(); 
+        setInterval(fetchGameStatus, 1000);
+        fetchGameStatus();
     </script>
+
 </body>
 </html>
