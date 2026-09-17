@@ -1,433 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Win Go 1Min</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; }
-        
-        .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
-        .balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 20px; }
-        
-        .ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
-        .timer-box { display: flex; gap: 5px; margin-top: 10px; }
-        .timer-box span { background: white; color: #ff3e3e; padding: 5px 8px; border-radius: 5px; font-size: 22px; font-weight: bold; }
-        
-        .game-container { background: white; margin: 15px; border-radius: 15px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .color-btns { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .c-btn { flex: 1; margin: 0 5px; padding: 12px 0; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .bg-green { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
-        .bg-violet { background-color: #9c27b0; box-shadow: 0 4px 0 #7b1fa2; }
-        .bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
-        
-        .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
-        .num-ball { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; margin: 0 auto; cursor: pointer; background: white; }
-        .num-green { border: 3px solid #17b15e; color: #17b15e; }
-        .num-red { border: 3px solid #ff2a2a; color: #ff2a2a; }
-        .num-0 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #ff2a2a 50%, #9c27b0 50%) border-box; color: #ff2a2a; }
-        .num-5 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #17b15e 50%, #9c27b0 50%) border-box; color: #17b15e; }
-        
-        .big-small { display: flex; gap: 10px; margin-top: 15px;}
-        .bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-big { background-color: #ff9800; }
-        .btn-small { background-color: #2196f3; }
-        
-        .tabs { display: flex; margin: 15px; gap: 10px; }
-        .tab { flex: 1; padding: 12px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 15px; cursor: pointer; transition: 0.2s;}
-        .tab-active { background: #ff3e3e; color: white; }
-        
-        .history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;}
-        .history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
-        .history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
-        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Win Go 1Min</title>
+<!-- Telegram Web App API -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; } /* Padding bottom badhaya nav bar ke liye */
+.header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
+.balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 20px; }
+.ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
+.timer-box { display: flex; gap: 5px; margin-top: 10px; }
+.timer-box span { background: white; color: #ff3e3e; padding: 5px 8px; border-radius: 5px; font-size: 22px; font-weight: bold; }
+.game-container { background: white; margin: 15px; border-radius: 15px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.color-btns { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.c-btn { flex: 1; margin: 0 5px; padding: 12px 0; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+.bg-green { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
+.bg-violet { background-color: #9c27b0; box-shadow: 0 4px 0 #7b1fa2; }
+.bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
+.c-btn:active { transform: translateY(4px); box-shadow: none; }
+.number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
+.num-ball { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; margin: 0 auto; cursor: pointer; background: white; }
+.num-green { border: 3px solid #17b15e; color: #17b15e; }
+.num-red { border: 3px solid #ff2a2a; color: #ff2a2a; }
+.num-0 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #ff2a2a 50%, #9c27b0 50%) border-box; color: #ff2a2a; }
+.num-5 { border: 3px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(135deg, #17b15e 50%, #9c27b0 50%) border-box; color: #17b15e; }
+.big-small { display: flex; gap: 10px; margin-top: 15px;}
+.bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
+.btn-big { background-color: #ff9800; }
+.btn-small { background-color: #2196f3; }
+.tabs { display: flex; margin: 15px; gap: 10px; }
+.tab { flex: 1; padding: 12px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 15px; cursor: pointer; transition: 0.2s;}
+.tab-active { background: #ff3e3e; color: white; }
+.history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;}
+.history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
+.history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
+.dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
+#bet-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+.popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; animation: popIn 0.3s ease-out; position: relative; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; }
+.pop-title { text-align: center; font-weight: bold; font-size: 16px; margin: 0; }
+.pop-period { text-align: center; font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 15px; }
+.sel-row { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 15px; }
+.sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.stepper-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.stepper-input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: left; font-size: 16px; outline: none; }
+.stepper-btn { background: #f0f0f0; border: none; width: 40px; height: 40px; font-size: 20px; border-radius: 8px; cursor: pointer; color: #333; }
+.preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+.preset-btn { background: #f0f0f0; border: none; padding: 10px 0; border-radius: 5px; font-size: 14px; color: #333; cursor: pointer; }
+.preset-btn.active { background: #ff3e3e; color: white; }
+.total-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; }
+.total-cost { font-weight: bold; font-size: 18px; }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; }
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #17b15e; }
+input:checked + .slider:before { transform: translateX(20px); }
+.mul-label { font-size: 14px; margin-bottom: 10px; display: block; }
+.mul-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; }
+.m-btn { background: #f0f0f0; border: none; padding: 8px 0; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; }
+.m-btn.active { background: #ff3e3e; color: white; }
+.confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; box-shadow: 0 4px 0 #128a49; }
+.confirm-btn:active { transform: translateY(4px); box-shadow: none; }
+.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
+.pop-footer { text-align: center; font-size: 14px; color: #333; }
+.pop-rules { color: #1772b1; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; font-size: 13px; }
 
-        /* 🌟 NAYA: Bottom Navigation Bar CSS */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
-        .nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 5px; transition: 0.2s; }
-        .nav-active { color: #ff3e3e; }
-        .nav-active i { transform: translateY(-3px); }
+/* 🌟 NEW: Bottom Navigation Bar CSS */
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
+.nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
+.nav-item i { font-size: 22px; display: block; margin-bottom: 5px; transition: 0.2s; }
+.nav-active { color: #ff3e3e; }
+.nav-active i { transform: translateY(-3px); }
 
-        /* 🌟 NAYA: Pages CSS */
-        .page-content { display: none; animation: fadeIn 0.3s; }
-        .page-active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* 🌟 NEW: Pages CSS */
+.page-content { display: none; animation: fadeIn 0.3s; }
+.page-active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
-        .wallet-balance { font-size: 32px; font-weight: bold; color: #ff3e3e; margin: 15px 0; }
-        .action-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .btn-withdraw { background-color: #ff9800; box-shadow: 0 4px 0 #e65100; }
-        .btn-deposit { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
-        
-        /* Popup CSS */
-        #bet-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
-        .popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; position: relative; }
-        .close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; }
-        .sel-row { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 15px; margin-top:20px; }
-        .sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
-        .stepper-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .stepper-input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: left; font-size: 16px; outline: none; }
-        .stepper-btn { background: #f0f0f0; border: none; width: 40px; height: 40px; font-size: 20px; border-radius: 8px; cursor: pointer; color: #333; }
-        .preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .preset-btn { background: #f0f0f0; border: none; padding: 10px 0; border-radius: 5px; font-size: 14px; color: #333; cursor: pointer; }
-        .preset-btn.active { background: #ff3e3e; color: white; }
-        .mul-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; }
-        .m-btn { background: #f0f0f0; border: none; padding: 8px 0; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; }
-        .m-btn.active { background: #ff3e3e; color: white; }
-        .confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-    </style>
+.wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
+.wallet-balance { font-size: 32px; font-weight: bold; color: #ff3e3e; margin: 15px 0; }
+.action-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+.btn-withdraw { background-color: #ff9800; box-shadow: 0 4px 0 #e65100; }
+.btn-deposit { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
+</style>
 </head>
 <body>
 
-    <div class="header">
-        <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
-        <div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">0.00</span></div>
+<div class="header">
+<div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
+<div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">1000.00</span></div>
+</div>
+
+<!-- ================= PAGE 1: GAME (DEFAULT) ================= -->
+<div id="page-game" class="page-content page-active">
+    <div class="ticket-banner">
+    <div class="ticket-left">
+    <div style="font-size: 14px;"><i class="fas fa-book"></i> How to play</div>
+    <div style="font-size: 18px; font-weight: bold; margin-top: 10px;">Win Go 1Min</div>
+    </div>
+    <div class="ticket-right" style="text-align: right;">
+    <div style="font-size: 14px;">Time remaining</div>
+    <div class="timer-box">
+    <span>0</span><span>0</span><b style="color:white;">:</b>
+    <span id="sec1">0</span><span id="sec2">0</span>
+    </div>
+    <div style="margin-top: 8px; font-weight: bold;" id="period-display">Loading...</div>
+    </div>
     </div>
 
-    <!-- ================= PAGE 1: GAME (DEFAULT) ================= -->
-    <div id="page-game" class="page-content page-active">
-        <div class="ticket-banner">
-            <div class="ticket-left">
-                <div style="font-size: 14px;"><i class="fas fa-book"></i> How to play</div>
-                <div style="font-size: 18px; font-weight: bold; margin-top: 10px;">Win Go 1Min</div>
-            </div>
-            <div class="ticket-right" style="text-align: right;">
-                <div style="font-size: 14px;">Time remaining</div>
-                <div class="timer-box">
-                    <span>0</span><span>0</span><b style="color:white;">:</b>
-                    <span id="sec1">0</span><span id="sec2">0</span>
-                </div>
-                <div style="margin-top: 8px; font-weight: bold;" id="period-display">Loading...</div>
-            </div>
-        </div>
-
-        <div class="game-container">
-            <div class="color-btns">
-                <button class="c-btn bg-green" onclick="openPopup('Green', '#17b15e')">Green</button>
-                <button class="c-btn bg-violet" onclick="openPopup('Violet', '#9c27b0')">Violet</button>
-                <button class="c-btn bg-red" onclick="openPopup('Red', '#ff2a2a')">Red</button>
-            </div>
-            <div class="number-grid">
-                <div class="num-ball num-0" onclick="openPopup('0', '#ff2a2a')">0</div>
-                <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')">1</div>
-                <div class="num-ball num-red" onclick="openPopup('2', '#ff2a2a')">2</div>
-                <div class="num-ball num-green" onclick="openPopup('3', '#17b15e')">3</div>
-                <div class="num-ball num-red" onclick="openPopup('4', '#ff2a2a')">4</div>
-                <div class="num-ball num-5" onclick="openPopup('5', '#17b15e')">5</div>
-                <div class="num-ball num-red" onclick="openPopup('6', '#ff2a2a')">6</div>
-                <div class="num-ball num-green" onclick="openPopup('7', '#17b15e')">7</div>
-                <div class="num-ball num-red" onclick="openPopup('8', '#ff2a2a')">8</div>
-                <div class="num-ball num-green" onclick="openPopup('9', '#17b15e')">9</div>
-            </div>
-            <div class="big-small">
-                <button class="bs-btn btn-big" onclick="openPopup('Big', '#ff9800')">Big</button>
-                <button class="bs-btn btn-small" onclick="openPopup('Small', '#2196f3')">Small</button>
-            </div>
-        </div>
-
-        <div class="tabs">
-            <div class="tab tab-active" id="tab-game-hist" onclick="switchTab('game')">Game history</div>
-            <div class="tab" id="tab-my-hist" onclick="switchTab('my')">My history</div>
-        </div>
-
-        <table class="history-table" id="table-game-history">
-            <thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
-            <tbody id="history-body"></tbody>
-        </table>
-
-        <table class="history-table" id="table-my-history" style="display: none;">
-            <thead><tr><th>Period</th><th>Select</th><th>Amount</th><th>Status</th></tr></thead>
-            <tbody id="my-history-body"></tbody>
-        </table>
+    <div class="game-container">
+    <div class="color-btns">
+    <button class="c-btn bg-green" onclick="openPopup('Green', '#17b15e')">Green</button>
+    <button class="c-btn bg-violet" onclick="openPopup('Violet', '#9c27b0')">Violet</button>
+    <button class="c-btn bg-red" onclick="openPopup('Red', '#ff2a2a')">Red</button>
+    </div>
+    <div class="number-grid">
+    <div class="num-ball num-0" onclick="openPopup('0', '#ff2a2a')">0</div>
+    <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')">1</div>
+    <div class="num-ball num-red" onclick="openPopup('2', '#ff2a2a')">2</div>
+    <div class="num-ball num-green" onclick="openPopup('3', '#17b15e')">3</div>
+    <div class="num-ball num-red" onclick="openPopup('4', '#ff2a2a')">4</div>
+    <div class="num-ball num-5" onclick="openPopup('5', '#17b15e')">5</div>
+    <div class="num-ball num-red" onclick="openPopup('6', '#ff2a2a')">6</div>
+    <div class="num-ball num-green" onclick="openPopup('7', '#17b15e')">7</div>
+    <div class="num-ball num-red" onclick="openPopup('8', '#ff2a2a')">8</div>
+    <div class="num-ball num-green" onclick="openPopup('9', '#17b15e')">9</div>
+    </div>
+    <div class="big-small">
+    <button class="bs-btn btn-big" onclick="openPopup('Big', '#ff9800')">Big</button>
+    <button class="bs-btn btn-small" onclick="openPopup('Small', '#2196f3')">Small</button>
+    </div>
     </div>
 
-    <!-- ================= PAGE 2: TASKS ================= -->
-    <div id="page-tasks" class="page-content">
-        <div class="task-card">
-            <i class="fas fa-gift" style="font-size: 40px; color: #ff3e3e; margin-bottom: 10px;"></i>
-            <h3>Earn Free Points</h3>
-            <p style="color: #666; font-size: 14px;">Watch videos or complete simple tasks to earn extra balance to play.</p>
-            
-            <button class="action-btn btn-deposit" style="margin-top: 20px;">
-                <i class="fas fa-play-circle"></i> Watch Ad (Earn ₹10)
-            </button>
-            <button class="action-btn" style="background: #2196f3; box-shadow: 0 4px 0 #1976d2;">
-                <i class="fab fa-telegram-plane"></i> Join Our Channel (Earn ₹50)
-            </button>
-        </div>
+    <!-- TABS -->
+    <div class="tabs">
+    <div class="tab tab-active" id="tab-game-hist" onclick="switchTab('game')">Game history</div>
+    <div class="tab" id="tab-my-hist" onclick="switchTab('my')">My history</div>
     </div>
 
-    <!-- ================= PAGE 3: WALLET ================= -->
-    <div id="page-wallet" class="page-content">
-        <div class="wallet-card">
-            <i class="fas fa-wallet" style="font-size: 40px; color: #ff3e3e;"></i>
-            <div style="font-size: 16px; color: #666; margin-top: 10px;">Available Balance</div>
-            <div class="wallet-balance">₹<span id="wallet-page-balance">0.00</span></div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="action-btn btn-deposit" onclick="alert('Deposit system coming soon!')">Deposit</button>
-                <button class="action-btn btn-withdraw" onclick="alert('Minimum 5000 points required to withdraw!')">Withdraw</button>
-            </div>
-            
-            <div style="text-align: left; margin-top: 30px; font-size: 14px; color: #555;">
-                <b style="color:#333;">Withdrawal Rules:</b><br>
-                1. Minimum withdrawal amount is ₹5000.<br>
-                2. Payouts are processed within 24 hours.<br>
-                3. Need active UPI ID for successful transfer.
-            </div>
-        </div>
-    </div>
+    <!-- Game History Table -->
+    <table class="history-table" id="table-game-history">
+    <thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
+    <tbody id="history-body"></tbody>
+    </table>
 
-    <!-- ================= BOTTOM NAVIGATION BAR ================= -->
-    <div class="bottom-nav">
-        <div class="nav-item nav-active" id="nav-game" onclick="switchNavPage('game')">
-            <i class="fas fa-gamepad"></i>
-            <span>Win Go</span>
-        </div>
-        <div class="nav-item" id="nav-tasks" onclick="switchNavPage('tasks')">
-            <i class="fas fa-tasks"></i>
-            <span>Tasks</span>
-        </div>
-        <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </div>
-    </div>
+    <!-- My History Table -->
+    <table class="history-table" id="table-my-history" style="display: none;">
+    <thead><tr><th>Period</th><th>Select</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody id="my-history-body"></tbody>
+    </table>
+</div>
 
-
-    <!-- ================= POPUP MODAL ================= -->
-    <div id="bet-popup">
-        <div class="popup-card">
-            <button class="close-btn" onclick="closePopup()">✕</button>
-            <div style="text-align: center; font-weight: bold; font-size: 16px;">Betting - Win Go 1Min</div>
-            <div class="sel-row">
-                Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-selection-text" style="font-weight: bold;">Green</span>
-            </div>
-            <div class="stepper-container">
-                <input type="number" class="stepper-input" id="calc-qty" value="1" readonly>
-                <button class="stepper-btn" onclick="updateQty(-1)">−</button>
-                <button class="stepper-btn" onclick="updateQty(1)">+</button>
-            </div>
-            <div class="preset-grid">
-                <button class="preset-btn active" onclick="setBase(10, this)">₹10</button>
-                <button class="preset-btn" onclick="setBase(50, this)">₹50</button>
-                <button class="preset-btn" onclick="setBase(100, this)">₹100</button>
-                <button class="preset-btn" onclick="setBase(200, this)">₹200</button>
-                <button class="preset-btn" onclick="setBase(500, this)">₹500</button>
-                <button class="preset-btn" onclick="setBase(1000, this)">₹1000</button>
-                <button class="preset-btn" onclick="setBase(2000, this)">₹2000</button>
-                <button class="preset-btn" onclick="setBase(5000, this)">₹5000</button>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:18px; margin-bottom:15px; font-weight:bold;">
-                <span>Total Cost:</span> <span id="pop-total-cost" style="color:#ff3e3e;">₹10.00</span>
-            </div>
-            <div style="font-size: 14px; margin-bottom: 10px;">Multiplier:</div>
-            <div class="mul-grid">
-                <button class="m-btn active" onclick="setMul(1, this)">X1</button>
-                <button class="m-btn" onclick="setMul(5, this)">X5</button>
-                <button class="m-btn" onclick="setMul(10, this)">X10</button>
-                <button class="m-btn" onclick="setMul(20, this)">X20</button>
-                <button class="m-btn" onclick="setMul(50, this)">X50</button>
-                <button class="m-btn" onclick="setMul(100, this)">X100</button>
-            </div>
-            <button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
-        </div>
-    </div>
-
-    <!-- LOGIC SCRIPTS -->
-    <script>
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
+<!-- ================= PAGE 2: TASKS ================= -->
+<div id="page-tasks" class="page-content">
+    <div class="task-card">
+        <i class="fas fa-gift" style="font-size: 40px; color: #ff3e3e; margin-bottom: 10px;"></i>
+        <h3>Earn Free Points</h3>
+        <p style="color: #666; font-size: 14px;">Watch videos or complete simple tasks to earn extra balance to play.</p>
         
-        const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+        <button class="action-btn btn-deposit" style="margin-top: 20px;">
+            <i class="fas fa-play-circle"></i> Watch Ad (Earn ₹10)
+        </button>
+        <button class="action-btn" style="background: #2196f3; box-shadow: 0 4px 0 #1976d2;">
+            <i class="fab fa-telegram-plane"></i> Join Our Channel (Earn ₹50)
+        </button>
+    </div>
+</div>
+
+<!-- ================= PAGE 3: WALLET ================= -->
+<div id="page-wallet" class="page-content">
+    <div class="wallet-card">
+        <i class="fas fa-wallet" style="font-size: 40px; color: #ff3e3e;"></i>
+        <div style="font-size: 16px; color: #666; margin-top: 10px;">Available Balance</div>
+        <div class="wallet-balance">₹<span id="wallet-page-balance">1000.00</span></div>
         
-        let telegramId;
-        const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-        if (tgUser) {
-            telegramId = tgUser.id.toString();
-        } else {
-            let savedGuestId = localStorage.getItem("guest_id");
-            if (!savedGuestId) {
-                savedGuestId = "guest_" + Math.floor(Math.random() * 1000000);
-                localStorage.setItem("guest_id", savedGuestId);
-            }
-            telegramId = savedGuestId;
-        }
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="action-btn btn-deposit" onclick="alert('Deposit system coming soon!')">Deposit</button>
+            <button class="action-btn btn-withdraw" onclick="alert('Minimum 5000 points required to withdraw!')">Withdraw</button>
+        </div>
+        
+        <div style="text-align: left; margin-top: 30px; font-size: 14px; color: #555;">
+            <b style="color:#333;">Withdrawal Rules:</b><br>
+            1. Minimum withdrawal amount is ₹5000.<br>
+            2. Payouts are processed within 24 hours.<br>
+            3. Need active UPI ID for successful transfer.
+        </div>
+    </div>
+</div>
 
-        let balance = 0.00;
-        let currentPeriod = 0;
-        let activeBets = []; 
-        let lastProcessedPeriod = 0;
-        let activeTab = 'game';
+<!-- ================= BOTTOM NAVIGATION BAR ================= -->
+<div class="bottom-nav">
+    <div class="nav-item nav-active" id="nav-game" onclick="switchNavPage('game')">
+        <i class="fas fa-gamepad"></i>
+        <span>Win Go</span>
+    </div>
+    <div class="nav-item" id="nav-tasks" onclick="switchNavPage('tasks')">
+        <i class="fas fa-tasks"></i>
+        <span>Tasks</span>
+    </div>
+    <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')">
+        <i class="fas fa-wallet"></i>
+        <span>Wallet</span>
+    </div>
+</div>
 
-        // 🌟 NAYA LOGIC: Bottom Navigation Switcher
-        function switchNavPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-            
-            document.getElementById('page-' + pageId).classList.add('page-active');
-            document.getElementById('nav-' + pageId).classList.add('nav-active');
-            
-            if(pageId === 'game') document.getElementById('page-title').innerText = "Win Go";
-            if(pageId === 'tasks') document.getElementById('page-title').innerText = "Earn Rewards";
-            if(pageId === 'wallet') document.getElementById('page-title').innerText = "My Wallet";
+<!-- PREMIUM POPUP MODAL -->
+<div id="bet-popup">
+<div class="popup-card">
+<button class="close-btn" onclick="closePopup()">✕</button>
+<div class="pop-title">Betting - Win Go 1Min</div>
+<div class="pop-period" id="pop-period-id">Period: Loading...</div>
 
-            if (window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.selectionChanged();
-            }
-        }
+<div class="sel-row">
+Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-selection-text" style="font-weight: bold;">Green</span>
+</div>
 
-        async function fetchRealBalance() {
-            try {
-                const res = await fetch(`${BACKEND_URL}/get-balance`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegramId })
-                });
-                const data = await res.json();
-                if(data.success) {
-                    balance = data.balance;
-                    updateBalanceDisplays();
-                }
-            } catch (err) { }
-        }
+<div style="font-size: 14px; margin-bottom: 5px;">Bet Amount</div>
+<div class="stepper-container">
+<input type="number" class="stepper-input" id="calc-qty" value="1" readonly>
+<button class="stepper-btn" onclick="updateQty(-1)">−</button>
+<button class="stepper-btn" onclick="updateQty(1)">+</button>
+</div>
 
-        async function fetchMyHistory() {
-            try {
-                const res = await fetch(`${BACKEND_URL}/my-history`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegramId })
-                });
-                const data = await res.json();
-                if(data.success) {
-                    activeBets = data.history; 
-                    if(activeTab === 'my') renderMyHistory();
-                }
-            } catch (err) { }
-        }
+<div class="preset-grid">
+<button class="preset-btn active" onclick="setBase(10, this)">₹10</button>
+<button class="preset-btn" onclick="setBase(50, this)">₹50</button>
+<button class="preset-btn" onclick="setBase(100, this)">₹100</button>
+<button class="preset-btn" onclick="setBase(200, this)">₹200</button>
+<button class="preset-btn" onclick="setBase(500, this)">₹500</button>
+<button class="preset-btn" onclick="setBase(1000, this)">₹1000</button>
+<button class="preset-btn" onclick="setBase(2000, this)">₹2000</button>
+<button class="preset-btn" onclick="setBase(5000, this)">₹5000</button>
+</div>
 
-        function updateBalanceDisplays() {
-            let formattedBal = balance.toFixed(2);
-            document.getElementById("header-balance").innerText = formattedBal;
-            document.getElementById("wallet-page-balance").innerText = formattedBal;
-        }
+<div class="total-row">
+<span>Total Cost:</span>
+<span class="total-cost" id="pop-total-cost">₹10.00</span>
+</div>
 
-        function switchTab(tabName) {
-            activeTab = tabName;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
-            if(tabName === 'game') {
-                document.getElementById('tab-game-hist').classList.add('tab-active');
-                document.getElementById('table-game-history').style.display = 'table';
-                document.getElementById('table-my-history').style.display = 'none';
-            } else {
-                document.getElementById('tab-my-hist').classList.add('tab-active');
-                document.getElementById('table-game-history').style.display = 'none';
-                document.getElementById('table-my-history').style.display = 'table';
-                fetchMyHistory(); 
-            }
-            if (window.Telegram.WebApp.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.selectionChanged();
-            }
-        }
+<div class="toggle-row">
+<span>Check balance: ₹<span id="toggle-balance">1000.00</span></span>
+<label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+</div>
 
-        function renderMyHistory() {
-            let myHistHTML = "";
-            activeBets.forEach(bet => {
-                let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
-                myHistHTML += `<tr>
-                    <td style="font-size:12px;">${bet.period}</td>
-                    <td style="font-weight: bold;">${bet.selection}</td>
-                    <td>₹${bet.amount.toFixed(0)}</td>
-                    <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
-                </tr>`;
+<span class="mul-label">Multiplier:</span>
+<div class="mul-grid">
+<button class="m-btn active" onclick="setMul(1, this)">X1</button>
+<button class="m-btn" onclick="setMul(5, this)">X5</button>
+<button class="m-btn" onclick="setMul(10, this)">X10</button>
+<button class="m-btn" onclick="setMul(20, this)">X20</button>
+<button class="m-btn" onclick="setMul(50, this)">X50</button>
+<button class="m-btn" onclick="setMul(100, this)">X100</button>
+</div>
+
+<!-- BUTTON ID ADDED -->
+<button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
+<button class="cancel-btn" onclick="closePopup()">Cancel</button>
+
+<div class="pop-footer">
+Available Balance: ₹<span id="footer-balance-pop">1000.00</span>
+<a href="#" class="pop-rules">Rules</a>
+</div>
+</div>
+</div>
+
+<!-- LOGIC SCRIPTS -->
+<script>
+window.Telegram.WebApp.ready();
+window.Telegram.WebApp.expand();
+
+// APKA BACKEND URL
+const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+
+// Telegram se User ka data lena
+const user = window.Telegram.WebApp.initDataUnsafe?.user;
+const telegramId = user ? user.id : "guest_123";
+
+// Global State Variables
+let balance = 1000.00;
+let currentPeriod = 0;
+let activeBets = [];
+let lastProcessedPeriod = 0;
+let activeTab = 'game';
+
+// Popup Variables
+let popSelection = "";
+let popBaseBet = 10;
+let popQty = 1;
+let popMul = 1;
+let popTotal = 10;
+
+function updateBalanceDisplays() {
+    let formattedBal = balance.toFixed(2);
+    document.getElementById("header-balance").innerText = formattedBal;
+    document.getElementById("toggle-balance").innerText = formattedBal;
+    document.getElementById("footer-balance-pop").innerText = formattedBal;
+    document.getElementById("wallet-page-balance").innerText = formattedBal;
+}
+
+// 🌟 NAYA LOGIC: Bottom Navigation Switcher
+function switchNavPage(pageId) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+    
+    document.getElementById('page-' + pageId).classList.add('page-active');
+    document.getElementById('nav-' + pageId).classList.add('nav-active');
+    
+    if(pageId === 'game') document.getElementById('page-title').innerText = "Win Go";
+    if(pageId === 'tasks') document.getElementById('page-title').innerText = "Earn Rewards";
+    if(pageId === 'wallet') document.getElementById('page-title').innerText = "My Wallet";
+
+    if (window.Telegram.WebApp.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    }
+}
+
+// TABS SWITCHING LOGIC
+function switchTab(tabName) {
+    activeTab = tabName;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+
+    if(tabName === 'game') {
+        document.getElementById('tab-game-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'table';
+        document.getElementById('table-my-history').style.display = 'none';
+    } else {
+        document.getElementById('tab-my-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'none';
+        document.getElementById('table-my-history').style.display = 'table';
+        renderMyHistory();
+    }
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+function renderMyHistory() {
+    let myHistHTML = "";
+    activeBets.slice().reverse().forEach(bet => {
+        let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+        myHistHTML += `<tr>
+            <td style="font-size:12px;">${bet.period}</td>
+            <td style="font-weight: bold;">${bet.selection}</td>
+            <td>₹${bet.amount.toFixed(0)}</td>
+            <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
+        </tr>`;
+    });
+
+    if(myHistHTML === "") {
+        myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
+    }
+    document.getElementById("my-history-body").innerHTML = myHistHTML;
+}
+
+// POPUP LOGIC
+function openPopup(selection, colorHex) {
+    popSelection = selection;
+    document.getElementById("pop-selection-text").innerText = selection;
+    document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
+    document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
+
+    popBaseBet = 10; popQty = 1; popMul = 1;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn')[0].classList.add('active');
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.m-btn')[0].classList.add('active');
+
+    calculateTotal();
+    updateBalanceDisplays();
+    document.getElementById("bet-popup").style.display = "flex";
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+function closePopup() {
+    document.getElementById("bet-popup").style.display = "none";
+}
+
+function setBase(amt, btn) {
+    popBaseBet = amt;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calculateTotal();
+}
+
+function updateQty(change) {
+    if (popQty + change >= 1) popQty += change;
+    calculateTotal();
+}
+
+function setMul(m, btn) {
+    popMul = m;
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calculateTotal();
+}
+
+function calculateTotal() {
+    popTotal = popBaseBet * popQty * popMul;
+    document.getElementById("calc-qty").value = popQty;
+    document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2);
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+// === UPDATED: SEND BET TO BACKEND ===
+async function placeFinalBet() {
+    if (balance < popTotal) {
+        alert("Insufficient Balance!");
+        return;
+    }
+
+    const btn = document.getElementById("confirmBetBtn");
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                telegramId: telegramId,
+                betSelection: popSelection,
+                betAmount: popTotal,
+                period: currentPeriod
+            })
+        });
+
+        const data = await response.json();
+
+        if(data.success) {
+            balance = data.newBalance;
+            updateBalanceDisplays();
+
+            activeBets.push({
+                period: currentPeriod,
+                selection: popSelection,
+                amount: popTotal,
+                status: 'Pending'
             });
-            if(myHistHTML === "") {
-                myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
+
+            if(activeTab === 'my') renderMyHistory();
+
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+            closePopup();
+        } else {
+            alert(data.message || "Bet failed!");
+        }
+    } catch (error) {
+        console.error("Server error:", error);
+        alert("Server connection failed!");
+    }
+
+    btn.innerText = "CONFIRM BET";
+    btn.disabled = false;
+}
+
+// FETCH SERVER DATA & UPDATE UI
+function fetchGameStatus() {
+    fetch(`${BACKEND_URL}/game-status`)
+    .then(res => res.json())
+    .then(data => {
+        currentPeriod = data.period;
+        document.getElementById("period-display").innerText = currentPeriod;
+
+        let timeStr = data.time.toString().padStart(2, '0');
+        document.getElementById("sec1").innerText = timeStr[0];
+        document.getElementById("sec2").innerText = timeStr[1];
+
+        let historyHTML = "";
+        data.results.forEach(res => {
+            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+            let bs = res.number > 4 ? "Big" : "Small";
+            historyHTML += `<tr>
+                <td style="font-size:12px;">${res.period}</td>
+                <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
+                <td>${bs}</td>
+                <td><span class="dot" style="background-color: ${fontColor};"></span></td>
+            </tr>`;
+        });
+        document.getElementById("history-body").innerHTML = historyHTML;
+
+        if(data.results.length > 0) {
+            let latestResult = data.results[0];
+            if(lastProcessedPeriod !== latestResult.period) {
+                lastProcessedPeriod = latestResult.period;
+                checkWinnings(latestResult);
             }
-            document.getElementById("my-history-body").innerHTML = myHistHTML;
         }
+    })
+    .catch(err => console.log("Waiting for backend..."));
+}
 
-        /* Betting Popup Logic */
-        let popSelection = "", popBaseBet = 10, popQty = 1, popMul = 1, popTotal = 10;
-        function openPopup(selection, colorHex) {
-            popSelection = selection;
-            document.getElementById("pop-selection-text").innerText = selection;
-            document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
-            popBaseBet = 10; popQty = 1; popMul = 1;
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.preset-btn')[0].classList.add('active');
-            document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.m-btn')[0].classList.add('active');
-            calculateTotal();
-            document.getElementById("bet-popup").style.display = "flex";
+// RESULT DECLARATION & REWARDS (Local update for now)
+function checkWinnings(result) {
+    let totalWinnings = 0;
+    let statusChanged = false;
+
+    activeBets.forEach(bet => {
+        if(bet.period === result.period && bet.status === 'Pending') {
+            let won = false; let multiplier = 0;
+
+            if(bet.selection === result.color) { won = true; multiplier = 2; }
+
+            let bs = result.number > 4 ? "Big" : "Small";
+            if(bet.selection === bs) { won = true; multiplier = 2; }
+
+            if(bet.selection === result.number.toString()) { won = true; multiplier = 9; }
+
+            if(won) {
+                totalWinnings += (bet.amount * multiplier);
+                bet.status = 'Won';
+            } else {
+                bet.status = 'Lost';
+            }
+            statusChanged = true;
         }
-        function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
-        function setBase(amt, btn) { popBaseBet = amt; document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); calculateTotal(); }
-        function updateQty(change) { if (popQty + change >= 1) popQty += change; calculateTotal(); }
-        function setMul(m, btn) { popMul = m; document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); calculateTotal(); }
-        function calculateTotal() { popTotal = popBaseBet * popQty * popMul; document.getElementById("calc-qty").value = popQty; document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2); }
+    });
 
-        async function placeFinalBet() {
-            if (balance < popTotal) { alert("Insufficient Balance!"); return; }
-            const btn = document.getElementById("confirmBetBtn");
-            btn.innerText = "Processing..."; btn.disabled = true;
-            try {
-                const response = await fetch(`${BACKEND_URL}/bet`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ telegramId, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
-                });
-                const data = await response.json();
-                if(data.success) {
-                    balance = data.newBalance; updateBalanceDisplays();
-                    if (window.Telegram.WebApp.HapticFeedback) {
-                        window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
-                    }
-                    closePopup(); fetchMyHistory(); 
-                } else { alert(data.message || "Bet failed!"); }
-            } catch (error) { alert("Server connection failed!"); }
-            btn.innerText = "CONFIRM BET"; btn.disabled = false;
-        }
+    if(totalWinnings > 0) {
+        balance += totalWinnings;
+        updateBalanceDisplays();
+        if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+        alert(`🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)}`);
+    }
 
-        function fetchGameStatus() {
-            fetch(`${BACKEND_URL}/game-status`)
-                .then(res => res.json())
-                .then(data => {
-                    currentPeriod = data.period;
-                    document.getElementById("period-display").innerText = currentPeriod;
-                    let timeStr = data.time.toString().padStart(2, '0');
-                    document.getElementById("sec1").innerText = timeStr[0];
-                    document.getElementById("sec2").innerText = timeStr[1];
-                    
-                    let historyHTML = "";
-                    data.results.forEach(res => {
-                        let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
-                        let bs = res.number > 4 ? "Big" : "Small";
-                        historyHTML += `<tr>
-                            <td style="font-size:12px;">${res.period}</td>
-                            <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
-                            <td>${bs}</td>
-                            <td><span class="dot" style="background-color: ${fontColor};"></span></td>
-                        </tr>`;
-                    });
-                    document.getElementById("history-body").innerHTML = historyHTML;
+    if(statusChanged && activeTab === 'my') {
+        renderMyHistory();
+    }
+}
 
-                    if(data.results.length > 0 && lastProcessedPeriod !== data.results[0].period) {
-                        lastProcessedPeriod = data.results[0].period;
-                        fetchRealBalance(); fetchMyHistory(); 
-                    }
-                })
-                .catch(err => console.log("Waiting..."));
-        }
-
-        // INITIALIZATION
-        fetchRealBalance();
-        fetchMyHistory(); 
-        setInterval(fetchGameStatus, 1000);
-        fetchGameStatus();
-    </script>
+// Initialize Game Fetch Loop (runs every 1 second)
+setInterval(fetchGameStatus, 1000);
+fetchGameStatus();
+updateBalanceDisplays();
+</script>
 </body>
 </html>
