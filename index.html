@@ -7,7 +7,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
-body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; } /* Padding bottom badhaya nav bar ke liye */
+body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; } 
 .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
 .balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 20px; }
 .ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
@@ -37,13 +37,17 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
 .history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
 .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
-#bet-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+
+/* Popup Common */
+.popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
 .popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; animation: popIn 0.3s ease-out; position: relative; }
 @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; }
 .pop-title { text-align: center; font-weight: bold; font-size: 16px; margin: 0; }
 .pop-period { text-align: center; font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 15px; }
-.sel-row { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 15px; }
+
+/* Bet Popup Specifics */
+.sel-row { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 15px; margin-top:20px; }
 .sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .stepper-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
 .stepper-input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: left; font-size: 16px; outline: none; }
@@ -70,21 +74,26 @@ input:checked + .slider:before { transform: translateX(20px); }
 .pop-footer { text-align: center; font-size: 14px; color: #333; }
 .pop-rules { color: #1772b1; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; font-size: 13px; }
 
-/* 🌟 NEW: Bottom Navigation Bar CSS */
+/* Deposit Popup Specifics */
+.deposit-input-box { width: 100%; box-sizing: border-box; padding: 15px; border-radius: 10px; border: 2px solid #ddd; font-size: 18px; font-weight: bold; text-align: center; outline: none; margin-bottom: 15px; color: #333; }
+.deposit-input-box:focus { border-color: #ff3e3e; }
+
+/* Bottom Navigation Bar CSS */
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
 .nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
 .nav-item i { font-size: 22px; display: block; margin-bottom: 5px; transition: 0.2s; }
 .nav-active { color: #ff3e3e; }
 .nav-active i { transform: translateY(-3px); }
 
-/* 🌟 NEW: Pages CSS */
+/* Pages CSS */
 .page-content { display: none; animation: fadeIn 0.3s; }
 .page-active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
 .wallet-balance { font-size: 32px; font-weight: bold; color: #ff3e3e; margin: 15px 0; }
-.action-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+.action-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; color: white; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+.action-btn:active { transform: translateY(4px); box-shadow: none !important; }
 .btn-withdraw { background-color: #ff9800; box-shadow: 0 4px 0 #e65100; }
 .btn-deposit { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
 </style>
@@ -93,7 +102,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <div class="header">
 <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
-<div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">1000.00</span></div>
+<div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">0.00</span></div>
 </div>
 
 <!-- ================= PAGE 1: GAME (DEFAULT) ================= -->
@@ -177,10 +186,10 @@ input:checked + .slider:before { transform: translateX(20px); }
     <div class="wallet-card">
         <i class="fas fa-wallet" style="font-size: 40px; color: #ff3e3e;"></i>
         <div style="font-size: 16px; color: #666; margin-top: 10px;">Available Balance</div>
-        <div class="wallet-balance">₹<span id="wallet-page-balance">1000.00</span></div>
+        <div class="wallet-balance">₹<span id="wallet-page-balance">0.00</span></div>
         
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="action-btn btn-deposit" onclick="alert('Deposit system coming soon!')">Deposit</button>
+            <button class="action-btn btn-deposit" onclick="openDepositPopup()">Deposit</button>
             <button class="action-btn btn-withdraw" onclick="alert('Minimum 5000 points required to withdraw!')">Withdraw</button>
         </div>
         
@@ -209,8 +218,29 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 </div>
 
-<!-- PREMIUM POPUP MODAL -->
-<div id="bet-popup">
+<!-- ================= DEPOSIT POPUP MODAL ================= -->
+<div id="deposit-popup" class="popup-overlay">
+    <div class="popup-card">
+        <button class="close-btn" onclick="closeDepositPopup()">✕</button>
+        <div class="pop-title" style="margin-bottom: 20px; font-size: 18px;">Deposit Balance</div>
+        
+        <div style="font-size: 14px; margin-bottom: 8px; color: #555; text-align: left;">Enter Amount (₹100 - ₹25,000)</div>
+        <input type="number" id="deposit-input" class="deposit-input-box" placeholder="₹ Enter Amount" />
+        
+        <div class="preset-grid">
+            <button class="preset-btn" style="background:#e0e0e0;" onclick="setDepositAmount(100)">₹100</button>
+            <button class="preset-btn" style="background:#e0e0e0;" onclick="setDepositAmount(500)">₹500</button>
+            <button class="preset-btn" style="background:#e0e0e0;" onclick="setDepositAmount(1000)">₹1000</button>
+            <button class="preset-btn" style="background:#e0e0e0;" onclick="setDepositAmount(5000)">₹5000</button>
+        </div>
+        
+        <button class="confirm-btn" onclick="processDeposit()">PROCEED TO PAY</button>
+    </div>
+</div>
+
+
+<!-- ================= BET POPUP MODAL ================= -->
+<div id="bet-popup" class="popup-overlay">
 <div class="popup-card">
 <button class="close-btn" onclick="closePopup()">✕</button>
 <div class="pop-title">Betting - Win Go 1Min</div>
@@ -244,7 +274,7 @@ Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-select
 </div>
 
 <div class="toggle-row">
-<span>Check balance: ₹<span id="toggle-balance">1000.00</span></span>
+<span>Check balance: ₹<span id="toggle-balance">0.00</span></span>
 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
 </div>
 
@@ -258,12 +288,11 @@ Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-select
 <button class="m-btn" onclick="setMul(100, this)">X100</button>
 </div>
 
-<!-- BUTTON ID ADDED -->
 <button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
 <button class="cancel-btn" onclick="closePopup()">Cancel</button>
 
 <div class="pop-footer">
-Available Balance: ₹<span id="footer-balance-pop">1000.00</span>
+Available Balance: ₹<span id="footer-balance-pop">0.00</span>
 <a href="#" class="pop-rules">Rules</a>
 </div>
 </div>
@@ -282,7 +311,7 @@ const user = window.Telegram.WebApp.initDataUnsafe?.user;
 const telegramId = user ? user.id : "guest_123";
 
 // Global State Variables
-let balance = 1000.00;
+let balance = 0.00;
 let currentPeriod = 0;
 let activeBets = [];
 let lastProcessedPeriod = 0;
@@ -303,7 +332,7 @@ function updateBalanceDisplays() {
     document.getElementById("wallet-page-balance").innerText = formattedBal;
 }
 
-// 🌟 NAYA LOGIC: Bottom Navigation Switcher
+// 🌟 Navigation Switcher
 function switchNavPage(pageId) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
@@ -356,7 +385,41 @@ function renderMyHistory() {
     document.getElementById("my-history-body").innerHTML = myHistHTML;
 }
 
-// POPUP LOGIC
+// ================= DEPOSIT LOGIC ================= //
+function openDepositPopup() {
+    document.getElementById("deposit-popup").style.display = "flex";
+    document.getElementById("deposit-input").value = "";
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+function closeDepositPopup() {
+    document.getElementById("deposit-popup").style.display = "none";
+}
+
+function setDepositAmount(amt) {
+    document.getElementById("deposit-input").value = amt;
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+function processDeposit() {
+    let amt = parseInt(document.getElementById("deposit-input").value);
+    
+    // Validation: 100 se kam ya 25000 se zyada nahi
+    if (isNaN(amt) || amt < 100 || amt > 25000) {
+        if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("error");
+        alert("Please enter a valid amount between ₹100 and ₹25,000.");
+        return;
+    }
+    
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+    
+    // Abhi ke liye yahan alert show ho raha hai, aage chal kar hum ise backend se jodenge
+    alert(`Request initiated for ₹${amt}!\n\n(Note: Payment gateway is not connected yet. Once connected, user will be redirected to UPI app.)`);
+    closeDepositPopup();
+}
+// ================================================= //
+
+// BETTING POPUP LOGIC
 function openPopup(selection, colorHex) {
     popSelection = selection;
     document.getElementById("pop-selection-text").innerText = selection;
@@ -405,7 +468,7 @@ function calculateTotal() {
     if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
-// === UPDATED: SEND BET TO BACKEND ===
+// SEND BET TO BACKEND
 async function placeFinalBet() {
     if (balance < popTotal) {
         alert("Insufficient Balance!");
@@ -457,7 +520,7 @@ async function placeFinalBet() {
     btn.disabled = false;
 }
 
-// FETCH SERVER DATA & UPDATE UI
+// FETCH SERVER DATA
 function fetchGameStatus() {
     fetch(`${BACKEND_URL}/game-status`)
     .then(res => res.json())
@@ -493,7 +556,36 @@ function fetchGameStatus() {
     .catch(err => console.log("Waiting for backend..."));
 }
 
-// RESULT DECLARATION & REWARDS (Local update for now)
+async function fetchRealBalance() {
+    try {
+        const res = await fetch(`${BACKEND_URL}/get-balance`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId })
+        });
+        const data = await res.json();
+        if(data.success) {
+            balance = data.balance;
+            updateBalanceDisplays();
+        }
+    } catch (err) { }
+}
+
+async function fetchMyHistory() {
+    try {
+        const res = await fetch(`${BACKEND_URL}/my-history`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId })
+        });
+        const data = await res.json();
+        if(data.success) {
+            activeBets = data.history; 
+            if(activeTab === 'my') renderMyHistory();
+        }
+    } catch (err) { }
+}
+
 function checkWinnings(result) {
     let totalWinnings = 0;
     let statusChanged = false;
@@ -534,6 +626,8 @@ function checkWinnings(result) {
 // Initialize Game Fetch Loop (runs every 1 second)
 setInterval(fetchGameStatus, 1000);
 fetchGameStatus();
+fetchRealBalance();
+fetchMyHistory();
 updateBalanceDisplays();
 </script>
 </body>
