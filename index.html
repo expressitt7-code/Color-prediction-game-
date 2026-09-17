@@ -3,10 +3,11 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Win Go 1Min</title>
+    <!-- Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; }
+        body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 30px; }
         
         /* Header & Banner */
         .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; }
@@ -37,16 +38,17 @@
         .btn-big { background-color: #ff9800; }
         .btn-small { background-color: #2196f3; }
 
-        /* Tabs & Table */
+        /* Tabs & Tables */
         .tabs { display: flex; margin: 15px; gap: 10px; }
-        .tab { flex: 1; padding: 10px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 14px; }
+        .tab { flex: 1; padding: 12px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 15px; cursor: pointer; transition: 0.2s;}
         .tab-active { background: #ff3e3e; color: white; }
-        .history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; }
+        
+        .history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;}
         .history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
         .history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
         .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
 
-        /* --- NEW PREMIUM POPUP CSS --- */
+        /* Premium Popup CSS */
         #bet-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; animation: popIn 0.3s ease-out; position: relative; }
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -136,14 +138,25 @@
         </div>
     </div>
 
-    <div class="tabs"><div class="tab tab-active">Game history</div></div>
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab tab-active" id="tab-game-hist" onclick="switchTab('game')">Game history</div>
+        <div class="tab" id="tab-my-hist" onclick="switchTab('my')">My history</div>
+    </div>
 
-    <table class="history-table">
+    <!-- Game History Table -->
+    <table class="history-table" id="table-game-history">
         <thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
         <tbody id="history-body"></tbody>
     </table>
 
-    <!-- EXACT SAME PREMIUM POPUP -->
+    <!-- My History Table -->
+    <table class="history-table" id="table-my-history" style="display: none;">
+        <thead><tr><th>Period</th><th>Select</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="my-history-body"></tbody>
+    </table>
+
+    <!-- PREMIUM POPUP MODAL -->
     <div id="bet-popup">
         <div class="popup-card">
             <button class="close-btn" onclick="closePopup()">✕</button>
@@ -202,18 +215,22 @@
         </div>
     </div>
 
+    <!-- LOGIC SCRIPTS -->
     <script>
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
+        
+        // APKA BACKEND URL
         const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
-        // Game State
+        // Global State Variables
         let balance = 1000.00;
         let currentPeriod = 0;
-        let activeBets = [];
+        let activeBets = []; 
         let lastProcessedPeriod = 0;
+        let activeTab = 'game';
 
-        // Popup State
+        // Popup Variables
         let popSelection = "";
         let popBaseBet = 10;
         let popQty = 1;
@@ -227,14 +244,52 @@
             document.getElementById("footer-balance").innerText = formattedBal;
         }
 
-        // Popup Logic
+        // TABS SWITCHING LOGIC
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+            
+            if(tabName === 'game') {
+                document.getElementById('tab-game-hist').classList.add('tab-active');
+                document.getElementById('table-game-history').style.display = 'table';
+                document.getElementById('table-my-history').style.display = 'none';
+            } else {
+                document.getElementById('tab-my-hist').classList.add('tab-active');
+                document.getElementById('table-game-history').style.display = 'none';
+                document.getElementById('table-my-history').style.display = 'table';
+                renderMyHistory(); // Refresh My History Data
+            }
+            window.Telegram.WebApp.HapticFeedback.selectionChanged();
+        }
+
+        // RENDER MY HISTORY LOGIC
+        function renderMyHistory() {
+            let myHistHTML = "";
+            activeBets.slice().reverse().forEach(bet => {
+                let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+                
+                myHistHTML += `<tr>
+                    <td style="font-size:12px;">${bet.period}</td>
+                    <td style="font-weight: bold;">${bet.selection}</td>
+                    <td>₹${bet.amount.toFixed(0)}</td>
+                    <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
+                </tr>`;
+            });
+            
+            if(myHistHTML === "") {
+                myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
+            }
+            document.getElementById("my-history-body").innerHTML = myHistHTML;
+        }
+
+        // POPUP LOGIC
         function openPopup(selection, colorHex) {
             popSelection = selection;
             document.getElementById("pop-selection-text").innerText = selection;
             document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
             document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
             
-            // Reset Values
+            // Reset modal values
             popBaseBet = 10; popQty = 1; popMul = 1;
             document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.preset-btn')[0].classList.add('active');
@@ -277,25 +332,31 @@
             window.Telegram.WebApp.HapticFeedback.selectionChanged();
         }
 
+        // CONFIRM BET
         function placeFinalBet() {
             if (balance < popTotal) {
                 alert("Insufficient Balance!");
                 return;
             }
+            // Balance Update
             balance -= popTotal;
             updateBalanceDisplays();
             
+            // Save to My History (Status: Pending)
             activeBets.push({
                 period: currentPeriod,
                 selection: popSelection,
-                amount: popTotal
+                amount: popTotal,
+                status: 'Pending'
             });
+            
+            if(activeTab === 'my') renderMyHistory();
             
             window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
             closePopup();
         }
 
-        // Fetch Timer and Results
+        // FETCH SERVER DATA & UPDATE UI
         function fetchGameStatus() {
             fetch(`${BACKEND_URL}/game-status`)
                 .then(res => res.json())
@@ -307,12 +368,13 @@
                     document.getElementById("sec1").innerText = timeStr[0];
                     document.getElementById("sec2").innerText = timeStr[1];
                     
+                    // Render Game History Table (max 10 rows)
                     let historyHTML = "";
                     data.results.forEach(res => {
                         let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
                         let bs = res.number > 4 ? "Big" : "Small";
                         historyHTML += `<tr>
-                            <td>${res.period}</td>
+                            <td style="font-size:12px;">${res.period}</td>
                             <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
                             <td>${bs}</td>
                             <td><span class="dot" style="background-color: ${fontColor};"></span></td>
@@ -320,6 +382,7 @@
                     });
                     document.getElementById("history-body").innerHTML = historyHTML;
 
+                    // Trigger Result check if a new period just started
                     if(data.results.length > 0) {
                         let latestResult = data.results[0];
                         if(lastProcessedPeriod !== latestResult.period) {
@@ -331,29 +394,52 @@
                 .catch(err => console.log(err));
         }
 
+        // RESULT DECLARATION & REWARDS
         function checkWinnings(result) {
             let totalWinnings = 0;
+            let statusChanged = false;
+            
+            // Sirf wahi bets check hongi jo us period ki hain aur "Pending" hain
             activeBets.forEach(bet => {
-                if(bet.period === result.period) {
+                if(bet.period === result.period && bet.status === 'Pending') {
                     let won = false; let multiplier = 0;
+                    
+                    // Match Colors
                     if(bet.selection === result.color) { won = true; multiplier = 2; }
+                    
+                    // Match Big/Small
                     let bs = result.number > 4 ? "Big" : "Small";
                     if(bet.selection === bs) { won = true; multiplier = 2; }
+                    
+                    // Match Number
                     if(bet.selection === result.number.toString()) { won = true; multiplier = 9; }
                     
-                    if(won) totalWinnings += (bet.amount * multiplier);
+                    if(won) {
+                        totalWinnings += (bet.amount * multiplier);
+                        bet.status = 'Won';
+                    } else {
+                        bet.status = 'Lost';
+                    }
+                    statusChanged = true;
                 }
             });
             
+            // Add rewards
             if(totalWinnings > 0) {
                 balance += totalWinnings;
                 updateBalanceDisplays();
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
-                alert(`🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)} from Period ${result.period}`);
+                // Ek alert popup jeetne par
+                alert(`🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)}`);
             }
-            activeBets = activeBets.filter(bet => bet.period >= result.period);
+            
+            // Agar result declare hua hai aur user My History dekh raha hai toh usko refresh kardo
+            if(statusChanged && activeTab === 'my') {
+                renderMyHistory();
+            }
         }
 
+        // Initialize Game Fetch Loop (runs every 1 second)
         setInterval(fetchGameStatus, 1000);
         fetchGameStatus();
         updateBalanceDisplays();
