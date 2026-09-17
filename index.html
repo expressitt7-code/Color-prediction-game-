@@ -175,7 +175,7 @@
                 <b style="color:#333;">Withdrawal Rules:</b><br>
                 1. Minimum withdrawal amount is ₹5000.<br>
                 2. Payouts are processed within 24 hours.<br>
-                3. Need active upi id for successful transfer.
+                3. Need active UPI ID for successful transfer.
             </div>
         </div>
     </div>
@@ -264,21 +264,19 @@
 
         // 🌟 NAYA LOGIC: Bottom Navigation Switcher
         function switchNavPage(pageId) {
-            // Hide all pages
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
-            // Remove active class from all nav icons
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
             
-            // Show selected page & highlight icon
             document.getElementById('page-' + pageId).classList.add('page-active');
             document.getElementById('nav-' + pageId).classList.add('nav-active');
             
-            // Change Header Title
             if(pageId === 'game') document.getElementById('page-title').innerText = "Win Go";
             if(pageId === 'tasks') document.getElementById('page-title').innerText = "Earn Rewards";
             if(pageId === 'wallet') document.getElementById('page-title').innerText = "My Wallet";
 
-            window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            if (window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            }
         }
 
         async function fetchRealBalance() {
@@ -314,7 +312,7 @@
         function updateBalanceDisplays() {
             let formattedBal = balance.toFixed(2);
             document.getElementById("header-balance").innerText = formattedBal;
-            document.getElementById("wallet-page-balance").innerText = formattedBal; // Wallet page balance
+            document.getElementById("wallet-page-balance").innerText = formattedBal;
         }
 
         function switchTab(tabName) {
@@ -330,7 +328,9 @@
                 document.getElementById('table-my-history').style.display = 'table';
                 fetchMyHistory(); 
             }
-            window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            if (window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.selectionChanged();
+            }
         }
 
         function renderMyHistory() {
@@ -383,7 +383,9 @@
                 const data = await response.json();
                 if(data.success) {
                     balance = data.newBalance; updateBalanceDisplays();
-                    window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+                    if (window.Telegram.WebApp.HapticFeedback) {
+                        window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+                    }
                     closePopup(); fetchMyHistory(); 
                 } else { alert(data.message || "Bet failed!"); }
             } catch (error) { alert("Server connection failed!"); }
