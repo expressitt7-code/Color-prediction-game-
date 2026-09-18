@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win Go - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .header { text-align: center; margin-bottom: 20px; color: #ff3e3e; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid #ff9800; }
+        .details { margin-bottom: 15px; font-size: 15px; line-height: 1.5; }
+        .details span { font-weight: bold; color: #555; }
+        .utr-text { color: #17b15e; font-weight: bold; font-size: 16px; letter-spacing: 1px; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-approve { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
+        .btn-reject { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .empty-msg { text-align: center; color: #888; font-size: 16px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+        <p style="color: #666; font-size: 14px;">Manage Pending Deposits</p>
+    </div>
+
+    <div id="requests-container">
+        <div class="empty-msg"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div>
+    </div>
+
+    <script>
+        // APKA BACKEND URL
+        const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+
+        async function fetchRequests() {
+            try {
+                let response = await fetch(`${BACKEND_URL}/admin/pending-deposits`);
+                let data = await response.json();
+                
+                let container = document.getElementById("requests-container");
+                
+                if (data.requests.length === 0) {
+                    container.innerHTML = `<div class="empty-msg"><i class="fas fa-check-circle" style="font-size: 40px; color: #17b15e; margin-bottom: 10px; display: block;"></i>No pending deposits!</div>`;
+                    return;
+                }
+
+                let html = "";
+                data.requests.forEach(req => {
+                    html += `
+                    <div class="card">
+                        <div class="details">
+                            <span>User ID:</span> ${req.telegramId} <br>
+                            <span>Amount:</span> ₹${req.amount} <br>
+                            <span>UTR No:</span> <span class="utr-text">${req.utr}</span> <br>
+                            <span style="font-size: 12px; color: #888;">Time: ${req.time}</span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-approve" onclick="processDeposit('${req.id}', 'approve')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-reject" onclick="processDeposit('${req.id}', 'reject')"><i class="fas fa-times"></i> Reject</button>
+                        </div>
+                    </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                document.getElementById("requests-container").innerHTML = `<div class="empty-msg" style="color: red;">Failed to connect to server.</div>`;
+            }
+        }
+
+        async function processDeposit(requestId, action) {
+            let confirmMsg = action === 'approve' ? "Approve this deposit and add money to user's wallet?" : "Reject this deposit?";
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                let response = await fetch(`${BACKEND_URL}/admin/approve-deposit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ requestId: requestId, action: action })
+                });
+                let data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ ${data.message}`);
+                    fetchRequests(); // List ko refresh karein
+                } else {
+                    alert(`❌ Error: ${data.message}`);
+                }
+            } catch (error) {
+                alert("Server connection failed!");
+            }
+        }
+
+        // Har 5 second mein naye requests check karega
+        fetchRequests();
+        setInterval(fetchRequests, 5000);
+    </script>
+
+</body>
+</html>
+
