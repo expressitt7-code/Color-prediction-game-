@@ -63,6 +63,25 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .pop-period { text-align: center; font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; }
 .deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
 
+/* 🌟 TRANSACTION HISTORY POPUP CSS 🌟 */
+.hist-tabs { display: flex; background: #f8f9fa; border-bottom: 1px solid #ddd; margin-bottom: 10px; border-radius: 10px 10px 0 0; overflow: hidden;}
+.hist-tab-btn { flex: 1; padding: 12px; border: none; background: none; font-size: 14px; font-weight: bold; cursor: pointer; color: #555; outline: none; }
+.hist-tab-btn.active { color: #2196f3; border-bottom: 3px solid #2196f3; background: #fff; }
+.hist-tab-content { display: none; padding: 5px; max-height: 350px; overflow-y: auto; }
+.hist-tab-content.active { display: block; }
+
+.txn-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+.txn-item:last-child { border-bottom: none; }
+.txn-info h4 { margin: 0 0 5px 0; font-size: 14px; color: #333; }
+.txn-info p { margin: 0; font-size: 11px; color: #777; }
+.txn-amount { font-weight: bold; font-size: 15px; text-align: right; }
+.txn-amount.dep { color: #17b15e; }
+.txn-amount.wid { color: #ff2a2a; }
+.txn-status { display: inline-block; margin-top: 5px; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+.txn-status.approved { background: #d4edda; color: #155724; }
+.txn-status.pending { background: #fff3cd; color: #856404; }
+.txn-status.rejected { background: #f8d7da; color: #721c24; }
+
 /* PREMIUM BETTING UI CSS */
 .sel-row { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; margin-bottom: 15px; margin-top: 10px;}
 .sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
@@ -261,12 +280,24 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 </div>
 
-<!-- TRANSACTION HISTORY POPUP -->
+<!-- 🌟 NEW TRANSACTION HISTORY POPUP 🌟 -->
 <div id="history-popup" class="popup-overlay">
-    <div class="popup-card" style="max-width: 400px;">
-        <button class="close-btn" onclick="closeHistoryPopup()">✕</button>
-        <div class="pop-title">History</div>
-        <div id="hist-content-area" style="max-height: 250px; overflow-y: auto; font-size: 14px;"></div>
+    <div class="popup-card" style="max-width: 400px; padding: 0;">
+        <button class="close-btn" style="top: 10px; right: 10px;" onclick="closeHistoryPopup()">✕</button>
+        <div class="pop-title" style="margin-top: 15px;">Transaction History</div>
+        
+        <div class="hist-tabs">
+            <button class="hist-tab-btn active" onclick="switchHistTab('depTab', this)">Deposits</button>
+            <button class="hist-tab-btn" onclick="switchHistTab('widTab', this)">Withdrawals</button>
+        </div>
+
+        <div id="depTab" class="hist-tab-content active" style="padding: 0 15px 15px 15px;">
+            <div id="depositHistList"></div>
+        </div>
+
+        <div id="widTab" class="hist-tab-content" style="padding: 0 15px 15px 15px;">
+            <div id="withdrawHistList"></div>
+        </div>
     </div>
 </div>
 
@@ -435,7 +466,6 @@ function updateBalanceDisplays() {
     document.getElementById("wallet-dep-bal").innerText = depositBalance.toFixed(2);
     document.getElementById("wallet-bonus-bal").innerText = bonusBalance.toFixed(2);
     
-    // UI elements in Bet Popup
     if(document.getElementById("toggle-balance")) document.getElementById("toggle-balance").innerText = formattedBal;
     if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = formattedBal;
 }
@@ -568,35 +598,20 @@ function clearPresetActive() {
     document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
 }
 
-// COPY UPI ID FUNCTION
 function copyMerchantUPI() {
     navigator.clipboard.writeText("Username@ybl");
     alert("UPI ID Copied: Username@ybl");
     if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
 }
 
-// 🌟 100% WORKING TELEGRAM UPI DEEP LINK (INTENT FIX) 🌟
 function proceedToPaymentApp() {
     let amt = parseFloat(document.getElementById("deposit-input").value);
-    if(isNaN(amt) || amt < 100) { 
-        alert("Minimum deposit amount is ₹100"); 
-        return; 
-    }
-    
-    // Aapka apna UPI ID
+    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
     let upiId = "Username@ybl"; 
-    
-    // Android Intent (Telegram ke andar error bypass karne ke liye)
     let intentLink = `intent://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR#Intent;scheme=upi;end`;
-    
-    // iOS (iPhone) ke liye regular link
     let upiLink = `upi://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR`;
-    
-    // Check OS
     let isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
     let finalLink = isAndroid ? intentLink : upiLink;
-    
-    // Hidden anchor tag trick to force open outside iframe
     let tempLink = document.createElement('a');
     tempLink.href = finalLink;
     tempLink.target = "_top"; 
@@ -644,6 +659,69 @@ async function submitWithdrawRequest() {
     } else { alert(data.message); }
 }
 
+// 🌟 TRANSACTION HISTORY LOGIC 🌟
+function openHistoryPopup() { 
+    document.getElementById("history-popup").style.display = "flex"; 
+    loadHistoryData(); 
+}
+function closeHistoryPopup() { 
+    document.getElementById("history-popup").style.display = "none"; 
+}
+
+function switchHistTab(tabId, btn) {
+    document.querySelectorAll(".hist-tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".hist-tab-btn").forEach(t => t.classList.remove("active"));
+    
+    document.getElementById(tabId).classList.add("active");
+    btn.classList.add("active");
+}
+
+// NOTE: Aap is dummy data ko hatakar backend API se fetch kar sakte hain future me
+const dummyDepositHistory = [
+    { id: "DEP90812", amount: 500, date: "18 Sep 2026", status: "approved" },
+    { id: "DEP90813", amount: 1000, date: "17 Sep 2026", status: "pending" }
+];
+
+const dummyWithdrawHistory = [
+    { id: "WDR70123", amount: 200, date: "16 Sep 2026", status: "approved" },
+    { id: "WDR70124", amount: 1500, date: "14 Sep 2026", status: "rejected" }
+];
+
+function loadHistoryData() {
+    renderHistList(dummyDepositHistory, "depositHistList", "dep");
+    renderHistList(dummyWithdrawHistory, "withdrawHistList", "wid");
+}
+
+function renderHistList(data, containerId, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; 
+
+    if (data.length === 0) {
+        container.innerHTML = "<p style='text-align:center; color:#777; margin-top:20px;'>No records found.</p>";
+        return;
+    }
+
+    data.forEach(txn => {
+        let sign = type === 'dep' ? '+' : '-';
+        let amountClass = type === 'dep' ? 'dep' : 'wid';
+        
+        let html = `
+            <div class="txn-item">
+                <div class="txn-info">
+                    <h4>ID: ${txn.id}</h4>
+                    <p>${txn.date}</p>
+                    <span class="txn-status ${txn.status}">${txn.status}</span>
+                </div>
+                <div class="txn-amount ${amountClass}">
+                    ${sign} ₹${txn.amount}
+                </div>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+}
+
+// 🌟 GAME STATUS LOGIC 🌟
 function fetchGameStatus() {
     fetch(`${BACKEND_URL}/game-status`)
     .then(res => res.json())
