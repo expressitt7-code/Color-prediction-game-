@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Win Go 1Min</title>
-<!-- Telegram Web App API -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -21,20 +20,43 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
 .c-btn:active { transform: translateY(4px); box-shadow: none; }
 
-/* 3D BALLS CSS */
+/* --- 🌟 EXACT 3D BALLS CSS (AS PER YOUR NEW PHOTO) --- */
 .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
-.num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-.num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #e8e8e8 80%, #d0d0d0 100%); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 1; }
-.num-ball::after { content: ''; position: absolute; top: 2px; left: 15%; width: 70%; height: 25%; background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0)); border-radius: 50%; z-index: 3; pointer-events: none; }
+.num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.25); }
+.num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #f0f0f0 80%, #dcdcdc 100%); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1; }
+.num-ball::after { content: ''; position: absolute; top: 3px; left: 16%; width: 68%; height: 22%; background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0)); border-radius: 50%; z-index: 3; pointer-events: none; }
 .num-ball span { position: relative; z-index: 2; font-size: 24px; font-weight: 900; font-family: 'Arial Black', sans-serif; }
-.num-green { background: linear-gradient(135deg, #4bd17d 0%, #17b15e 100%); }
-.num-green span { color: #17b15e; }
-.num-red { background: linear-gradient(135deg, #ff6b6b 0%, #d32020 100%); }
-.num-red span { color: #d32020; }
-.num-0 { background: linear-gradient(135deg, #ff6b6b 48%, #9c27b0 52%); }
+
+/* Individual Ball Color Styles matching the photo */
+.num-0 { background: linear-gradient(135deg, #ff3b3b 45%, #9c27b0 55%); }
 .num-0 span { color: #9c27b0; }
-.num-5 { background: linear-gradient(135deg, #4bd17d 48%, #9c27b0 52%); }
+
+.num-1 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); }
+.num-1 span { color: #17b15e; }
+
+.num-2 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); }
+.num-2 span { color: #ff3b3b; }
+
+.num-3 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); }
+.num-3 span { color: #17b15e; }
+
+.num-4 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); }
+.num-4 span { color: #ff3b3b; }
+
+.num-5 { background: linear-gradient(135deg, #4cd964 45%, #9c27b0 55%); }
 .num-5 span { color: #9c27b0; }
+
+.num-6 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); }
+.num-6 span { color: #ff3b3b; }
+
+.num-7 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); }
+.num-7 span { color: #17b15e; }
+
+.num-8 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); }
+.num-8 span { color: #ff3b3b; }
+
+.num-9 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); }
+.num-9 span { color: #17b15e; }
 
 .big-small { display: flex; gap: 10px; margin-top: 15px;}
 .bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
@@ -140,15 +162,15 @@ input:checked + .slider:before { transform: translateX(20px); }
 
         <div class="number-grid">
             <div class="num-ball num-0" onclick="openPopup('0', '#9c27b0')"><span>0</span></div>
-            <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
-            <div class="num-ball num-red" onclick="openPopup('2', '#ff2a2a')"><span>2</span></div>
-            <div class="num-ball num-green" onclick="openPopup('3', '#17b15e')"><span>3</span></div>
-            <div class="num-ball num-red" onclick="openPopup('4', '#ff2a2a')"><span>4</span></div>
+            <div class="num-ball num-1" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
+            <div class="num-ball num-2" onclick="openPopup('2', '#ff2a2a')"><span>2</span></div>
+            <div class="num-ball num-3" onclick="openPopup('3', '#17b15e')"><span>3</span></div>
+            <div class="num-ball num-4" onclick="openPopup('4', '#ff2a2a')"><span>4</span></div>
             <div class="num-ball num-5" onclick="openPopup('5', '#9c27b0')"><span>5</span></div>
-            <div class="num-ball num-red" onclick="openPopup('6', '#ff2a2a')"><span>6</span></div>
-            <div class="num-ball num-green" onclick="openPopup('7', '#17b15e')"><span>7</span></div>
-            <div class="num-ball num-red" onclick="openPopup('8', '#ff2a2a')"><span>8</span></div>
-            <div class="num-ball num-green" onclick="openPopup('9', '#17b15e')"><span>9</span></div>
+            <div class="num-ball num-6" onclick="openPopup('6', '#ff2a2a')"><span>6</span></div>
+            <div class="num-ball num-7" onclick="openPopup('7', '#17b15e')"><span>7</span></div>
+            <div class="num-ball num-8" onclick="openPopup('8', '#ff2a2a')"><span>8</span></div>
+            <div class="num-ball num-9" onclick="openPopup('9', '#17b15e')"><span>9</span></div>
         </div>
 
         <div class="big-small">
@@ -195,7 +217,6 @@ input:checked + .slider:before { transform: translateX(20px); }
             <button class="action-btn btn-withdraw" onclick="openWithdrawPopup()">Withdraw</button>
         </div>
 
-        <!-- Transaction History Button -->
         <button class="action-btn" style="background: #2196f3; box-shadow: 0 4px 0 #1976d2; margin-top: 5px;" onclick="openHistoryPopup()"><i class="fas fa-history"></i> Deposit & Withdraw History</button>
 
         <div style="text-align: left; margin-top: 20px; font-size: 14px; color: #555;">
@@ -275,15 +296,11 @@ input:checked + .slider:before { transform: translateX(20px); }
     <div class="popup-card" style="max-width: 400px;">
         <button class="close-btn" onclick="closeHistoryPopup()">✕</button>
         <div class="pop-title">Transaction History</div>
-
         <div style="display: flex; margin-bottom: 15px; gap: 5px;">
             <button class="tab tab-active" id="hist-tab-dep" onclick="switchHistTab('dep')">Deposits</button>
             <button class="tab" id="hist-tab-with" onclick="switchHistTab('with')">Withdrawals</button>
         </div>
-
-        <div id="hist-content-area" style="max-height: 300px; overflow-y: auto; text-align: left; font-size: 14px;">
-            <!-- Data dynamically load hoga -->
-        </div>
+        <div id="hist-content-area" style="max-height: 300px; overflow-y: auto; text-align: left; font-size: 14px;"></div>
     </div>
 </div>
 
