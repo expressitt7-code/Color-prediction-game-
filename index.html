@@ -8,7 +8,7 @@
 <style>
 body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; }
 .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
-.balance-box { font-size: 11px; background: rgba(0,0,0,0.2); padding: 5px 8px; border-radius: 15px; text-align: right; }
+.balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; }
 .ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
 .timer-box { display: flex; gap: 5px; margin-top: 10px; }
 .timer-box span { background: white; color: #ff3e3e; padding: 5px 8px; border-radius: 5px; font-size: 22px; font-weight: bold; }
@@ -62,7 +62,7 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
 .deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
 .confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
 
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
 .nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
@@ -78,16 +78,13 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 </head>
 <body>
 
-<!-- ================= LOGIN / SIGNUP SCREEN ================= -->
+<!-- LOGIN / SIGNUP SCREEN -->
 <div id="auth-screen">
     <div class="auth-card">
         <h2 id="auth-heading" style="color: #ff3e3e; margin-bottom: 5px;">Login</h2>
-        <p id="auth-sub" style="font-size: 13px; color: #666; margin-bottom: 20px;">Enter your mobile & password</p>
-        
         <input type="text" id="auth-mobile" class="auth-input" placeholder="Mobile Number" />
         <input type="password" id="auth-password" class="auth-input" placeholder="Password" />
         <input type="text" id="auth-ref" class="auth-input" placeholder="Referral Code (Optional)" style="display:none;" />
-        
         <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Login</button>
         <p id="auth-switch-text" style="font-size: 14px; margin-top: 15px; color: #666; cursor: pointer;" onclick="toggleAuthMode()">Don't have an account? Sign Up</p>
     </div>
@@ -95,12 +92,11 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 
 <div class="header">
     <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
-    <div class="balance-box">
-        Main: ₹<span id="header-main">0</span> | Dep: ₹<span id="header-dep">0</span> | Bon: ₹<span id="header-bon">0</span>
-    </div>
+    <!-- Header mein Total Balance dikhega -->
+    <div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-total-balance">0.00</span></div>
 </div>
 
-<!-- ================= PAGE 1: GAME ================= -->
+<!-- PAGE 1: GAME -->
 <div id="page-game" class="page-content page-active">
     <div class="ticket-banner">
         <div class="ticket-left">
@@ -153,7 +149,7 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     </table>
 </div>
 
-<!-- ================= PAGE 2: REFERRAL / INVITE ================= -->
+<!-- PAGE 2: INVITE -->
 <div id="page-tasks" class="page-content">
     <div class="task-card">
         <i class="fas fa-users" style="font-size: 40px; color: #ff3e3e; margin-bottom: 10px;"></i>
@@ -166,15 +162,18 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     </div>
 </div>
 
-<!-- ================= PAGE 3: WALLET ================= -->
+<!-- PAGE 3: WALLET -->
 <div id="page-wallet" class="page-content">
     <div class="wallet-card">
         <i class="fas fa-wallet" style="font-size: 35px; color: #ff3e3e;"></i>
         <div style="font-size: 13px; color: #666; margin-top: 5px;">Withdrawable Balance (Main)</div>
         <div class="wallet-balance">₹<span id="wallet-main-bal">0.00</span></div>
 
-        <div style="font-size: 12px; color: #888; margin-top: 10px;">Deposit Balance (Betting Only): ₹<span id="wallet-dep-bal">0.00</span></div>
-        <div style="font-size: 12px; color: #888;">Bonus Balance (Betting Only): ₹<span id="wallet-bonus-bal">0.00</span></div>
+        <!-- Wallet option click karne par alag-alag dikhega -->
+        <div style="font-size: 13px; color: #555; margin-top: 12px; background: #f9f9f9; padding: 10px; border-radius: 8px; text-align: left;">
+            <div><b>Deposit Balance:</b> ₹<span id="wallet-dep-bal">0.00</span></div>
+            <div style="margin-top: 5px;"><b>Bonus Balance:</b> ₹<span id="wallet-bonus-bal">0.00</span></div>
+        </div>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
             <button class="confirm-btn" onclick="openDepositPopup()">Deposit</button>
@@ -196,7 +195,6 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     <div class="popup-card">
         <button class="close-btn" onclick="closeDepositPopup()">✕</button>
         <div class="pop-title">Deposit Balance</div>
-        <p style="font-size: 12px; color: #666; text-align: center;">Note: Deposited amount can only be used for betting and cannot be directly withdrawn.</p>
         <input type="number" id="deposit-input" class="deposit-input-box" placeholder="₹ Amount" />
         <input type="text" id="utr-input" class="deposit-input-box" placeholder="Enter 12-Digit UTR No." style="font-size: 14px;" />
         <button class="confirm-btn" onclick="submitDepositRequest()">SUBMIT DEPOSIT</button>
@@ -325,10 +323,11 @@ async function fetchUserData() {
 }
 
 function updateBalanceDisplays() {
-    document.getElementById("header-main").innerText = mainBalance.toFixed(0);
-    document.getElementById("header-dep").innerText = depositBalance.toFixed(0);
-    document.getElementById("header-bon").innerText = bonusBalance.toFixed(0);
+    let totalTotal = mainBalance + depositBalance + bonusBalance;
+    // Header mein total balance ek sath dikhega
+    document.getElementById("header-total-balance").innerText = totalTotal.toFixed(2);
 
+    // Wallet page par teeno alag-alag dikhenge
     document.getElementById("wallet-main-bal").innerText = mainBalance.toFixed(2);
     document.getElementById("wallet-dep-bal").innerText = depositBalance.toFixed(2);
     document.getElementById("wallet-bonus-bal").innerText = bonusBalance.toFixed(2);
@@ -410,7 +409,7 @@ async function submitDepositRequest() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
     });
-    alert("Deposit request submitted! Once approved, it will be added to your Deposit Balance.");
+    alert("Deposit request submitted!");
     closeDepositPopup();
 }
 
