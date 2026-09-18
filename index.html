@@ -4,8 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Win Go 1Min</title>
 <!-- Telegram Web App API -->
-<script src="[https://telegram.org/js/telegram-web-app.js](https://telegram.org/js/telegram-web-app.js)"></script>
-<link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
 body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; }
 .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
@@ -141,6 +141,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <button class="c-btn bg-red" onclick="openPopup('Red', '#ff2a2a')">Red</button>
 </div>
 
+<!-- UPDATED 3D BALLS HTML -->
 <div class="number-grid">
 <div class="num-ball num-0" onclick="openPopup('0', '#9c27b0')"><span>0</span></div>
 <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
@@ -330,12 +331,12 @@ window.Telegram.WebApp.ready();
 window.Telegram.WebApp.expand();
 
 // APKA BACKEND URL
-const BACKEND_URL = "[https://game-backend-1-fgug.onrender.com](https://game-backend-1-fgug.onrender.com)";
+const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
 const user = window.Telegram.WebApp.initDataUnsafe?.user;
 const telegramId = user ? user.id : "guest_" + Math.floor(Math.random() * 10000);
 
-let balance = 0.00; // Asli balance ab backend se aayega
+let balance = 0.00;
 let currentPeriod = 0;
 let activeBets = [];
 let lastProcessedPeriod = 0;
@@ -361,7 +362,7 @@ function loadBalance() {
             updateBalanceDisplays();
         }
     })
-    .catch(err => console.log("Balance fetch error:", err));
+    .catch(err => console.log("Balance error:", err));
 }
 
 function updateBalanceDisplays() {
@@ -415,7 +416,6 @@ function renderMyHistory() {
             <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
         </tr>`; 
     }); 
-    
     if(myHistHTML === "") { 
         myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
     }
@@ -451,6 +451,7 @@ function playRewardedAd() {
 // Backend ko batao ki paise add karne hain
 async function claimAdReward() {
     document.getElementById("ad-player-screen").style.display = "none";
+
     try {
         const response = await fetch(`${BACKEND_URL}/add-reward`, {
             method: 'POST',
@@ -503,8 +504,10 @@ function goToUpiStep() {
         return;
     }
     selectedDepositAmount = amt;
+    
     let upiUrl = `upi://pay?pa=${ADMIN_UPI}&pn=WinGoGame&am=${amt}&cu=INR`;
     document.getElementById("upi-intent-btn").href = upiUrl;
+    
     document.getElementById("pay-amount-display").innerText = amt;
     document.getElementById("deposit-step-1").style.display = "none";
     document.getElementById("deposit-step-2").style.display = "block";
@@ -530,10 +533,9 @@ async function submitDepositRequest() {
         alert(`Deposit Request Sent!\nAmount: ₹${selectedDepositAmount}\nUTR: ${utr}\n\nYour balance will be updated once Admin approves it.`);
         closeDepositPopup();
     } catch(err) {
-        alert("Server error processing deposit tracking...");
+        alert("Wait, setting up backend for deposit tracking...");
         closeDepositPopup();
     }
-
     btn.innerText = "SUBMIT REQUEST";
     btn.disabled = false;
 }
@@ -590,7 +592,6 @@ async function submitWithdrawRequest() {
         alert("Backend server not ready for withdrawal yet!");
         closeWithdrawPopup();
     }
-
     btn.innerText = "SUBMIT REQUEST";
     btn.disabled = false;
 }
@@ -642,24 +643,25 @@ async function placeFinalBet() {
             alert(data.message || "Bet failed!");
         }
     } catch (error) { alert("Server connection failed!"); }
+    
     btn.innerText = "CONFIRM BET";
     btn.disabled = false;
 }
 
 function fetchGameStatus() {
     fetch(`${BACKEND_URL}/game-status`)
-    .then(res => res.json()) 
-    .then(data => { 
-        currentPeriod = data.period; 
-        document.getElementById("period-display").innerText = currentPeriod; 
-        let timeStr = data.time.toString().padStart(2, '0'); 
-        document.getElementById("sec1").innerText = timeStr[0]; 
-        document.getElementById("sec2").innerText = timeStr[1]; 
+    .then(res => res.json())
+    .then(data => {
+        currentPeriod = data.period;
+        document.getElementById("period-display").innerText = currentPeriod;
+        let timeStr = data.time.toString().padStart(2, '0');
+        document.getElementById("sec1").innerText = timeStr[0];
+        document.getElementById("sec2").innerText = timeStr[1];
         
-        let historyHTML = ""; 
-        data.results.forEach(res => { 
-            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0'); 
-            let bs = res.number > 4 ? "Big" : "Small"; 
+        let historyHTML = "";
+        data.results.forEach(res => {
+            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+            let bs = res.number > 4 ? "Big" : "Small";
             historyHTML += `<tr>
                 <td style="font-size:12px;">${res.period}</td>
                 <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
@@ -683,6 +685,7 @@ function fetchGameStatus() {
 function checkWinnings(result) {
     let totalWinnings = 0;
     let statusChanged = false;
+    
     activeBets.forEach(bet => {
         if(bet.period === result.period && bet.status === 'Pending') {
             let won = false; let multiplier = 0;
@@ -698,7 +701,7 @@ function checkWinnings(result) {
     });
 
     if(totalWinnings > 0) {
-        balance += totalWinnings; // Game UI mein turant update ke liye
+        balance += totalWinnings;
         updateBalanceDisplays();
         if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
         alert(`🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)}`);
