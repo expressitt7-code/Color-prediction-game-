@@ -8,7 +8,11 @@
 <style>
 body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; }
 .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
-.balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; }
+.header-left { flex: 1; display: flex; align-items: center; }
+.header-mid { flex: 1.2; text-align: center; }
+.header-right { flex: 1; text-align: right; }
+.mid-uid-box { font-size: 11px; background: rgba(0,0,0,0.25); padding: 4px 10px; border-radius: 12px; display: inline-block; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2); }
+.balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block; }
 .ticket-banner { background: linear-gradient(135deg, #ff6b6b, #ff4747); margin: 15px; border-radius: 15px; padding: 20px; color: white; display: flex; justify-content: space-between; box-shadow: 0 4px 10px rgba(255, 62, 62, 0.3); }
 .timer-box { display: flex; gap: 5px; margin-top: 10px; }
 .timer-box span { background: white; color: #ff3e3e; padding: 5px 8px; border-radius: 5px; font-size: 22px; font-weight: bold; }
@@ -470,33 +474,29 @@ if(!uniqueId) {
 
 let mainBalance = parseFloat(localStorage.getItem("game_main_balance"));
 if(isNaN(mainBalance)) {
-    mainBalance = 150.50; // New user starting balance
+    mainBalance = 150.50; 
     localStorage.setItem("game_main_balance", mainBalance);
 }
 
-// 🌟 BONUS BALANCE LOCAL STORAGE FIX 🌟
 let bonusBalance = parseFloat(localStorage.getItem("game_bonus_balance"));
 if(isNaN(bonusBalance)) {
     bonusBalance = 0.00; 
     localStorage.setItem("game_bonus_balance", bonusBalance);
 }
 
-let depositBalance = 0.00; // Future me aap isko bhi local storage me daal sakte hain agar chahiye
+let depositBalance = 0.00; 
 
 function updateBalanceDisplays() {
     localStorage.setItem("game_main_balance", mainBalance);
     localStorage.setItem("game_bonus_balance", bonusBalance);
     
-    // Header me total balance (Main + Bonus + Deposit) dikhane ke liye
     let totalBal = mainBalance + depositBalance + bonusBalance;
     document.getElementById('header-total-balance').innerText = totalBal.toFixed(2);
     
-    // Wallet screen par sabhi alag alag balance
     document.getElementById('wallet-main-bal').innerText = mainBalance.toFixed(2);
     document.getElementById('wallet-dep-bal').innerText = depositBalance.toFixed(2);
     document.getElementById('wallet-bonus-bal').innerText = bonusBalance.toFixed(2);
     
-    // IDs update
     document.getElementById("header-uid").innerText = uniqueId;
     document.getElementById("display-uid").innerText = uniqueId;
     
@@ -504,16 +504,14 @@ function updateBalanceDisplays() {
     if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = totalBal.toFixed(2);
 }
 
-updateBalanceDisplays(); // Load on start
+updateBalanceDisplays(); 
 
-// Balance / Game Variables
 let currentPeriod = 0;
 let activeBets = [];
 let lastProcessedPeriod = 0;
 let activeTab = 'game';
 let isSignupMode = false;
 
-// Bet Variables
 let popSelection = "";
 let popBaseBet = 10;
 let popQty = 1;
@@ -577,7 +575,6 @@ function copyReferralLink() {
     alert("Referral Link Copied!");
 }
 
-// 🌟 DYNAMIC NAVIGATION LOGIC (4 TABS) 🌟
 function switchNavPage(pageId) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
@@ -609,7 +606,6 @@ function renderMyHistory() {
     document.getElementById("my-history-body").innerHTML = myHistHTML || "<tr><td colspan='4'>No history</td></tr>";
 }
 
-// 🌟 PREMIUM BET POPUP LOGIC 🌟
 function openPopup(sel, colorHex) { 
     popSelection = sel; 
     document.getElementById("pop-selection-text").innerText = sel; 
@@ -684,7 +680,6 @@ async function placeFinalBet() {
     btn.disabled = false;
 }
 
-// 🌟 DEPOSIT & WITHDRAW LOGIC 🌟
 function openDepositPopup() { document.getElementById("deposit-popup").style.display = "flex"; }
 function closeDepositPopup() { document.getElementById("deposit-popup").style.display = "none"; }
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
@@ -763,7 +758,6 @@ async function submitWithdrawRequest() {
     } else { alert(data.message); }
 }
 
-// 🌟 TRANSACTION HISTORY LOGIC 🌟
 function openHistoryPopup() { 
     document.getElementById("history-popup").style.display = "flex"; 
     loadHistoryData(); 
@@ -824,16 +818,13 @@ function renderHistList(data, containerId, type) {
     });
 }
 
-// -----------------------------------------
-// 🌟 AD SIMULATION LOGIC 🌟
-// -----------------------------------------
 let adCallback = null;
 function playAd(type, callback) {
     adCallback = callback;
     document.getElementById('ad-sim-screen').style.display = 'flex';
     document.getElementById('ad-sim-title').innerText = (type === 'video') ? "Video Reward Ad Playing..." : "Interstitial Ad Playing...";
     
-    let timeLeft = 3; // 3 second ad simulation
+    let timeLeft = 3; 
     document.getElementById('ad-sim-timer').innerText = timeLeft;
     document.getElementById('ad-close-btn').style.display = 'none';
 
@@ -854,9 +845,6 @@ function closeAdSim() {
     if(adCallback) adCallback();
 }
 
-// -----------------------------------------
-// 🌟 MATH GAME LOGIC 🌟
-// -----------------------------------------
 let mathStep = 1;
 let mathScore = 0;
 let correctAnswer = 0;
@@ -929,7 +917,6 @@ function submitMathAnswer() {
     }
 
     setTimeout(() => {
-        // Har level ke baad interstitial ad
         playAd('interstitial', () => {
             mathStep++;
             if(mathStep > 5) {
@@ -957,7 +944,6 @@ function claimTaskReward() {
         return;
     }
 
-    // Video Reward Ad
     playAd('video', () => {
         document.getElementById('math-reward-popup').style.display = 'none';
         document.getElementById('task-start-screen').style.display = 'block';
@@ -970,7 +956,6 @@ function claimTaskReward() {
     });
 }
 
-// 🌟 GAME STATUS LOGIC 🌟
 function fetchGameStatus() {
     fetch(`${BACKEND_URL}/game-status`)
     .then(res => res.json())
