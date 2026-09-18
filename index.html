@@ -61,8 +61,14 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; }
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
 .deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
+
+/* Preset Grid for Deposit */
+.preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+.preset-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 10px 0; border-radius: 6px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; }
+.preset-btn.active { background: #ff3e3e; color: white; border-color: #ff3e3e; }
+
 .confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
+.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
 .nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
@@ -168,7 +174,6 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
         <div style="font-size: 13px; color: #666; margin-top: 5px;">Main Balance</div>
         <div class="wallet-balance">₹<span id="wallet-main-bal">0.00</span></div>
 
-        <!-- Deposit Balance aur Bonus Balance Main Balance ke niche middle mein -->
         <div style="font-size: 13px; color: #555; margin-top: 12px; line-height: 1.8; text-align: center;">
             <div>Deposit Balance (Bet only): ₹<span id="wallet-dep-bal">0.00</span></div>
             <div>Bonus Balance (Bet only): ₹<span id="wallet-bonus-bal">0.00</span></div>
@@ -189,13 +194,30 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')"><i class="fas fa-wallet"></i><span>Wallet</span></div>
 </div>
 
-<!-- DEPOSIT POPUP -->
+<!-- NEW DEPOSIT POPUP WITH PRESETS & UTR -->
 <div id="deposit-popup" class="popup-overlay">
     <div class="popup-card">
         <button class="close-btn" onclick="closeDepositPopup()">✕</button>
-        <div class="pop-title">Deposit Balance</div>
-        <input type="number" id="deposit-input" class="deposit-input-box" placeholder="₹ Amount" />
-        <input type="text" id="utr-input" class="deposit-input-box" placeholder="Enter 12-Digit UTR No." style="font-size: 14px;" />
+        <div class="pop-title">Deposit Funds</div>
+        
+        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-align: left;">Select Amount (Min ₹100):</div>
+        <div class="preset-grid">
+            <button class="preset-btn active" onclick="setDepositAmount(100, this)">₹100</button>
+            <button class="preset-btn" onclick="setDepositAmount(200, this)">₹200</button>
+            <button class="preset-btn" onclick="setDepositAmount(500, this)">₹500</button>
+            <button class="preset-btn" onclick="setDepositAmount(1000, this)">₹1000</button>
+            <button class="preset-btn" onclick="setDepositAmount(2000, this)">₹2000</button>
+            <button class="preset-btn" onclick="setDepositAmount(5000, this)">₹5000</button>
+        </div>
+
+        <div style="font-size: 13px; color: #666; margin-bottom: 5px; text-align: left;">Or Enter Custom Amount:</div>
+        <input type="number" id="deposit-input" class="deposit-input-box" value="100" placeholder="Min ₹100" oninput="clearPresetActive()" />
+
+        <button class="confirm-btn" style="background: #2196f3;" onclick="proceedToPaymentApp()">Pay via UPI App</button>
+
+        <div style="font-size: 13px; color: #666; margin: 10px 0 5px 0; text-align: left;">Enter 12-Digit UTR No. After Payment:</div>
+        <input type="text" id="utr-input" class="deposit-input-box" placeholder="e.g. 432109876543" style="font-size: 14px;" />
+        
         <button class="confirm-btn" onclick="submitDepositRequest()">SUBMIT DEPOSIT</button>
     </div>
 </div>
@@ -375,39 +397,51 @@ function closeDepositPopup() { document.getElementById("deposit-popup").style.di
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
 function closeWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "none"; }
 
-async function placeFinalBet() {
-    let amt = parseFloat(document.getElementById("calc-qty").value);
-    if(isNaN(amt) || amt <= 0) { alert("Invalid amount"); return; }
-    
-    try {
-        let res = await fetch(`${BACKEND_URL}/bet`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: amt, period: currentPeriod })
-        });
-        let data = await res.json();
-        if(data.success) {
-            mainBalance = data.balance;
-            depositBalance = data.depositBalance;
-            bonusBalance = data.bonusBalance;
-            updateBalanceDisplays();
-            activeBets.push({ period: currentPeriod, selection: popSelection, amount: amt, status: 'Pending' });
-            closePopup();
-            alert("Bet Placed Successfully!");
-        } else { alert(data.message); }
-    } catch(e) { alert("Error"); }
+// Deposit Preset Selection
+function setDepositAmount(amt, btn) {
+    document.getElementById("deposit-input").value = amt;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function clearPresetActive() {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+}
+
+// Open Payment UPI App
+function proceedToPaymentApp() {
+    let amt = parseFloat(document.getElementById("deposit-input").value);
+    if(isNaN(amt) || amt < 100) {
+        alert("Minimum deposit amount is ₹100");
+        return;
+    }
+    // UPI Intent / Deep Link (e.g., GPay / PhonePe / Paytm)
+    let upiLink = `upi://pay?pa=merchant@upi&pn=WinGoGame&am=${amt}&cu=INR`;
+    window.location.href = upiLink;
 }
 
 async function submitDepositRequest() {
     let amt = parseFloat(document.getElementById("deposit-input").value);
-    let utr = document.getElementById("utr-input").value;
-    await fetch(`${BACKEND_URL}/deposit-request`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
-    });
-    alert("Deposit request submitted!");
-    closeDepositPopup();
+    let utr = document.getElementById("utr-input").value.trim();
+
+    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
+    if(!utr || utr.length < 10) { alert("Please enter a valid 12-Digit UTR number"); return; }
+
+    try {
+        let res = await fetch(`${BACKEND_URL}/deposit-request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
+        });
+        let data = await res.json();
+        if(data.success) {
+            alert(data.message);
+            closeDepositPopup();
+            document.getElementById("utr-input").value = "";
+        } else {
+            alert(data.message);
+        }
+    } catch(e) { alert("Server error"); }
 }
 
 async function submitWithdrawRequest() {
