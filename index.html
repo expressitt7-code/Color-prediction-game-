@@ -565,18 +565,31 @@ function clearPresetActive() {
 // 🌟 100% WORKING TELEGRAM UPI DEEP LINK FIX 🌟
 function proceedToPaymentApp() {
     let amt = parseFloat(document.getElementById("deposit-input").value);
-    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
-    
-    // YAHAN APNA ASLI UPI ID DALEIN 
-    let upiLink = `upi://pay?pa=merchant@upi&pn=WinGoGame&am=${amt}&cu=INR`;
-    
-    // Telegram WebView Native Link Opener
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-        window.Telegram.WebApp.openLink(upiLink);
-    } else {
-        // Fallback for standard browsers
-        window.location.href = upiLink;
+    if(isNaN(amt) || amt < 100) { 
+        alert("Minimum deposit amount is ₹100"); 
+        return; 
     }
+    
+    // Aapka Merchant UPI ID
+    let upiId = "Username@ybl"; 
+    
+    // Android ke liye Intent URL (Telegram WebView Bypass karta hai)
+    let intentLink = `intent://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR#Intent;scheme=upi;end`;
+    
+    // iPhone (iOS) ke liye Normal UPI Link
+    let upiLink = `upi://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR`;
+    
+    // Check karein ki user Android par hai ya nahi
+    let isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+    let finalLink = isAndroid ? intentLink : upiLink;
+    
+    // Telegram iframe se bahar nikal kar app open karne ki technique (_top target)
+    let tempLink = document.createElement('a');
+    tempLink.href = finalLink;
+    tempLink.target = "_top"; 
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
 }
 
 async function submitDepositRequest() {
