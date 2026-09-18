@@ -1,220 +1,180 @@
-const express = require('express');
-const cors = require('cors');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Win Go</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        
+        /* 🌟 LOGIN SCREEN CSS 🌟 */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: white; padding: 25px; border-radius: 12px; text-align: center; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 90%; max-width: 320px; box-sizing: border-box; }
+        .login-input { padding: 12px; margin: 15px 0; width: 100%; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; text-align: center;}
+        .login-input:focus { outline: none; border-color: #ff3e3e; }
+        .login-btn { background: #ff3e3e; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
+        .login-btn:active { transform: scale(0.98); }
+        
+        .header { text-align: center; margin-bottom: 20px; color: #ff3e3e; }
+        .tabs { display: flex; margin-bottom: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; transition: 0.3s;}
+        .tab.active { background: #ff3e3e; color: white; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card-dep { border-left: 5px solid #17b15e; }
+        .card-with { border-left: 5px solid #ff9800; }
+        .details { line-height: 1.6; }
+        .details span { font-weight: bold; color: #333; }
+        .highlight { font-weight: bold; font-size: 16px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-approve { background: #17b15e; }
+        .btn-reject { background: #ff2a2a; }
+    </style>
+</head>
+<body>
 
-const app = express();
-const PORT = process.env.PORT || 10000;
+<!-- 🌟 ADMIN LOGIN SCREEN 🌟 -->
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="margin-top:0; color:#ff3e3e;"><i class="fas fa-lock"></i> Admin Login</h2>
+        <div style="font-size: 14px; color: #666; margin-bottom: 10px;">Security Check</div>
+        <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password">
+        <button class="login-btn" onclick="checkPassword()">LOGIN TO DASHBOARD</button>
+    </div>
+</div>
 
-app.use(cors());
-app.use(express.json());
-
-// 🗄️ In-Memory Database
-let users = {}; 
-let currentPeriodBets = []; 
-let gameHistory = [];
-let lastGeneratedPeriod = 0;
-let depositRequests = []; 
-let withdrawalRequests = []; // 🌟 NAYA: Pending Withdrawals save karne ke liye
-
-// --- GAME LOGIC (Smart Algorithm) ---
-function getLiabilityForNumber(number, bets) {
-    let liability = 0;
-    let color1 = '';
-    let color2 = '';
-    if (number === 0) { color1 = 'Red'; color2 = 'Violet'; }
-    else if (number === 5) { color1 = 'Green'; color2 = 'Violet'; }
-    else if (number % 2 === 0) { color1 = 'Red'; }
-    else { color1 = 'Green'; }
-
-    let bs = number > 4 ? 'Big' : 'Small';
-
-    bets.forEach(bet => {
-        if (bet.selection === number.toString()) liability += bet.amount * 9;
-        if (bet.selection === color1) liability += (color2 !== '' ? bet.amount * 1.5 : bet.amount * 2);
-        if (color2 !== '' && bet.selection === color2) liability += bet.amount * 4.5; 
-        if (bet.selection === bs) liability += bet.amount * 2;
-    });
-    return liability;
-}
-
-function generateSmartResult() {
-    if (currentPeriodBets.length === 0) return Math.floor(Math.random() * 10); 
-    let lowestLiability = Infinity;
-    let bestNumbers = [];
-    for (let i = 0; i <= 9; i++) {
-        let liability = getLiabilityForNumber(i, currentPeriodBets);
-        if (liability < lowestLiability) {
-            lowestLiability = liability;
-            bestNumbers = [i]; 
-        } else if (liability === lowestLiability) {
-            bestNumbers.push(i);
-        }
-    }
-    let randomIndex = Math.floor(Math.random() * bestNumbers.length);
-    return bestNumbers[randomIndex];
-}
-
-function getGameState() {
-    const now = new Date();
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const istTime = new Date(now.getTime() + istOffset);
+<!-- 🌟 MAIN ADMIN PANEL (Hides until login is successful) 🌟 -->
+<div id="main-admin" style="display: none;">
     
-    const yyyy = istTime.getUTCFullYear();
-    const mm = String(istTime.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(istTime.getUTCDate()).padStart(2, '0');
-    const totalMinutesToday = (istTime.getUTCHours() * 60) + istTime.getUTCMinutes();
-    
-    const periodStr = `${yyyy}${mm}${dd}${String(totalMinutesToday).padStart(4, '0')}`;
-    const currentPeriod = parseInt(periodStr);
-    const secondsPassed = istTime.getUTCSeconds();
-    const timeLeft = 60 - secondsPassed;
+    <div class="header">
+        <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+    </div>
 
-    if (currentPeriod > lastGeneratedPeriod) {
-        if (lastGeneratedPeriod !== 0) {
-            const winNumber = generateSmartResult();
-            let winColor = (winNumber === 0 || winNumber === 5) ? 'Violet' : (winNumber % 2 === 0 ? 'Red' : 'Green');
-            let winBS = winNumber > 4 ? 'Big' : 'Small';
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" id="tab-dep" onclick="switchTab('dep')">Deposits</div>
+        <div class="tab" id="tab-with" onclick="switchTab('with')">Withdrawals</div>
+    </div>
 
-            gameHistory.unshift({ period: lastGeneratedPeriod, number: winNumber, color: winColor });
-            if (gameHistory.length > 10) gameHistory = gameHistory.slice(0, 10);
+    <!-- DEPOSIT SECTION -->
+    <div id="deposit-section"></div>
 
-            currentPeriodBets.forEach(bet => {
-                let userObj = users[bet.tgId];
-                if(userObj) {
-                    let userBetRecord = userObj.history.find(b => b.period === bet.period && b.selection === bet.selection);
-                    let won = false; let multiplier = 0;
+    <!-- WITHDRAW SECTION -->
+    <div id="withdraw-section" style="display: none;"></div>
 
-                    if (bet.selection === winNumber.toString()) { won = true; multiplier = 9; }
-                    else if (bet.selection === winColor) { won = true; multiplier = (winColor === 'Violet') ? 4.5 : ((winNumber === 0 || winNumber === 5) ? 1.5 : 2); }
-                    else if (bet.selection === winBS) { won = true; multiplier = 2; }
+</div>
 
-                    if (won) {
-                        userObj.balance += (bet.amount * multiplier);
-                        if(userBetRecord) userBetRecord.status = 'Won';
-                    } else {
-                        if(userBetRecord) userBetRecord.status = 'Lost';
-                    }
+<script>
+    // APKA BACKEND URL
+    const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+    let refreshInterval;
+
+    // 🔒 PASSWORD CHECKING LOGIC 
+    function checkPassword() {
+        let pass = document.getElementById("admin-pass").value;
+        if (pass === "SD@zxcvbnm987654321") {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("main-admin").style.display = "block";
+            
+            // Login hone ke turant baad data fetch karein
+            fetchDeposits();
+            
+            // Background me har 5 second me naye requests check karne ke liye auto-refresh chalu
+            refreshInterval = setInterval(() => {
+                if(document.getElementById('tab-dep').classList.contains('active')) {
+                    fetchDeposits();
+                } else {
+                    fetchWithdrawals();
                 }
+            }, 5000);
+        } else {
+            alert("Wrong Password! ❌ Access Denied.");
+        }
+    }
+
+    function switchTab(tab) {
+        document.getElementById('tab-dep').classList.remove('active');
+        document.getElementById('tab-with').classList.remove('active');
+        document.getElementById('deposit-section').style.display = 'none';
+        document.getElementById('withdraw-section').style.display = 'none';
+        
+        if(tab === 'dep') {
+            document.getElementById('tab-dep').classList.add('active');
+            document.getElementById('deposit-section').style.display = 'block';
+            fetchDeposits();
+        } else {
+            document.getElementById('tab-with').classList.add('active');
+            document.getElementById('withdraw-section').style.display = 'block';
+            fetchWithdrawals();
+        }
+    }
+
+    async function fetchDeposits() {
+        try {
+            let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`);
+            let data = await res.json();
+            let html = data.requests.length === 0 ? '<p style="text-align:center; color:#888;">No pending deposits</p>' : '';
+            data.requests.forEach(req => {
+                html += `
+                <div class="card card-dep">
+                    <div class="details">
+                        User ID: <span>${req.telegramId}</span><br>
+                        Amount: <span style="color:#17b15e;">₹${req.amount}</span><br>
+                        UTR: <span class="highlight" style="color:#d32020;">${req.utr}</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-approve" onclick="processReq('deposit', '${req.id}', 'approve')"><i class="fas fa-check"></i> Approve</button>
+                        <button class="btn btn-reject" onclick="processReq('deposit', '${req.id}', 'reject')"><i class="fas fa-times"></i> Reject</button>
+                    </div>
+                </div>`;
             });
-            currentPeriodBets = [];
-        }
-        lastGeneratedPeriod = currentPeriod;
-    }
-    return { period: currentPeriod, time: timeLeft, results: gameHistory };
-}
-
-// 🔌 API ENDPOINTS (Game & Users)
-app.get('/game-status', (req, res) => { res.json(getGameState()); });
-
-app.post('/get-balance', (req, res) => {
-    const { telegramId } = req.body;
-    if (!users[telegramId]) users[telegramId] = { balance: 1000.00, history: [] }; 
-    res.json({ success: true, balance: users[telegramId].balance });
-});
-
-app.post('/bet', (req, res) => {
-    const { telegramId, betSelection, betAmount, period } = req.body;
-    if (!users[telegramId]) users[telegramId] = { balance: 1000.00, history: [] };
-    if (users[telegramId].balance < betAmount) return res.json({ success: false, message: "Insufficient balance" });
-    
-    users[telegramId].balance -= betAmount;
-    let newBet = { tgId: telegramId, period, selection: betSelection, amount: betAmount, status: 'Pending' };
-    currentPeriodBets.push(newBet); 
-    users[telegramId].history.push(newBet); 
-    res.json({ success: true, newBalance: users[telegramId].balance });
-});
-
-app.post('/add-reward', (req, res) => {
-    const { telegramId, amount, type } = req.body;
-    if (!users[telegramId]) users[telegramId] = { balance: 1000.00, history: [] };
-    users[telegramId].balance += amount; 
-    res.json({ success: true, newBalance: users[telegramId].balance });
-});
-
-// 🌟 DEPOSIT & ADMIN API 🌟
-
-app.post('/deposit-request', (req, res) => {
-    const { telegramId, amount, utr } = req.body;
-    const newRequest = {
-        id: Date.now().toString(),
-        telegramId: telegramId,
-        amount: amount,
-        utr: utr,
-        status: 'Pending',
-        time: new Date().toLocaleString()
-    };
-    depositRequests.push(newRequest);
-    res.json({ success: true, message: "Request received successfully" });
-});
-
-app.get('/admin/pending-deposits', (req, res) => {
-    const pending = depositRequests.filter(req => req.status === 'Pending');
-    res.json({ success: true, requests: pending });
-});
-
-app.post('/admin/approve-deposit', (req, res) => {
-    const { requestId, action } = req.body; 
-    
-    let requestIndex = depositRequests.findIndex(r => r.id === requestId);
-    if (requestIndex === -1) return res.json({ success: false, message: "Request not found" });
-
-    let request = depositRequests[requestIndex];
-    request.status = action === 'approve' ? 'Approved' : 'Rejected';
-
-    if (action === 'approve') {
-        if (!users[request.telegramId]) users[request.telegramId] = { balance: 1000.00, history: [] };
-        users[request.telegramId].balance += request.amount;
-    }
-
-    res.json({ success: true, message: `Deposit ${action}ed successfully!` });
-});
-
-// 🌟 WITHDRAWAL API (Naya Add Kiya Gaya) 🌟
-
-app.post('/withdraw-request', (req, res) => {
-    const { telegramId, amount, upiId } = req.body;
-    
-    if (!users[telegramId]) users[telegramId] = { balance: 1000.00, history: [] };
-    if (users[telegramId].balance < amount) return res.json({ success: false, message: "Insufficient balance" });
-
-    // Deduct balance immediately upon request
-    users[telegramId].balance -= amount;
-
-    const newRequest = {
-        id: Date.now().toString(),
-        telegramId: telegramId,
-        amount: amount,
-        upiId: upiId,
-        status: 'Pending',
-        time: new Date().toLocaleString()
-    };
-    withdrawalRequests.push(newRequest);
-    res.json({ success: true, message: "Request received successfully", newBalance: users[telegramId].balance });
-});
-
-app.get('/admin/pending-withdrawals', (req, res) => {
-    const pending = withdrawalRequests.filter(req => req.status === 'Pending');
-    res.json({ success: true, requests: pending });
-});
-
-app.post('/admin/approve-withdraw', (req, res) => {
-    const { requestId, action } = req.body; 
-    
-    let requestIndex = withdrawalRequests.findIndex(r => r.id === requestId);
-    if (requestIndex === -1) return res.json({ success: false, message: "Request not found" });
-
-    let request = withdrawalRequests[requestIndex];
-    request.status = action === 'approve' ? 'Approved' : 'Rejected';
-
-    // Agar Reject kiya, toh paise balance me wapas (Refund) kar do
-    if (action === 'reject') {
-        if (users[request.telegramId]) {
-            users[request.telegramId].balance += request.amount;
+            document.getElementById('deposit-section').innerHTML = html;
+        } catch(e) {
+            console.log("Error fetching deposits: ", e);
         }
     }
 
-    res.json({ success: true, message: action === 'approve' ? 'Withdrawal Approved!' : 'Rejected & Refunded!' });
-});
+    async function fetchWithdrawals() {
+        try {
+            let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`);
+            let data = await res.json();
+            let html = data.requests.length === 0 ? '<p style="text-align:center; color:#888;">No pending withdrawals</p>' : '';
+            data.requests.forEach(req => {
+                html += `
+                <div class="card card-with">
+                    <div class="details">
+                        User ID: <span>${req.telegramId}</span><br>
+                        Amount to Pay: <span class="highlight" style="color:#ff9800; font-size:18px;">₹${req.amount}</span><br>
+                        Send to UPI: <span class="highlight" style="color:#2196f3; user-select:all;">${req.upiId}</span>
+                    </div>
+                    <p style="font-size:12px; color:#888; margin-top:8px;">*Pehle is UPI par ₹${req.amount} bhejein, uske baad Approve dabayein.</p>
+                    <div class="btn-group">
+                        <button class="btn btn-approve" onclick="processReq('withdraw', '${req.id}', 'approve')">Paid & Approve</button>
+                        <button class="btn btn-reject" onclick="processReq('withdraw', '${req.id}', 'reject')">Reject & Refund</button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('withdraw-section').innerHTML = html;
+        } catch(e) {
+            console.log("Error fetching withdrawals: ", e);
+        }
+    }
 
-app.get('/', (req, res) => { res.send("🟢 Backend with Full Admin System is Running!"); });
-
-app.listen(PORT, () => { console.log(`Server is running on port ${PORT}`); });
+    async function processReq(type, id, action) {
+        if(!confirm(`Are you sure you want to ${action} this request?`)) return;
+        let endpoint = type === 'deposit' ? '/admin/approve-deposit' : '/admin/approve-withdraw';
+        try {
+            let res = await fetch(BACKEND_URL + endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ requestId: id, action: action })
+            });
+            let data = await res.json();
+            alert(`✅ ${data.message}`);
+            type === 'deposit' ? fetchDeposits() : fetchWithdrawals();
+        } catch(e) { alert('❌ Server Error'); }
+    }
+</script>
+</body>
+</html>
