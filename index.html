@@ -262,7 +262,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
             <button class="action-btn btn-deposit" onclick="openDepositPopup()">Deposit</button>
-            <button class="action-btn btn-withdraw" onclick="alert('Minimum 500 points required to withdraw!')">Withdraw</button>
+            <button class="action-btn btn-withdraw" onclick="openWithdrawPopup()">Withdraw</button>
         </div>
 
         <div style="text-align: left; margin-top: 30px; font-size: 14px; color: #555;">
@@ -322,6 +322,22 @@ input:checked + .slider:before { transform: translateX(20px); }
             <button class="confirm-btn" id="submit-utr-btn" onclick="submitDepositRequest()">SUBMIT REQUEST</button>
             <button class="cancel-btn" style="margin-bottom: 0;" onclick="closeDepositPopup()">Cancel</button>
         </div>
+    </div>
+</div>
+
+<!-- 🌟 WITHDRAWAL POPUP 🌟 -->
+<div id="withdraw-popup" class="popup-overlay">
+    <div class="popup-card">
+        <button class="close-btn" onclick="closeWithdrawPopup()">✕</button>
+        <div class="pop-title">Withdraw Balance</div>
+        
+        <div style="font-size: 14px; margin-bottom: 8px; color: #555;">Enter Amount (Min ₹500)</div>
+        <input type="number" id="withdraw-input" class="deposit-input-box" placeholder="₹ Amount" />
+        
+        <div style="font-size: 14px; margin-bottom: 8px; color: #555;">Enter Your UPI ID</div>
+        <input type="text" id="withdraw-upi-input" class="deposit-input-box" placeholder="yourname@ybl" style="font-size: 14px;" />
+        
+        <button class="confirm-btn" id="submit-withdraw-btn" style="background-color: #ff9800; box-shadow: 0 4px 0 #e65100;" onclick="submitWithdrawRequest()">SUBMIT REQUEST</button>
     </div>
 </div>
 
@@ -567,6 +583,64 @@ async function submitDepositRequest() {
     } catch(err) {
         alert("Wait, setting up backend for deposit tracking...");
         closeDepositPopup();
+    }
+
+    btn.innerText = "SUBMIT REQUEST";
+    btn.disabled = false;
+}
+
+// 🌟 WITHDRAWAL LOGIC 🌟
+function openWithdrawPopup() {
+    if (balance < 500) {
+        alert("Minimum ₹500 balance is required to withdraw!");
+        return;
+    }
+    document.getElementById("withdraw-input").value = "";
+    document.getElementById("withdraw-upi-input").value = "";
+    document.getElementById("withdraw-popup").style.display = "flex";
+}
+
+function closeWithdrawPopup() {
+    document.getElementById("withdraw-popup").style.display = "none";
+}
+
+async function submitWithdrawRequest() {
+    let wAmt = parseInt(document.getElementById("withdraw-input").value);
+    let wUpi = document.getElementById("withdraw-upi-input").value.trim();
+
+    if (isNaN(wAmt) || wAmt < 500) {
+        alert("Please enter a valid amount (Minimum ₹500).");
+        return;
+    }
+    if (wAmt > balance) {
+        alert("Insufficient Balance!");
+        return;
+    }
+    if (wUpi.length < 5 || !wUpi.includes('@')) {
+        alert("Please enter a valid UPI ID.");
+        return;
+    }
+
+    const btn = document.getElementById("submit-withdraw-btn");
+    btn.innerText = "Submitting...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/withdraw-request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, amount: wAmt, upiId: wUpi })
+        });
+        
+        // Temporarily deduct balance on screen
+        balance -= wAmt;
+        updateBalanceDisplays();
+        
+        alert(`Withdrawal Request Sent!\nAmount: ₹${wAmt}\nUPI: ${wUpi}\n\nAdmin will process it within 24 hours.`);
+        closeWithdrawPopup();
+    } catch(err) {
+        alert("Backend server not ready for withdrawal yet!");
+        closeWithdrawPopup();
     }
 
     btn.innerText = "SUBMIT REQUEST";
