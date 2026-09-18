@@ -62,6 +62,8 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
 .deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
 
+.popup-card div[style*="text-align: left;"] { text-align: center !important; }
+
 /* Preset Grid for Deposit */
 .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
 .preset-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 10px 0; border-radius: 6px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; }
@@ -228,7 +230,7 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
         <button class="close-btn" onclick="closeWithdrawPopup()">✕</button>
         <div class="pop-title">Withdraw Balance</div>
         <input type="number" id="withdraw-amount-input" class="deposit-input-box" placeholder="₹ Amount" />
-        <input type="text" id="withdraw-upi-input" class="deposit-input-box" placeholder="e.g. user@paytm" style="text-align: left; padding: 12px;" />
+        <input type="text" id="withdraw-upi-input" class="deposit-input-box" placeholder="e.g. user@paytm" style="text-align: center; padding: 12px;" />
         <button class="confirm-btn" onclick="submitWithdrawRequest()">SUBMIT WITHDRAWAL</button>
     </div>
 </div>
@@ -414,7 +416,14 @@ function proceedToPaymentApp() {
         return;
     }
     let upiLink = `upi://pay?pa=merchant@upi&pn=WinGoGame&am=${amt}&cu=INR`;
-    window.location.href = upiLink;
+    
+    // Fix for Telegram WebView (ERR_UNKNOWN_URL_SCHEME)
+    let tempLink = document.createElement('a');
+    tempLink.href = upiLink;
+    tempLink.target = "_top"; // Forces open outside iframe/webview
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
 }
 
 async function submitDepositRequest() {
