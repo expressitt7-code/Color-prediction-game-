@@ -7,6 +7,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        
+        /* 🌟 LOGIN SCREEN CSS 🌟 */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: white; padding: 25px; border-radius: 12px; text-align: center; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 90%; max-width: 320px; box-sizing: border-box; }
+        .login-input { padding: 12px; margin: 15px 0; width: 100%; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; text-align: center;}
+        .login-input:focus { outline: none; border-color: #ff3e3e; }
+        .login-btn { background: #ff3e3e; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
+        .login-btn:active { transform: scale(0.98); }
+        
         .header { text-align: center; margin-bottom: 20px; color: #ff3e3e; }
         .tabs { display: flex; margin-bottom: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; transition: 0.3s;}
@@ -25,25 +34,54 @@
 </head>
 <body>
 
-<div class="header">
-    <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+<!-- 🌟 ADMIN LOGIN SCREEN 🌟 -->
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="margin-top:0; color:#ff3e3e;"><i class="fas fa-lock"></i> Admin Login</h2>
+        <div style="font-size: 14px; color: #666; margin-bottom: 10px;">Security Check</div>
+        <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password">
+        <button class="login-btn" onclick="checkPassword()">LOGIN TO DASHBOARD</button>
+    </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-    <div class="tab active" id="tab-dep" onclick="switchTab('dep')">Deposits</div>
-    <div class="tab" id="tab-with" onclick="switchTab('with')">Withdrawals</div>
+<!-- 🌟 MAIN ADMIN PANEL (Hides until login is successful) 🌟 -->
+<div id="main-admin" style="display: none;">
+    
+    <div class="header">
+        <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" id="tab-dep" onclick="switchTab('dep')">Deposits</div>
+        <div class="tab" id="tab-with" onclick="switchTab('with')">Withdrawals</div>
+    </div>
+
+    <!-- DEPOSIT SECTION -->
+    <div id="deposit-section"></div>
+
+    <!-- WITHDRAW SECTION -->
+    <div id="withdraw-section" style="display: none;"></div>
+
 </div>
-
-<!-- DEPOSIT SECTION -->
-<div id="deposit-section"></div>
-
-<!-- WITHDRAW SECTION -->
-<div id="withdraw-section" style="display: none;"></div>
 
 <script>
     // APKA BACKEND URL
     const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+
+    // 🔒 PASSWORD CHECKING LOGIC 
+    function checkPassword() {
+        let pass = document.getElementById("admin-pass").value;
+        if (pass === "SD@zxcvbnm987654321") {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("main-admin").style.display = "block";
+            // Login hone ke baad hi data load karna shuru karein
+            fetchDeposits();
+            startAutoRefresh();
+        } else {
+            alert("Wrong Password! ❌ Access Denied.");
+        }
+    }
 
     function switchTab(tab) {
         document.getElementById('tab-dep').classList.remove('active');
@@ -124,12 +162,13 @@
         } catch(e) { alert('❌ Server Error'); }
     }
 
-    // Auto-refresh data every 5 seconds
-    fetchDeposits();
-    setInterval(() => {
-        if(document.getElementById('tab-dep').classList.contains('active')) fetchDeposits();
-        else fetchWithdrawals();
-    }, 5000);
+    // Auto-refresh data every 5 seconds only after successful login
+    function startAutoRefresh() {
+        setInterval(() => {
+            if(document.getElementById('tab-dep').classList.contains('active')) fetchDeposits();
+            else fetchWithdrawals();
+        }, 5000);
+    }
 </script>
 </body>
 </html>
