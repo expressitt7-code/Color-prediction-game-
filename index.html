@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,83 +23,18 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 
 /* 🌟 NEW 3D BALL TEXTURE CSS 🌟 */
 .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
-.num-ball {
-width: 56px; height: 56px;
-border-radius: 50%;
-display: flex; justify-content: center; align-items: center;
-margin: 0 auto; cursor: pointer;
-position: relative;
-box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
-
-/* Inner Glossy White Circle */
-.num-ball::before {
-content: '';
-position: absolute;
-width: 38px; height: 38px;
-background: radial-gradient(circle at 35% 35%, #ffffff 40%, #e8e8e8 80%, #d0d0d0 100%);
-border-radius: 50%;
-box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-z-index: 1;
-}
-
-/* Top Glass Reflection */
-.num-ball::after {
-content: '';
-position: absolute;
-top: 2px; left: 15%;
-width: 70%; height: 25%;
-background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0));
-border-radius: 50%;
-z-index: 3;
-pointer-events: none;
-}
-
-/* Number Text Styling */
-.num-ball span {
-position: relative;
-z-index: 2;
-font-size: 24px;
-font-weight: 900;
-font-family: 'Arial Black', sans-serif;
-}
-
-/* Green Balls with Dimples */
-.num-green {
-background:
-radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-linear-gradient(135deg, #4bd17d 0%, #17b15e 100%);
-}
+.num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+.num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #e8e8e8 80%, #d0d0d0 100%); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 1; }
+.num-ball::after { content: ''; position: absolute; top: 2px; left: 15%; width: 70%; height: 25%; background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0)); border-radius: 50%; z-index: 3; pointer-events: none; }
+.num-ball span { position: relative; z-index: 2; font-size: 24px; font-weight: 900; font-family: 'Arial Black', sans-serif; }
+.num-green { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #4bd17d 0%, #17b15e 100%); }
 .num-green span { color: #17b15e; }
-
-/* Red Balls with Dimples */
-.num-red {
-background:
-radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-linear-gradient(135deg, #ff6b6b 0%, #d32020 100%);
-}
+.num-red { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #ff6b6b 0%, #d32020 100%); }
 .num-red span { color: #d32020; }
-
-/* Half Red / Half Violet (0) */
-.num-0 {
-background:
-radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-linear-gradient(135deg, #ff6b6b 48%, #9c27b0 52%);
-}
+.num-0 { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #ff6b6b 48%, #9c27b0 52%); }
 .num-0 span { color: #9c27b0; }
-
-/* Half Green / Half Violet (5) /
-.num-5 {
-background:
-radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%),
-linear-gradient(135deg, #4bd17d 48%, #9c27b0 52%);
-}
+.num-5 { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #4bd17d 48%, #9c27b0 52%); }
 .num-5 span { color: #9c27b0; }
-/ 🌟 END OF NEW 3D BALL CSS 🌟 */
 
 .big-small { display: flex; gap: 10px; margin-top: 15px;}
 .bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
@@ -123,7 +56,7 @@ linear-gradient(135deg, #4bd17d 48%, #9c27b0 52%);
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
 .pop-period { text-align: center; font-size: 12px; color: #666; margin-top: 5px; margin-bottom: 15px; }
 
-/* DEPOSIT UI CSS */
+/* DEPOSIT/WITHDRAW UI CSS */
 .upi-box { background: #f9f9f9; border: 1px dashed #17b15e; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; display: none; }
 .upi-id { font-size: 18px; font-weight: bold; color: #17b15e; margin: 10px 0; user-select: all; }
 .copy-btn { background: #e0e0e0; border: none; padding: 5px 15px; border-radius: 5px; font-size: 12px; cursor: pointer; margin-bottom: 10px;}
@@ -181,7 +114,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <div class="header">
 <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
-<div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">1000.00</span></div>
+<div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-balance">0.00</span></div>
 </div>
 
 <!-- ================= PAGE 1: GAME ================= -->
@@ -260,7 +193,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div class="wallet-card">
 <i class="fas fa-wallet" style="font-size: 40px; color: #ff3e3e;"></i>
 <div style="font-size: 16px; color: #666; margin-top: 10px;">Available Balance</div>
-<div class="wallet-balance">₹<span id="wallet-page-balance">1000.00</span></div>
+<div class="wallet-balance">₹<span id="wallet-page-balance">0.00</span></div>
 
 <div style="display: flex; gap: 10px; margin-top: 20px;">
 <button class="action-btn btn-deposit" onclick="openDepositPopup()">Deposit</button>
@@ -373,7 +306,7 @@ Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-select
 </div>
 
 <div class="total-row"><span>Total Cost:</span><span class="total-cost" id="pop-total-cost">₹10.00</span></div>
-<div class="toggle-row"><span>Check balance: ₹<span id="toggle-balance">1000.00</span></span>
+<div class="toggle-row"><span>Check balance: ₹<span id="toggle-balance">0.00</span></span>
 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
 </div>
 <span class="mul-label">Multiplier:</span>
@@ -388,7 +321,7 @@ Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-select
 <button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
 <button class="cancel-btn" onclick="closePopup()">Cancel</button>
 
-<div class="pop-footer">Available Balance: ₹<span id="footer-balance-pop">1000.00</span> <a href="#" class="pop-rules">Rules</a></div>
+<div class="pop-footer">Available Balance: ₹<span id="footer-balance-pop">0.00</span> <a href="#" class="pop-rules">Rules</a></div>
 </div>
 </div>
 
@@ -401,9 +334,9 @@ window.Telegram.WebApp.expand();
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
 const user = window.Telegram.WebApp.initDataUnsafe?.user;
-const telegramId = user ? user.id : "guest_123";
+const telegramId = user ? user.id : "guest_" + Math.floor(Math.random() * 10000);
 
-let balance = 1000.00;
+let balance = 0.00;
 let currentPeriod = 0;
 let activeBets = [];
 let lastProcessedPeriod = 0;
@@ -415,53 +348,78 @@ let popQty = 1;
 let popMul = 1;
 let popTotal = 10;
 
+// SERVER SE REAL BALANCE MANGWANE KA FUNCTION
+function loadBalance() {
+    fetch(`${BACKEND_URL}/get-balance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegramId: telegramId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            balance = data.balance;
+            updateBalanceDisplays();
+        }
+    })
+    .catch(err => console.log("Balance error:", err));
+}
+
 function updateBalanceDisplays() {
-let formattedBal = balance.toFixed(2);
-document.getElementById("header-balance").innerText = formattedBal;
-document.getElementById("toggle-balance").innerText = formattedBal;
-document.getElementById("footer-balance-pop").innerText = formattedBal;
-document.getElementById("wallet-page-balance").innerText = formattedBal;
+    let formattedBal = balance.toFixed(2);
+    document.getElementById("header-balance").innerText = formattedBal;
+    document.getElementById("toggle-balance").innerText = formattedBal;
+    document.getElementById("footer-balance-pop").innerText = formattedBal;
+    document.getElementById("wallet-page-balance").innerText = formattedBal;
 }
 
 function switchNavPage(pageId) {
-document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
-document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-document.getElementById('page-' + pageId).classList.add('page-active');
-document.getElementById('nav-' + pageId).classList.add('nav-active');
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+    document.getElementById('page-' + pageId).classList.add('page-active');
+    document.getElementById('nav-' + pageId).classList.add('nav-active');
 
-if(pageId === 'game') document.getElementById('page-title').innerText = "Win Go";
-if(pageId === 'tasks') document.getElementById('page-title').innerText = "Earn Rewards";
-if(pageId === 'wallet') document.getElementById('page-title').innerText = "My Wallet";
+    if(pageId === 'game') document.getElementById('page-title').innerText = "Win Go";
+    if(pageId === 'tasks') document.getElementById('page-title').innerText = "Earn Rewards";
+    if(pageId === 'wallet') {
+        document.getElementById('page-title').innerText = "My Wallet";
+        loadBalance(); // Wallet open hote hi latest balance reload karna
+    }
 
-if (window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    if (window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 function switchTab(tabName) {
-activeTab = tabName;
-document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
-if(tabName === 'game') {
-document.getElementById('tab-game-hist').classList.add('tab-active');
-document.getElementById('table-game-history').style.display = 'table';
-document.getElementById('table-my-history').style.display = 'none';
-} else {
-document.getElementById('tab-my-hist').classList.add('tab-active');
-document.getElementById('table-game-history').style.display = 'none';
-document.getElementById('table-my-history').style.display = 'table';
-renderMyHistory();
-}
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    activeTab = tabName;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+    if(tabName === 'game') {
+        document.getElementById('tab-game-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'table';
+        document.getElementById('table-my-history').style.display = 'none';
+    } else {
+        document.getElementById('tab-my-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'none';
+        document.getElementById('table-my-history').style.display = 'table';
+        renderMyHistory();
+    }
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 function renderMyHistory() {
-let myHistHTML = "";
-activeBets.slice().reverse().forEach(bet => {
-let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
-myHistHTML += <tr&gt; &lt;td style="font-size:12px;"&gt;${bet.period}</td>
-<td style="font-weight: bold;">${bet.selection}&lt;/td&gt; &lt;td&gt;₹${bet.amount.toFixed(0)}</td>
-<td style="color: ${statusColor}; font-weight: bold;"&gt;${bet.status}</td>
-</tr>; }); if(myHistHTML === "") { myHistHTML =<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
-}
-document.getElementById("my-history-body").innerHTML = myHistHTML;
+    let myHistHTML = "";
+    activeBets.slice().reverse().forEach(bet => {
+        let statusColor = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+        myHistHTML += `<tr>
+            <td style="font-size:12px;">${bet.period}</td>
+            <td style="font-weight: bold;">${bet.selection}</td>
+            <td>₹${bet.amount.toFixed(0)}</td>
+            <td style="color: ${statusColor}; font-weight: bold;">${bet.status}</td>
+        </tr>`; 
+    }); 
+    if(myHistHTML === "") { 
+        myHistHTML = `<tr><td colspan="4" style="color: #888; padding: 20px;">No betting history found</td></tr>`;
+    }
+    document.getElementById("my-history-body").innerHTML = myHistHTML;
 }
 
 // 🌟 REWARDED VIDEO AD LOGIC 🌟
@@ -469,48 +427,46 @@ let adRewardAmount = 5.00;
 let adTimerInterval;
 
 function playRewardedAd() {
-document.getElementById("ad-player-screen").style.display = "flex";
-document.getElementById("close-ad-btn").style.display = "none";
+    document.getElementById("ad-player-screen").style.display = "flex";
+    document.getElementById("close-ad-btn").style.display = "none";
 
-let secondsLeft = 15;
-document.getElementById("ad-timer").innerText = secondsLeft;
+    let secondsLeft = 15;
+    document.getElementById("ad-timer").innerText = secondsLeft;
 
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("light");
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("light");
 
-adTimerInterval = setInterval(() => {
-secondsLeft--;
-document.getElementById("ad-timer").innerText = secondsLeft;
+    adTimerInterval = setInterval(() => {
+        secondsLeft--;
+        document.getElementById("ad-timer").innerText = secondsLeft;
 
-if(secondsLeft <= 0) {
-clearInterval(adTimerInterval);
-document.getElementById("ad-timer").innerText = "0";
-document.getElementById("close-ad-btn").style.display = "block";
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
-}
-}, 1000);
+        if(secondsLeft <= 0) {
+            clearInterval(adTimerInterval);
+            document.getElementById("ad-timer").innerText = "0";
+            document.getElementById("close-ad-btn").style.display = "block";
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+        }
+    }, 1000);
 }
 
 // Backend ko batao ki paise add karne hain
 async function claimAdReward() {
-document.getElementById("ad-player-screen").style.display = "none";
+    document.getElementById("ad-player-screen").style.display = "none";
 
-try {
-const response = await fetch(``${BACKEND_URL}/add-reward`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ telegramId: telegramId, amount: adRewardAmount, type: 'video_ad' })
-});
-
-const data = await response.json();
-
-if(data.success) {
-balance = data.newBalance;
-updateBalanceDisplays();
-alert(🎉 Reward Claimed! ₹${adRewardAmount} has been added to your wallet.`);
-}
-} catch (error) {
-alert("Failed to claim reward. Server connection issue.");
-}
+    try {
+        const response = await fetch(`${BACKEND_URL}/add-reward`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, amount: adRewardAmount, type: 'video_ad' })
+        });
+        const data = await response.json();
+        if(data.success) {
+            balance = data.newBalance;
+            updateBalanceDisplays();
+            alert(`🎉 Reward Claimed! ₹${adRewardAmount} has been added to your wallet.`);
+        }
+    } catch (error) {
+        alert("Failed to claim reward. Server connection issue.");
+    }
 }
 
 // 🌟 DEPOSIT LOGIC 🌟
@@ -518,147 +474,143 @@ let selectedDepositAmount = 0;
 const ADMIN_UPI = "yourname@upi"; // YAHAN APNA ASLI UPI ID DALEIN
 
 function openDepositPopup() {
-document.getElementById("deposit-popup").style.display = "flex";
-document.getElementById("deposit-step-1").style.display = "block";
-document.getElementById("deposit-step-2").style.display = "none";
-document.getElementById("deposit-input").value = "";
-document.getElementById("utr-input").value = "";
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    document.getElementById("deposit-popup").style.display = "flex";
+    document.getElementById("deposit-step-1").style.display = "block";
+    document.getElementById("deposit-step-2").style.display = "none";
+    document.getElementById("deposit-input").value = "";
+    document.getElementById("utr-input").value = "";
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 function closeDepositPopup() {
-document.getElementById("deposit-popup").style.display = "none";
+    document.getElementById("deposit-popup").style.display = "none";
 }
 
 function setDepositAmount(amt) {
-document.getElementById("deposit-input").value = amt;
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    document.getElementById("deposit-input").value = amt;
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 function copyUPI() {
-navigator.clipboard.writeText(ADMIN_UPI);
-alert("UPI ID Copied: " + ADMIN_UPI);
+    navigator.clipboard.writeText(ADMIN_UPI);
+    alert("UPI ID Copied: " + ADMIN_UPI);
 }
 
 function goToUpiStep() {
-let amt = parseInt(document.getElementById("deposit-input").value);
-if (isNaN(amt) || amt < 100 || amt > 25000) {
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-alert("Enter amount between ₹100 and ₹25,000");
-return;
-}
-selectedDepositAmount = amt;
-
-let upiUrl = upi://pay?pa=${ADMIN_UPI}&pn=WinGoGame&am=${amt}&cu=INR;
-document.getElementById("upi-intent-btn").href = upiUrl;
-
-document.getElementById("pay-amount-display").innerText = amt;
-document.getElementById("deposit-step-1").style.display = "none";
-document.getElementById("deposit-step-2").style.display = "block";
+    let amt = parseInt(document.getElementById("deposit-input").value);
+    if (isNaN(amt) || amt < 100 || amt > 25000) {
+        if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("error");
+        alert("Enter amount between ₹100 and ₹25,000");
+        return;
+    }
+    selectedDepositAmount = amt;
+    
+    let upiUrl = `upi://pay?pa=${ADMIN_UPI}&pn=WinGoGame&am=${amt}&cu=INR`;
+    document.getElementById("upi-intent-btn").href = upiUrl;
+    
+    document.getElementById("pay-amount-display").innerText = amt;
+    document.getElementById("deposit-step-1").style.display = "none";
+    document.getElementById("deposit-step-2").style.display = "block";
 }
 
 async function submitDepositRequest() {
-let utr = document.getElementById("utr-input").value.trim();
-if(utr.length < 12) {
-alert("Please enter a valid 12-digit UTR/Ref Number.");
-return;
-}
+    let utr = document.getElementById("utr-input").value.trim();
+    if(utr.length < 12) {
+        alert("Please enter a valid 12-digit UTR/Ref Number.");
+        return;
+    }
 
-const btn = document.getElementById("submit-utr-btn");
-btn.innerText = "Submitting...";
-btn.disabled = true;
+    const btn = document.getElementById("submit-utr-btn");
+    btn.innerText = "Submitting...";
+    btn.disabled = true;
 
-try {
-const response = await fetch(``${BACKEND_URL}/deposit-request`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ telegramId: telegramId, amount: selectedDepositAmount, utr: utr })
-});
-
-alert(Deposit Request Sent!\nAmount: ₹${selectedDepositAmount}\nUTR: ${utr}\n\nYour balance will be updated once Admin approves it.);
-closeDepositPopup();
-} catch(err) {
-alert("Wait, setting up backend for deposit tracking...");
-closeDepositPopup();
-}
-
-btn.innerText = "SUBMIT REQUEST";
-btn.disabled = false;
+    try {
+        const response = await fetch(`${BACKEND_URL}/deposit-request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, amount: selectedDepositAmount, utr: utr })
+        });
+        alert(`Deposit Request Sent!\nAmount: ₹${selectedDepositAmount}\nUTR: ${utr}\n\nYour balance will be updated once Admin approves it.`);
+        closeDepositPopup();
+    } catch(err) {
+        alert("Wait, setting up backend for deposit tracking...");
+        closeDepositPopup();
+    }
+    btn.innerText = "SUBMIT REQUEST";
+    btn.disabled = false;
 }
 
 // 🌟 WITHDRAWAL LOGIC 🌟
 function openWithdrawPopup() {
-if (balance < 500) {
-alert("Minimum ₹500 balance is required to withdraw!");
-return;
-}
-document.getElementById("withdraw-input").value = "";
-document.getElementById("withdraw-upi-input").value = "";
-document.getElementById("withdraw-popup").style.display = "flex";
+    if (balance < 500) {
+        alert("Minimum ₹500 balance is required to withdraw!");
+        return;
+    }
+    document.getElementById("withdraw-input").value = "";
+    document.getElementById("withdraw-upi-input").value = "";
+    document.getElementById("withdraw-popup").style.display = "flex";
 }
 
 function closeWithdrawPopup() {
-document.getElementById("withdraw-popup").style.display = "none";
+    document.getElementById("withdraw-popup").style.display = "none";
 }
 
 async function submitWithdrawRequest() {
-let wAmt = parseInt(document.getElementById("withdraw-input").value);
-let wUpi = document.getElementById("withdraw-upi-input").value.trim();
+    let wAmt = parseInt(document.getElementById("withdraw-input").value);
+    let wUpi = document.getElementById("withdraw-upi-input").value.trim();
 
-if (isNaN(wAmt) || wAmt < 500) {
-alert("Please enter a valid amount (Minimum ₹500).");
-return;
-}
-if (wAmt > balance) {
-alert("Insufficient Balance!");
-return;
-}
-if (wUpi.length < 5 || !wUpi.includes('@')) {
-alert("Please enter a valid UPI ID.");
-return;
-}
+    if (isNaN(wAmt) || wAmt < 500) {
+        alert("Please enter a valid amount (Minimum ₹500).");
+        return;
+    }
+    if (wAmt > balance) {
+        alert("Insufficient Balance!");
+        return;
+    }
+    if (wUpi.length < 5 || !wUpi.includes('@')) {
+        alert("Please enter a valid UPI ID.");
+        return;
+    }
 
-const btn = document.getElementById("submit-withdraw-btn");
-btn.innerText = "Submitting...";
-btn.disabled = true;
+    const btn = document.getElementById("submit-withdraw-btn");
+    btn.innerText = "Submitting...";
+    btn.disabled = true;
 
-try {
-const response = await fetch(${BACKEND_URL}/withdraw-request`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ telegramId: telegramId, amount: wAmt, upiId: wUpi })
-});
-
-// Temporarily deduct balance on screen
-balance -= wAmt;
-updateBalanceDisplays();
-
-alert(Withdrawal Request Sent!\nAmount: ₹${wAmt}\nUPI: ${wUpi}\n\nAdmin will process it within 24 hours.);
-closeWithdrawPopup();
-} catch(err) {
-alert("Backend server not ready for withdrawal yet!");
-closeWithdrawPopup();
-}
-
-btn.innerText = "SUBMIT REQUEST";
-btn.disabled = false;
+    try {
+        const response = await fetch(`${BACKEND_URL}/withdraw-request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, amount: wAmt, upiId: wUpi })
+        });
+        
+        balance -= wAmt; // Update local temporarily
+        updateBalanceDisplays();
+        
+        alert(`Withdrawal Request Sent!\nAmount: ₹${wAmt}\nUPI: ${wUpi}\n\nAdmin will process it within 24 hours.`);
+        closeWithdrawPopup();
+    } catch(err) {
+        alert("Backend server not ready for withdrawal yet!");
+        closeWithdrawPopup();
+    }
+    btn.innerText = "SUBMIT REQUEST";
+    btn.disabled = false;
 }
 
 // BETTING POPUP LOGIC
 function openPopup(selection, colorHex) {
-popSelection = selection;
-document.getElementById("pop-selection-text").innerText = selection;
-document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
-document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
-popBaseBet = 10; popQty = 1; popMul = 1;
-document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-document.querySelectorAll('.preset-btn')[0].classList.add('active');
-document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-document.querySelectorAll('.m-btn')[0].classList.add('active');
-calculateTotal();
-updateBalanceDisplays();
-document.getElementById("bet-popup").style.display = "flex";
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    popSelection = selection;
+    document.getElementById("pop-selection-text").innerText = selection;
+    document.getElementById("pop-color-dot").style.backgroundColor = colorHex;
+    document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
+    popBaseBet = 10; popQty = 1; popMul = 1;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn')[0].classList.add('active');
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.m-btn')[0].classList.add('active');
+    calculateTotal();
+    updateBalanceDisplays();
+    document.getElementById("bet-popup").style.display = "flex";
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
@@ -668,79 +620,99 @@ function setMul(m, btn) { popMul = m; document.querySelectorAll('.m-btn').forEac
 function calculateTotal() { popTotal = popBaseBet * popQty * popMul; document.getElementById("calc-qty").value = popQty; document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2); if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged(); }
 
 async function placeFinalBet() {
-if (balance < popTotal) { alert("Insufficient Balance!"); return; }
-const btn = document.getElementById("confirmBetBtn");
-btn.innerText = "Processing...";
-btn.disabled = true;
+    if (balance < popTotal) { alert("Insufficient Balance!"); return; }
+    const btn = document.getElementById("confirmBetBtn");
+    btn.innerText = "Processing...";
+    btn.disabled = true;
 
-try {
-const response = await fetch(``${BACKEND_URL}/bet`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ telegramId: telegramId, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
-});
-const data = await response.json();
-if(data.success) {
-balance = data.newBalance;
-updateBalanceDisplays();
-activeBets.push({ period: currentPeriod, selection: popSelection, amount: popTotal, status: 'Pending' });
-if(activeTab === 'my') renderMyHistory();
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
-closePopup();
-} else {
-alert(data.message || "Bet failed!");
-}
-} catch (error) { alert("Server connection failed!"); }
-btn.innerText = "CONFIRM BET";
-btn.disabled = false;
+    try {
+        const response = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telegramId: telegramId, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
+        });
+        const data = await response.json();
+        if(data.success) {
+            balance = data.newBalance;
+            updateBalanceDisplays();
+            activeBets.push({ period: currentPeriod, selection: popSelection, amount: popTotal, status: 'Pending' });
+            if(activeTab === 'my') renderMyHistory();
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+            closePopup();
+        } else {
+            alert(data.message || "Bet failed!");
+        }
+    } catch (error) { alert("Server connection failed!"); }
+    
+    btn.innerText = "CONFIRM BET";
+    btn.disabled = false;
 }
 
 function fetchGameStatus() {
-fetch(${BACKEND_URL}/game-status) .then(res =&gt; res.json()) .then(data =&gt; { currentPeriod = data.period; document.getElementById("period-display").innerText = currentPeriod; let timeStr = data.time.toString().padStart(2, '0'); document.getElementById("sec1").innerText = timeStr[0]; document.getElementById("sec2").innerText = timeStr[1]; let historyHTML = ""; data.results.forEach(res =&gt; { let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0'); let bs = res.number &gt; 4 ? "Big" : "Small"; historyHTML +=<tr>
-<td style="font-size:12px;">${res.period}&lt;/td&gt; &lt;td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}&lt;/td&gt; &lt;td&gt;${bs}</td>
-<td><span class="dot" style="background-color: ${fontColor};"&gt;&lt;/span&gt;&lt;/td&gt; &lt;/tr>;
-});
-document.getElementById("history-body").innerHTML = historyHTML;
-if(data.results.length > 0) {
-let latestResult = data.results[0];
-if(lastProcessedPeriod !== latestResult.period) {
-lastProcessedPeriod = latestResult.period;
-checkWinnings(latestResult);
-}
-}
-}).catch(err => console.log("Waiting for backend..."));
+    fetch(`${BACKEND_URL}/game-status`)
+    .then(res => res.json())
+    .then(data => {
+        currentPeriod = data.period;
+        document.getElementById("period-display").innerText = currentPeriod;
+        let timeStr = data.time.toString().padStart(2, '0');
+        document.getElementById("sec1").innerText = timeStr[0];
+        document.getElementById("sec2").innerText = timeStr[1];
+        
+        let historyHTML = "";
+        data.results.forEach(res => {
+            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+            let bs = res.number > 4 ? "Big" : "Small";
+            historyHTML += `<tr>
+                <td style="font-size:12px;">${res.period}</td>
+                <td style="color: ${fontColor}; font-size: 18px; font-weight: bold;">${res.number}</td>
+                <td>${bs}</td>
+                <td><span class="dot" style="background-color: ${fontColor};"></span></td>
+            </tr>`;
+        });
+        
+        document.getElementById("history-body").innerHTML = historyHTML;
+        
+        if(data.results.length > 0) {
+            let latestResult = data.results[0];
+            if(lastProcessedPeriod !== latestResult.period) {
+                lastProcessedPeriod = latestResult.period;
+                checkWinnings(latestResult);
+            }
+        }
+    }).catch(err => console.log("Waiting for backend..."));
 }
 
 function checkWinnings(result) {
-let totalWinnings = 0;
-let statusChanged = false;
-activeBets.forEach(bet => {
-if(bet.period === result.period && bet.status === 'Pending') {
-let won = false; let multiplier = 0;
-if(bet.selection === result.color) { won = true; multiplier = 2; }
-let bs = result.number > 4 ? "Big" : "Small";
-if(bet.selection === bs) { won = true; multiplier = 2; }
-if(bet.selection === result.number.toString()) { won = true; multiplier = 9; }
+    let totalWinnings = 0;
+    let statusChanged = false;
+    
+    activeBets.forEach(bet => {
+        if(bet.period === result.period && bet.status === 'Pending') {
+            let won = false; let multiplier = 0;
+            if(bet.selection === result.color) { won = true; multiplier = 2; }
+            let bs = result.number > 4 ? "Big" : "Small";
+            if(bet.selection === bs) { won = true; multiplier = 2; }
+            if(bet.selection === result.number.toString()) { won = true; multiplier = 9; }
 
-if(won) { totalWinnings += (bet.amount * multiplier); bet.status = 'Won'; }
-else { bet.status = 'Lost'; }
-statusChanged = true;
-}
-});
+            if(won) { totalWinnings += (bet.amount * multiplier); bet.status = 'Won'; }
+            else { bet.status = 'Lost'; }
+            statusChanged = true;
+        }
+    });
 
-if(totalWinnings > 0) {
-balance += totalWinnings;
-updateBalanceDisplays();
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
-alert(🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)});
-}
-if(statusChanged && activeTab === 'my') renderMyHistory();
+    if(totalWinnings > 0) {
+        balance += totalWinnings;
+        updateBalanceDisplays();
+        if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+        alert(`🎉 Congratulations! You won ₹${totalWinnings.toFixed(2)}`);
+    }
+    if(statusChanged && activeTab === 'my') renderMyHistory();
 }
 
+// 🌟 INITIALLY LOAD BALANCE AND START INTERVALS
+loadBalance();
 setInterval(fetchGameStatus, 1000);
 fetchGameStatus();
-updateBalanceDisplays();
 </script>
 </body>
 </html>
-
