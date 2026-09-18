@@ -6,7 +6,6 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
-/* ... (Purana Base CSS) ... */
 body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; padding: 0; color: #333; padding-bottom: 80px; }
 .header { background-color: #ff3e3e; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; position: sticky; top: 0; z-index: 100;}
 .balance-box { font-size: 14px; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; }
@@ -19,7 +18,9 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .bg-green { background-color: #17b15e; box-shadow: 0 4px 0 #128a49; }
 .bg-violet { background-color: #9c27b0; box-shadow: 0 4px 0 #7b1fa2; }
 .bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
+.c-btn:active { transform: translateY(4px); box-shadow: none; }
 
+/* 🌟 3D BALL TEXTURE CSS 🌟 */
 .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
 .num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
 .num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #e8e8e8 80%, #d0d0d0 100%); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 1; }
@@ -45,17 +46,13 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .history-table { width: 100%; background: white; text-align: center; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;}
 .history-table th { background: #ff3e3e; color: white; padding: 12px 5px; font-weight: normal; }
 .history-table td { padding: 15px 5px; border-bottom: 1px solid #eee; }
+.dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
 
-/* BOTTOM NAV */
-.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
-.nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
-.nav-item i { font-size: 22px; display: block; margin-bottom: 5px; }
-.nav-active { color: #ff3e3e; }
-
-.page-content { display: none; animation: fadeIn 0.3s; }
-.page-active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
+/* AUTH SCREEN */
+#auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f7f8ff; z-index: 3000; display: flex; justify-content: center; align-items: center; }
+.auth-card { background: white; width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+.auth-input { width: 100%; box-sizing: border-box; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
+.auth-btn { width: 100%; background: #ff3e3e; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
 /* 🌟 POPUPS CSS 🌟 */
 .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
@@ -63,7 +60,27 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; z-index: 5;}
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
-.confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+.pop-period { text-align: center; font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; }
+.deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
+
+/* 🌟 TRANSACTION HISTORY POPUP CSS 🌟 */
+.hist-tabs { display: flex; background: #f8f9fa; border-bottom: 1px solid #ddd; margin-bottom: 10px; border-radius: 10px 10px 0 0; overflow: hidden;}
+.hist-tab-btn { flex: 1; padding: 12px; border: none; background: none; font-size: 14px; font-weight: bold; cursor: pointer; color: #555; outline: none; }
+.hist-tab-btn.active { color: #2196f3; border-bottom: 3px solid #2196f3; background: #fff; }
+.hist-tab-content { display: none; padding: 5px; max-height: 350px; overflow-y: auto; }
+.hist-tab-content.active { display: block; }
+
+.txn-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+.txn-item:last-child { border-bottom: none; }
+.txn-info h4 { margin: 0 0 5px 0; font-size: 14px; color: #333; }
+.txn-info p { margin: 0; font-size: 11px; color: #777; }
+.txn-amount { font-weight: bold; font-size: 15px; text-align: right; }
+.txn-amount.dep { color: #17b15e; }
+.txn-amount.wid { color: #ff2a2a; }
+.txn-status { display: inline-block; margin-top: 5px; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+.txn-status.approved { background: #d4edda; color: #155724; }
+.txn-status.pending { background: #fff3cd; color: #856404; }
+.txn-status.rejected { background: #f8d7da; color: #721c24; }
 
 /* 🌟 PREMIUM WITHDRAW CSS 🌟 */
 .premium-popup { background: linear-gradient(135deg, #ffffff, #f9f9f9); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 1px solid #eee; text-align: center;}
@@ -86,9 +103,60 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 /* AD SIMULATION CSS */
 .ad-sim-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
 .ad-sim-timer { font-size: 50px; font-weight: bold; margin: 20px 0; color: #ff3e3e; }
+
+/* PREMIUM BETTING UI CSS */
+.sel-row { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; margin-bottom: 15px; margin-top: 10px;}
+.sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.stepper-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.stepper-input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; outline: none; }
+.stepper-btn { background: #f0f0f0; border: none; width: 40px; height: 40px; font-size: 20px; border-radius: 8px; cursor: pointer; color: #333; font-weight: bold;}
+.preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+.preset-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 10px 0; border-radius: 5px; font-size: 14px; color: #333; cursor: pointer; font-weight: bold;}
+.preset-btn.active { background: #ff3e3e; color: white; border-color: #ff3e3e;}
+.total-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; }
+.total-cost { font-weight: bold; font-size: 18px; color: #17b15e;}
+.toggle-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; font-weight: bold;}
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #17b15e; }
+input:checked + .slider:before { transform: translateX(20px); }
+.mul-label { font-size: 14px; margin-bottom: 10px; display: block; text-align: left; font-weight: bold;}
+.mul-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; }
+.m-btn { background: #f0f0f0; border: none; padding: 8px 0; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; }
+.m-btn.active { background: #ff3e3e; color: white; }
+.pop-footer { text-align: center; font-size: 14px; color: #333; margin-top: 10px;}
+.pop-rules { color: #1772b1; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; font-size: 13px; }
+
+.confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px;}
+
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
+.nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
+.nav-item i { font-size: 22px; display: block; margin-bottom: 5px; }
+.nav-active { color: #ff3e3e; }
+
+.page-content { display: none; animation: fadeIn 0.3s; }
+.page-active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
+.wallet-balance { font-size: 28px; font-weight: bold; color: #ff3e3e; margin: 5px 0; }
 </style>
 </head>
 <body>
+
+<!-- LOGIN / SIGNUP SCREEN -->
+<div id="auth-screen">
+    <div class="auth-card">
+        <h2 id="auth-heading" style="color: #ff3e3e; margin-bottom: 5px;">Login</h2>
+        <input type="text" id="auth-mobile" class="auth-input" placeholder="Mobile Number" />
+        <input type="password" id="auth-password" class="auth-input" placeholder="Password" />
+        <input type="text" id="auth-ref" class="auth-input" placeholder="Referral Code (Optional)" style="display:none;" />
+        <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Login</button>
+        <p id="auth-switch-text" style="font-size: 14px; margin-top: 15px; color: #666; cursor: pointer;" onclick="toggleAuthMode()">Don't have an account? Sign Up</p>
+    </div>
+</div>
 
 <div class="header">
     <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
@@ -110,28 +178,45 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     </div>
 
     <div class="game-container">
-        <!-- Game Balls & Betting Logic Same as Before -->
         <div class="color-btns">
-            <button class="c-btn bg-green" onclick="alert('Betting System active.')">Green</button>
-            <button class="c-btn bg-violet" onclick="alert('Betting System active.')">Violet</button>
-            <button class="c-btn bg-red" onclick="alert('Betting System active.')">Red</button>
+            <button class="c-btn bg-green" onclick="openPopup('Green', '#17b15e')">Green</button>
+            <button class="c-btn bg-violet" onclick="openPopup('Violet', '#9c27b0')">Violet</button>
+            <button class="c-btn bg-red" onclick="openPopup('Red', '#ff2a2a')">Red</button>
         </div>
         <div class="number-grid">
-            <div class="num-ball num-0"><span>0</span></div>
-            <div class="num-ball num-green"><span>1</span></div>
-            <div class="num-ball num-red"><span>2</span></div>
-            <div class="num-ball num-green"><span>3</span></div>
-            <div class="num-ball num-red"><span>4</span></div>
-            <div class="num-ball num-5"><span>5</span></div>
-            <div class="num-ball num-red"><span>6</span></div>
-            <div class="num-ball num-green"><span>7</span></div>
-            <div class="num-ball num-red"><span>8</span></div>
-            <div class="num-ball num-green"><span>9</span></div>
+            <div class="num-ball num-0" onclick="openPopup('0', '#9c27b0')"><span>0</span></div>
+            <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
+            <div class="num-ball num-red" onclick="openPopup('2', '#ff2a2a')"><span>2</span></div>
+            <div class="num-ball num-green" onclick="openPopup('3', '#17b15e')"><span>3</span></div>
+            <div class="num-ball num-red" onclick="openPopup('4', '#ff2a2a')"><span>4</span></div>
+            <div class="num-ball num-5" onclick="openPopup('5', '#9c27b0')"><span>5</span></div>
+            <div class="num-ball num-red" onclick="openPopup('6', '#ff2a2a')"><span>6</span></div>
+            <div class="num-ball num-green" onclick="openPopup('7', '#17b15e')"><span>7</span></div>
+            <div class="num-ball num-red" onclick="openPopup('8', '#ff2a2a')"><span>8</span></div>
+            <div class="num-ball num-green" onclick="openPopup('9', '#17b15e')"><span>9</span></div>
+        </div>
+        <div class="big-small">
+            <button class="bs-btn btn-big" onclick="openPopup('Big', '#ff9800')">Big</button>
+            <button class="bs-btn btn-small" onclick="openPopup('Small', '#2196f3')">Small</button>
         </div>
     </div>
+
+    <div class="tabs">
+        <div class="tab tab-active" id="tab-game-hist" onclick="switchTab('game')">Game history</div>
+        <div class="tab" id="tab-my-hist" onclick="switchTab('my')">My history</div>
+    </div>
+
+    <table class="history-table" id="table-game-history">
+        <thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
+        <tbody id="history-body"></tbody>
+    </table>
+    <table class="history-table" id="table-my-history" style="display: none;">
+        <thead><tr><th>Period</th><th>Select</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="my-history-body"></tbody>
+    </table>
 </div>
 
-<!-- PAGE 2: TASK (NEW) -->
+<!-- 🌟 PAGE 2: TASK (NEW MATH GAME) 🌟 -->
 <div id="page-task" class="page-content">
     <div class="task-card" id="task-start-screen">
         <i class="fas fa-gift" style="font-size: 40px; color: #ff9800; margin-bottom: 10px;"></i>
@@ -172,9 +257,12 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 <div id="page-invite" class="page-content">
     <div class="task-card">
         <i class="fas fa-users" style="font-size: 40px; color: #ff3e3e; margin-bottom: 10px;"></i>
-        <h3>Invite Friends</h3>
-        <p style="color: #666; font-size: 14px;">Share code. Earn rewards!</p>
-        <button class="confirm-btn">Copy Link</button>
+        <h3>Invite Friends & Earn</h3>
+        <p style="color: #666; font-size: 14px;">Share your unique referral code. Friend gets ₹100 bonus & you get ₹50 bonus!</p>
+        <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; margin: 15px 0; font-weight: bold; font-size: 16px;">
+            Your UID: <span id="display-uid" style="color: #ff3e3e;">---</span>
+        </div>
+        <button class="confirm-btn" onclick="copyReferralLink()"><i class="fas fa-copy"></i> Copy Referral Link</button>
     </div>
 </div>
 
@@ -183,22 +271,62 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     <div class="wallet-card">
         <i class="fas fa-wallet" style="font-size: 35px; color: #ff3e3e;"></i>
         <div style="font-size: 13px; color: #666; margin-top: 5px;">Main Balance</div>
-        <div class="wallet-balance" style="font-size: 30px;">₹<span id="wallet-main-bal">0.00</span></div>
-        
+        <div class="wallet-balance">₹<span id="wallet-main-bal">0.00</span></div>
+
+        <div style="font-size: 13px; color: #555; margin-top: 12px; line-height: 1.8; text-align: center;">
+            <div>Deposit Balance (Bet only): ₹<span id="wallet-dep-bal">0.00</span></div>
+            <div>Bonus Balance (Bet only): ₹<span id="wallet-bonus-bal">0.00</span></div>
+        </div>
+
         <div style="display: flex; gap: 10px; margin-top: 20px;">
             <button class="confirm-btn" onclick="openDepositPopup()">Deposit</button>
-            <!-- Withraw button ab naye premium popup ko open karega -->
             <button class="confirm-btn" style="background:#ff9800;" onclick="openWithdrawPopup()">Withdraw</button>
         </div>
+        <button class="confirm-btn" style="background: #2196f3; margin-top: 5px;" onclick="openHistoryPopup()">Transaction History</button>
     </div>
 </div>
 
-<!-- BOTTOM NAV (UPDATED: 4 Tabs) -->
+<!-- 🌟 BOTTOM NAV (4 Tabs) 🌟 -->
 <div class="bottom-nav">
     <div class="nav-item nav-active" id="nav-game" onclick="switchNavPage('game')"><i class="fas fa-gamepad"></i><span>Win Go</span></div>
     <div class="nav-item" id="nav-task" onclick="switchNavPage('task')"><i class="fas fa-tasks"></i><span>Task</span></div>
     <div class="nav-item" id="nav-invite" onclick="switchNavPage('invite')"><i class="fas fa-share-alt"></i><span>Invite</span></div>
     <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')"><i class="fas fa-wallet"></i><span>Wallet</span></div>
+</div>
+
+<!-- DEPOSIT POPUP WITH UPI BOX & APP FIX -->
+<div id="deposit-popup" class="popup-overlay">
+    <div class="popup-card">
+        <button class="close-btn" onclick="closeDepositPopup()">✕</button>
+        <div class="pop-title">Deposit Funds</div>
+        
+        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-align: center;">Select Amount (Min ₹100):</div>
+        <div class="preset-grid" id="deposit-preset-grid">
+            <button class="preset-btn active" onclick="setDepositAmount(100, this)">₹100</button>
+            <button class="preset-btn" onclick="setDepositAmount(200, this)">₹200</button>
+            <button class="preset-btn" onclick="setDepositAmount(500, this)">₹500</button>
+            <button class="preset-btn" onclick="setDepositAmount(1000, this)">₹1000</button>
+            <button class="preset-btn" onclick="setDepositAmount(2000, this)">₹2000</button>
+            <button class="preset-btn" onclick="setDepositAmount(5000, this)">₹5000</button>
+        </div>
+
+        <div style="font-size: 13px; color: #666; margin-bottom: 5px; text-align: center;">Or Enter Custom Amount:</div>
+        <input type="number" id="deposit-input" class="deposit-input-box" value="100" placeholder="Min ₹100" oninput="clearPresetActive()" />
+
+        <!-- 🌟 NEW VISIBLE UPI BOX 🌟 -->
+        <div style="background: #f9f9f9; border: 1px dashed #2196f3; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px;">
+            <div style="font-size: 12px; color: #888; margin-bottom: 5px;">Merchant UPI ID</div>
+            <div style="font-size: 18px; font-weight: bold; color: #2196f3; margin-bottom: 10px; user-select: all;">Username@ybl</div>
+            <button style="background: #e0e0e0; border: none; padding: 6px 15px; border-radius: 5px; font-size: 12px; cursor: pointer; font-weight: bold;" onclick="copyMerchantUPI()">COPY UPI ID</button>
+        </div>
+
+        <button class="confirm-btn" style="background: #2196f3;" onclick="proceedToPaymentApp()">Pay via UPI App</button>
+
+        <div style="font-size: 13px; color: #666; margin: 10px 0 5px 0; text-align: center;">Enter 12-Digit UTR No. After Payment:</div>
+        <input type="text" id="utr-input" class="deposit-input-box" placeholder="e.g. 432109876543" style="font-size: 14px;" />
+        
+        <button class="confirm-btn" onclick="submitDepositRequest()">SUBMIT DEPOSIT</button>
+    </div>
 </div>
 
 <!-- 🌟 PREMIUM WITHDRAW POPUP 🌟 -->
@@ -211,18 +339,32 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
         <input type="number" id="withdraw-amount-input" class="input-premium" placeholder="Enter Amount (₹)" />
         <input type="text" id="withdraw-upi-input" class="input-premium" placeholder="Your UPI ID (e.g. user@ybl)" />
         
-        <button class="confirm-btn" style="background: linear-gradient(135deg, #ff9800, #ff5722); font-size: 18px; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);" onclick="alert('Withdraw request submitted!')">WITHDRAW NOW</button>
+        <button class="confirm-btn" style="background: linear-gradient(135deg, #ff9800, #ff5722); font-size: 18px; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);" onclick="submitWithdrawRequest()">WITHDRAW NOW</button>
     </div>
 </div>
 
-<!-- AD SIMULATION SCREEN -->
-<div id="ad-sim-screen" class="ad-sim-screen">
-    <h2 id="ad-sim-title">Interstitial Ad Playing...</h2>
-    <div class="ad-sim-timer" id="ad-sim-timer">3</div>
-    <button id="ad-close-btn" class="confirm-btn" style="width: 200px; display: none;" onclick="closeAdSim()">Close Ad</button>
+<!-- 🌟 TRANSACTION HISTORY POPUP 🌟 -->
+<div id="history-popup" class="popup-overlay">
+    <div class="popup-card" style="max-width: 400px; padding: 0;">
+        <button class="close-btn" style="top: 10px; right: 10px;" onclick="closeHistoryPopup()">✕</button>
+        <div class="pop-title" style="margin-top: 15px;">Transaction History</div>
+        
+        <div class="hist-tabs">
+            <button class="hist-tab-btn active" onclick="switchHistTab('depTab', this)">Deposits</button>
+            <button class="hist-tab-btn" onclick="switchHistTab('widTab', this)">Withdrawals</button>
+        </div>
+
+        <div id="depTab" class="hist-tab-content active" style="padding: 0 15px 15px 15px;">
+            <div id="depositHistList"></div>
+        </div>
+
+        <div id="widTab" class="hist-tab-content" style="padding: 0 15px 15px 15px;">
+            <div id="withdrawHistList"></div>
+        </div>
+    </div>
 </div>
 
-<!-- MATH GAME REWARD POPUP -->
+<!-- 🌟 MATH GAME REWARD POPUP 🌟 -->
 <div id="math-reward-popup" class="popup-overlay">
     <div class="popup-card" style="text-align: center;">
         <i class="fas fa-check-circle" style="font-size: 50px; color: #17b15e; margin-bottom: 10px;"></i>
@@ -234,13 +376,189 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     </div>
 </div>
 
-<script>
-// Mock Balance for Demo
-let mainBalance = 150.50; 
-document.getElementById('header-total-balance').innerText = mainBalance.toFixed(2);
-document.getElementById('wallet-main-bal').innerText = mainBalance.toFixed(2);
+<!-- 🌟 AD SIMULATION SCREEN 🌟 -->
+<div id="ad-sim-screen" class="ad-sim-screen">
+    <h2 id="ad-sim-title">Interstitial Ad Playing...</h2>
+    <div class="ad-sim-timer" id="ad-sim-timer">3</div>
+    <button id="ad-close-btn" class="confirm-btn" style="width: 200px; display: none;" onclick="closeAdSim()">Close Ad</button>
+</div>
 
-// NAVIGATION LOGIC
+<!-- 🌟 PREMIUM BET POPUP MODAL 🌟 -->
+<div id="bet-popup" class="popup-overlay">
+    <div class="popup-card">
+        <button class="close-btn" onclick="closePopup()">✕</button>
+        <div class="pop-title">Betting - Win Go 1Min</div>
+        <div class="pop-period" id="pop-period-id">Period: Loading...</div>
+
+        <div class="sel-row">
+            Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-selection-text" style="font-weight: bold;">Green</span>
+        </div>
+
+        <div style="font-size: 14px; margin-bottom: 8px; text-align: center; font-weight: bold;">Select Bet Quantity</div>
+        <div class="stepper-container">
+            <button class="stepper-btn" onclick="updateQty(-1)">−</button>
+            <input type="number" class="stepper-input" id="calc-qty" value="1" readonly>
+            <button class="stepper-btn" onclick="updateQty(1)">+</button>
+        </div>
+
+        <div class="preset-grid" id="bet-preset-grid">
+            <button class="preset-btn active" onclick="setBase(10, this)">₹10</button>
+            <button class="preset-btn" onclick="setBase(50, this)">₹50</button>
+            <button class="preset-btn" onclick="setBase(100, this)">₹100</button>
+            <button class="preset-btn" onclick="setBase(200, this)">₹200</button>
+            <button class="preset-btn" onclick="setBase(500, this)">₹500</button>
+            <button class="preset-btn" onclick="setBase(1000, this)">₹1000</button>
+            <button class="preset-btn" onclick="setBase(2000, this)">₹2000</button>
+            <button class="preset-btn" onclick="setBase(5000, this)">₹5000</button>
+        </div>
+
+        <div class="total-row">
+            <span>Total Cost:</span>
+            <span class="total-cost" id="pop-total-cost">₹10.00</span>
+        </div>
+
+        <div class="toggle-row">
+            <span>Check balance: ₹<span id="toggle-balance">0.00</span></span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+
+        <span class="mul-label">Multiplier:</span>
+        <div class="mul-grid">
+            <button class="m-btn active" onclick="setMul(1, this)">X1</button>
+            <button class="m-btn" onclick="setMul(5, this)">X5</button>
+            <button class="m-btn" onclick="setMul(10, this)">X10</button>
+            <button class="m-btn" onclick="setMul(20, this)">X20</button>
+            <button class="m-btn" onclick="setMul(50, this)">X50</button>
+            <button class="m-btn" onclick="setMul(100, this)">X100</button>
+        </div>
+
+        <button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
+        
+        <div class="pop-footer">
+            Available Balance: ₹<span id="footer-balance-pop">0.00</span>
+            <a href="#" class="pop-rules">Rules</a>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+window.Telegram.WebApp.ready();
+window.Telegram.WebApp.expand();
+
+const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
+
+let currentMobile = localStorage.getItem("game_mobile") || "";
+let uniqueId = "";
+let mainBalance = 0.00;
+let depositBalance = 0.00;
+let bonusBalance = 0.00;
+let currentPeriod = 0;
+let activeBets = [];
+let lastProcessedPeriod = 0;
+let activeTab = 'game';
+let isSignupMode = false;
+
+// Bet Variables
+let popSelection = "";
+let popBaseBet = 10;
+let popQty = 1;
+let popMul = 1;
+let popTotal = 10;
+
+const urlParams = new URLSearchParams(window.location.search);
+const refParam = urlParams.get('ref');
+if (refParam) {
+    isSignupMode = true;
+    document.getElementById("auth-heading").innerText = "Sign Up";
+    document.getElementById("auth-ref").style.display = "block";
+    document.getElementById("auth-ref").value = refParam;
+    document.getElementById("auth-submit-btn").innerText = "Sign Up";
+}
+
+if (currentMobile) {
+    document.getElementById("auth-screen").style.display = "none";
+    fetchUserData();
+}
+
+function toggleAuthMode() {
+    isSignupMode = !isSignupMode;
+    document.getElementById("auth-heading").innerText = isSignupMode ? "Sign Up" : "Login";
+    document.getElementById("auth-submit-btn").innerText = isSignupMode ? "Sign Up" : "Login";
+    document.getElementById("auth-ref").style.display = isSignupMode ? "block" : "none";
+    document.getElementById("auth-switch-text").innerText = isSignupMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
+}
+
+async function handleAuth() {
+    let mobile = document.getElementById("auth-mobile").value.trim();
+    let password = document.getElementById("auth-password").value.trim();
+    let refCode = document.getElementById("auth-ref").value.trim();
+
+    if(!mobile || !password) { alert("Enter mobile and password"); return; }
+
+    let endpoint = isSignupMode ? '/register' : '/login';
+    let payload = isSignupMode ? { mobile, password, refCode } : { mobile, password };
+
+    try {
+        let res = await fetch(`${BACKEND_URL}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        let data = await res.json();
+
+        if(data.success) {
+            localStorage.setItem("game_mobile", mobile);
+            currentMobile = mobile;
+            document.getElementById("auth-screen").style.display = "none";
+            fetchUserData();
+            alert(data.message);
+        } else {
+            alert(data.message);
+        }
+    } catch(e) { alert("Server error"); }
+}
+
+async function fetchUserData() {
+    if(!currentMobile) return;
+    try {
+        let res = await fetch(`${BACKEND_URL}/get-account-data`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile })
+        });
+        let data = await res.json();
+        if(data.success) {
+            mainBalance = data.balance;
+            depositBalance = data.depositBalance;
+            bonusBalance = data.bonusBalance;
+            uniqueId = data.uniqueId;
+            updateBalanceDisplays();
+            document.getElementById("display-uid").innerText = uniqueId;
+        }
+    } catch(e) {}
+}
+
+function updateBalanceDisplays() {
+    let totalTotal = mainBalance + depositBalance + bonusBalance;
+    let formattedBal = totalTotal.toFixed(2);
+    
+    document.getElementById("header-total-balance").innerText = formattedBal;
+    document.getElementById("wallet-main-bal").innerText = mainBalance.toFixed(2);
+    document.getElementById("wallet-dep-bal").innerText = depositBalance.toFixed(2);
+    document.getElementById("wallet-bonus-bal").innerText = bonusBalance.toFixed(2);
+    
+    if(document.getElementById("toggle-balance")) document.getElementById("toggle-balance").innerText = formattedBal;
+    if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = formattedBal;
+}
+
+function copyReferralLink() {
+    let link = window.location.origin + window.location.pathname + "?ref=" + uniqueId;
+    navigator.clipboard.writeText(link);
+    alert("Referral Link Copied!");
+}
+
+// 🌟 DYNAMIC NAVIGATION LOGIC (4 TABS) 🌟
 function switchNavPage(pageId) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
@@ -248,9 +566,245 @@ function switchNavPage(pageId) {
     document.getElementById('nav-' + pageId).classList.add('nav-active');
 }
 
-// WITHDRAW POPUP LOGIC
+function switchTab(tabName) {
+    activeTab = tabName;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+    if(tabName === 'game') {
+        document.getElementById('tab-game-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'table';
+        document.getElementById('table-my-history').style.display = 'none';
+    } else {
+        document.getElementById('tab-my-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'none';
+        document.getElementById('table-my-history').style.display = 'table';
+        renderMyHistory();
+    }
+}
+
+function renderMyHistory() {
+    let myHistHTML = "";
+    activeBets.slice().reverse().forEach(bet => {
+        let color = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+        myHistHTML += `<tr><td>${bet.period}</td><td>${bet.selection}</td><td>₹${bet.amount}</td><td style="color:${color}; font-weight:bold;">${bet.status}</td></tr>`;
+    });
+    document.getElementById("my-history-body").innerHTML = myHistHTML || "<tr><td colspan='4'>No history</td></tr>";
+}
+
+// 🌟 PREMIUM BET POPUP LOGIC 🌟
+function openPopup(sel, colorHex) { 
+    popSelection = sel; 
+    document.getElementById("pop-selection-text").innerText = sel; 
+    document.getElementById("pop-color-dot").style.backgroundColor = colorHex || "#17b15e";
+    document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod; 
+    
+    popBaseBet = 10; popQty = 1; popMul = 1;
+    
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#bet-preset-grid .preset-btn')[0].classList.add('active');
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.m-btn')[0].classList.add('active');
+    
+    calculateTotal();
+    updateBalanceDisplays();
+    document.getElementById("bet-popup").style.display = "flex"; 
+    
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
+
+function setBase(amt, btn) { 
+    popBaseBet = amt; 
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active')); 
+    btn.classList.add('active'); 
+    calculateTotal(); 
+}
+function updateQty(change) { 
+    if (popQty + change >= 1) popQty += change; 
+    calculateTotal(); 
+}
+function setMul(m, btn) { 
+    popMul = m; 
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active')); 
+    btn.classList.add('active'); 
+    calculateTotal(); 
+}
+function calculateTotal() { 
+    popTotal = popBaseBet * popQty * popMul; 
+    document.getElementById("calc-qty").value = popQty; 
+    document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2); 
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+async function placeFinalBet() {
+    let totalTotal = mainBalance + depositBalance + bonusBalance;
+    if (totalTotal < popTotal) { alert("Insufficient Balance!"); return; }
+    
+    const btn = document.getElementById("confirmBetBtn");
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+    
+    try {
+        let res = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
+        });
+        let data = await res.json();
+        if(data.success) {
+            mainBalance = data.balance;
+            depositBalance = data.depositBalance;
+            bonusBalance = data.bonusBalance;
+            updateBalanceDisplays();
+            activeBets.push({ period: currentPeriod, selection: popSelection, amount: popTotal, status: 'Pending' });
+            closePopup();
+            alert("Bet Placed Successfully!");
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+        } else { alert(data.message); }
+    } catch(e) { alert("Error"); }
+    
+    btn.innerText = "CONFIRM BET";
+    btn.disabled = false;
+}
+
+// 🌟 DEPOSIT & WITHDRAW LOGIC 🌟
+function openDepositPopup() { document.getElementById("deposit-popup").style.display = "flex"; }
+function closeDepositPopup() { document.getElementById("deposit-popup").style.display = "none"; }
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
 function closeWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "none"; }
+
+function setDepositAmount(amt, btn) {
+    document.getElementById("deposit-input").value = amt;
+    document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+function clearPresetActive() {
+    document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+}
+
+function copyMerchantUPI() {
+    navigator.clipboard.writeText("Username@ybl");
+    alert("UPI ID Copied: Username@ybl");
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+}
+
+function proceedToPaymentApp() {
+    let amt = parseFloat(document.getElementById("deposit-input").value);
+    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
+    let upiId = "Username@ybl"; 
+    let intentLink = `intent://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR#Intent;scheme=upi;end`;
+    let upiLink = `upi://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR`;
+    let isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+    let finalLink = isAndroid ? intentLink : upiLink;
+    let tempLink = document.createElement('a');
+    tempLink.href = finalLink;
+    tempLink.target = "_top"; 
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+}
+
+async function submitDepositRequest() {
+    let amt = parseFloat(document.getElementById("deposit-input").value);
+    let utr = document.getElementById("utr-input").value.trim();
+
+    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
+    if(!utr || utr.length < 10) { alert("Please enter a valid 12-Digit UTR number"); return; }
+
+    try {
+        let res = await fetch(`${BACKEND_URL}/deposit-request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
+        });
+        let data = await res.json();
+        if(data.success) {
+            alert(data.message);
+            closeDepositPopup();
+            document.getElementById("utr-input").value = "";
+        } else { alert(data.message); }
+    } catch(e) { alert("Server error"); }
+}
+
+async function submitWithdrawRequest() {
+    let amt = parseFloat(document.getElementById("withdraw-amount-input").value);
+    let upiId = document.getElementById("withdraw-upi-input").value;
+    
+    if(isNaN(amt) || amt < 500) { alert("Withdrawal amount must be at least ₹500"); return; }
+    
+    let res = await fetch(`${BACKEND_URL}/withdraw-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobile: currentMobile, amount: amt, upiId })
+    });
+    let data = await res.json();
+    if(data.success) {
+        mainBalance = data.balance;
+        updateBalanceDisplays();
+        alert("Withdrawal submitted!");
+        closeWithdrawPopup();
+    } else { alert(data.message); }
+}
+
+// 🌟 TRANSACTION HISTORY LOGIC 🌟
+function openHistoryPopup() { 
+    document.getElementById("history-popup").style.display = "flex"; 
+    loadHistoryData(); 
+}
+function closeHistoryPopup() { 
+    document.getElementById("history-popup").style.display = "none"; 
+}
+
+function switchHistTab(tabId, btn) {
+    document.querySelectorAll(".hist-tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".hist-tab-btn").forEach(t => t.classList.remove("active"));
+    
+    document.getElementById(tabId).classList.add("active");
+    btn.classList.add("active");
+}
+
+const dummyDepositHistory = [
+    { id: "DEP90812", amount: 500, date: "18 Sep 2026", status: "approved" },
+    { id: "DEP90813", amount: 1000, date: "17 Sep 2026", status: "pending" }
+];
+
+const dummyWithdrawHistory = [
+    { id: "WDR70123", amount: 200, date: "16 Sep 2026", status: "approved" },
+    { id: "WDR70124", amount: 1500, date: "14 Sep 2026", status: "rejected" }
+];
+
+function loadHistoryData() {
+    renderHistList(dummyDepositHistory, "depositHistList", "dep");
+    renderHistList(dummyWithdrawHistory, "withdrawHistList", "wid");
+}
+
+function renderHistList(data, containerId, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; 
+
+    if (data.length === 0) {
+        container.innerHTML = "<p style='text-align:center; color:#777; margin-top:20px;'>No records found.</p>";
+        return;
+    }
+
+    data.forEach(txn => {
+        let sign = type === 'dep' ? '+' : '-';
+        let amountClass = type === 'dep' ? 'dep' : 'wid';
+        
+        let html = `
+            <div class="txn-item">
+                <div class="txn-info">
+                    <h4>ID: ${txn.id}</h4>
+                    <p>${txn.date}</p>
+                    <span class="txn-status ${txn.status}">${txn.status}</span>
+                </div>
+                <div class="txn-amount ${amountClass}">
+                    ${sign} ₹${txn.amount}
+                </div>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+}
 
 // -----------------------------------------
 // 🌟 AD SIMULATION LOGIC 🌟
@@ -261,7 +815,7 @@ function playAd(type, callback) {
     document.getElementById('ad-sim-screen').style.display = 'flex';
     document.getElementById('ad-sim-title').innerText = (type === 'video') ? "Video Reward Ad Playing..." : "Interstitial Ad Playing...";
     
-    let timeLeft = 3; // Fake 3 second ad
+    let timeLeft = 3; // 3 second ad simulation
     document.getElementById('ad-sim-timer').innerText = timeLeft;
     document.getElementById('ad-close-btn').style.display = 'none';
 
@@ -293,7 +847,6 @@ let selectedVal = null;
 let mathOptionsArr = [];
 
 function startMathTask() {
-    // Interstitial ad play before game
     playAd('interstitial', () => {
         document.getElementById('task-start-screen').style.display = 'none';
         document.getElementById('task-game-screen').style.display = 'block';
@@ -311,7 +864,6 @@ function generateMathQuestion() {
     let n2 = Math.floor(Math.random() * 9) + 1;
     let isPlus = Math.random() > 0.5;
     
-    // Prevent negative answer just to keep it clean
     if(!isPlus && n1 < n2) { let temp = n1; n1 = n2; n2 = temp; }
 
     document.getElementById('m-n1').innerText = n1;
@@ -320,7 +872,6 @@ function generateMathQuestion() {
     
     correctAnswer = isPlus ? (n1 + n2) : (n1 - n2);
 
-    // Generate 4 options
     mathOptionsArr = [correctAnswer];
     while(mathOptionsArr.length < 4) {
         let fakeAns = correctAnswer + Math.floor(Math.random() * 10) - 5;
@@ -328,13 +879,13 @@ function generateMathQuestion() {
             mathOptionsArr.push(fakeAns);
         }
     }
-    // Shuffle Options
+    // Shuffle
     mathOptionsArr.sort(() => Math.random() - 0.5);
 
     let optDivs = document.querySelectorAll('.m-opt');
     optDivs.forEach((div, index) => {
         div.innerText = mathOptionsArr[index];
-        div.className = "m-opt"; // reset color
+        div.className = "m-opt"; 
     });
     
     selectedDiv = null;
@@ -356,7 +907,7 @@ function submitMathAnswer() {
 
     if(selectedVal === correctAnswer) {
         selectedDiv.classList.add('correct');
-        mathScore++;
+        mathScore++; // Earn 1 rupee per right answer
     } else {
         selectedDiv.classList.add('wrong');
     }
@@ -368,13 +919,13 @@ function submitMathAnswer() {
         } else {
             generateMathQuestion();
         }
-    }, 1000); // 1 sec delay to show red/green color
+    }, 1000); 
 }
 
 function endMathGame() {
     document.getElementById('task-game-screen').style.display = 'none';
     document.getElementById('final-score-text').innerText = mathScore;
-    document.getElementById('final-reward-amt').innerText = mathScore; // ₹1 per right answer
+    document.getElementById('final-reward-amt').innerText = mathScore; 
     
     document.getElementById('math-reward-popup').style.display = 'flex';
 }
@@ -389,24 +940,19 @@ function claimTaskReward() {
 
     // Video Reward Ad
     playAd('video', () => {
-        // HIDE POPUPS
         document.getElementById('math-reward-popup').style.display = 'none';
         document.getElementById('task-start-screen').style.display = 'block';
 
         // Add reward to main balance
         mainBalance += mathScore;
-        
-        // Update UI
-        document.getElementById('header-total-balance').innerText = mainBalance.toFixed(2);
-        document.getElementById('wallet-main-bal').innerText = mainBalance.toFixed(2);
+        updateBalanceDisplays();
         
         alert(`Congratulations! ₹${mathScore} added to your main balance.`);
         
         /* 
-        Backend Developer Note: 
-        Yahan par aapko real me apna fetch API lagana hoga taki backend par balance secure tarike se update ho:
-        
-        fetch('https://game-backend-1-fgug.onrender.com/add-task-reward', {
+        BACKEND NOTE:
+        Yahan real API call add karein:
+        fetch(`${BACKEND_URL}/add-task-reward`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ mobile: currentMobile, reward: mathScore })
@@ -414,6 +960,37 @@ function claimTaskReward() {
         */
     });
 }
+
+// 🌟 GAME STATUS LOGIC 🌟
+function fetchGameStatus() {
+    fetch(`${BACKEND_URL}/game-status`)
+    .then(res => res.json())
+    .then(data => {
+        currentPeriod = data.period;
+        document.getElementById("period-display").innerText = currentPeriod;
+        let timeStr = data.time.toString().padStart(2, '0');
+        document.getElementById("sec1").innerText = timeStr[0];
+        document.getElementById("sec2").innerText = timeStr[1];
+        
+        let historyHTML = "";
+        data.results.forEach(res => {
+            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+            historyHTML += `<tr><td>${res.period}</td><td style="color:${fontColor}; font-weight:bold;">${res.number}</td><td>${res.number > 4 ? "Big" : "Small"}</td><td><span class="dot" style="background:${fontColor};"></span></td></tr>`;
+        });
+        document.getElementById("history-body").innerHTML = historyHTML;
+
+        if(data.results.length > 0) {
+            let latest = data.results[0];
+            if(lastProcessedPeriod !== latest.period) {
+                lastProcessedPeriod = latest.period;
+                fetchUserData();
+            }
+        }
+    });
+}
+
+setInterval(fetchGameStatus, 1000);
+fetchGameStatus();
 </script>
 </body>
 </html>
