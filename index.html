@@ -194,13 +194,13 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')"><i class="fas fa-wallet"></i><span>Wallet</span></div>
 </div>
 
-<!-- NEW DEPOSIT POPUP WITH PRESETS & UTR -->
+<!-- NEW DEPOSIT POPUP WITH CENTERED TEXT LABELS -->
 <div id="deposit-popup" class="popup-overlay">
     <div class="popup-card">
         <button class="close-btn" onclick="closeDepositPopup()">✕</button>
         <div class="pop-title">Deposit Funds</div>
         
-        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-align: left;">Select Amount (Min ₹100):</div>
+        <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-align: center;">Select Amount (Min ₹100):</div>
         <div class="preset-grid">
             <button class="preset-btn active" onclick="setDepositAmount(100, this)">₹100</button>
             <button class="preset-btn" onclick="setDepositAmount(200, this)">₹200</button>
@@ -210,12 +210,12 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
             <button class="preset-btn" onclick="setDepositAmount(5000, this)">₹5000</button>
         </div>
 
-        <div style="font-size: 13px; color: #666; margin-bottom: 5px; text-align: left;">Or Enter Custom Amount:</div>
+        <div style="font-size: 13px; color: #666; margin-bottom: 5px; text-align: center;">Or Enter Custom Amount:</div>
         <input type="number" id="deposit-input" class="deposit-input-box" value="100" placeholder="Min ₹100" oninput="clearPresetActive()" />
 
         <button class="confirm-btn" style="background: #2196f3;" onclick="proceedToPaymentApp()">Pay via UPI App</button>
 
-        <div style="font-size: 13px; color: #666; margin: 10px 0 5px 0; text-align: left;">Enter 12-Digit UTR No. After Payment:</div>
+        <div style="font-size: 13px; color: #666; margin: 10px 0 5px 0; text-align: center;">Enter 12-Digit UTR No. After Payment:</div>
         <input type="text" id="utr-input" class="deposit-input-box" placeholder="e.g. 432109876543" style="font-size: 14px;" />
         
         <button class="confirm-btn" onclick="submitDepositRequest()">SUBMIT DEPOSIT</button>
@@ -397,7 +397,6 @@ function closeDepositPopup() { document.getElementById("deposit-popup").style.di
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
 function closeWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "none"; }
 
-// Deposit Preset Selection
 function setDepositAmount(amt, btn) {
     document.getElementById("deposit-input").value = amt;
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
@@ -408,14 +407,12 @@ function clearPresetActive() {
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
 }
 
-// Open Payment UPI App
 function proceedToPaymentApp() {
     let amt = parseFloat(document.getElementById("deposit-input").value);
     if(isNaN(amt) || amt < 100) {
         alert("Minimum deposit amount is ₹100");
         return;
     }
-    // UPI Intent / Deep Link (e.g., GPay / PhonePe / Paytm)
     let upiLink = `upi://pay?pa=merchant@upi&pn=WinGoGame&am=${amt}&cu=INR`;
     window.location.href = upiLink;
 }
@@ -442,6 +439,29 @@ async function submitDepositRequest() {
             alert(data.message);
         }
     } catch(e) { alert("Server error"); }
+}
+
+async function placeFinalBet() {
+    let amt = parseFloat(document.getElementById("calc-qty").value);
+    if(isNaN(amt) || amt <= 0) { alert("Invalid amount"); return; }
+    
+    try {
+        let res = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: amt, period: currentPeriod })
+        });
+        let data = await res.json();
+        if(data.success) {
+            mainBalance = data.balance;
+            depositBalance = data.depositBalance;
+            bonusBalance = data.bonusBalance;
+            updateBalanceDisplays();
+            activeBets.push({ period: currentPeriod, selection: popSelection, amount: amt, status: 'Pending' });
+            closePopup();
+            alert("Bet Placed Successfully!");
+        } else { alert(data.message); }
+    } catch(e) { alert("Error"); }
 }
 
 async function submitWithdrawRequest() {
