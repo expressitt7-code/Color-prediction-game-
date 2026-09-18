@@ -20,27 +20,26 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .bg-red { background-color: #ff2a2a; box-shadow: 0 4px 0 #d32020; }
 .c-btn:active { transform: translateY(4px); box-shadow: none; }
 
-/* 3D BALLS CSS */
+/* 🌟 NEW 3D BALL TEXTURE CSS 🌟 */
 .number-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px 10px; margin-bottom: 20px; }
-.num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.25); }
-.num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #f0f0f0 80%, #dcdcdc 100%); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1; }
-.num-ball::after { content: ''; position: absolute; top: 3px; left: 16%; width: 68%; height: 22%; background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0)); border-radius: 50%; z-index: 3; pointer-events: none; }
+.num-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+.num-ball::before { content: ''; position: absolute; width: 38px; height: 38px; background: radial-gradient(circle at 35% 35%, #ffffff 40%, #e8e8e8 80%, #d0d0d0 100%); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 1; }
+.num-ball::after { content: ''; position: absolute; top: 2px; left: 15%; width: 70%; height: 25%; background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0)); border-radius: 50%; z-index: 3; pointer-events: none; }
 .num-ball span { position: relative; z-index: 2; font-size: 24px; font-weight: 900; font-family: 'Arial Black', sans-serif; }
 
-.num-0 { background: linear-gradient(135deg, #ff3b3b 45%, #9c27b0 55%); } .num-0 span { color: #9c27b0; }
-.num-1 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); } .num-1 span { color: #17b15e; }
-.num-2 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); } .num-2 span { color: #ff3b3b; }
-.num-3 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); } .num-3 span { color: #17b15e; }
-.num-4 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); } .num-4 span { color: #ff3b3b; }
-.num-5 { background: linear-gradient(135deg, #4cd964 45%, #9c27b0 55%); } .num-5 span { color: #9c27b0; }
-.num-6 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); } .num-6 span { color: #ff3b3b; }
-.num-7 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); } .num-7 span { color: #17b15e; }
-.num-8 { background: linear-gradient(135deg, #ff3b3b 0%, #d32020 100%); } .num-8 span { color: #ff3b3b; }
-.num-9 { background: linear-gradient(135deg, #4cd964 0%, #17b15e 100%); } .num-9 span { color: #17b15e; }
+.num-green { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #4bd17d 0%, #17b15e 100%); }
+.num-green span { color: #17b15e; }
+.num-red { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #ff6b6b 0%, #d32020 100%); }
+.num-red span { color: #d32020; }
+.num-0 { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #ff6b6b 48%, #9c27b0 52%); }
+.num-0 span { color: #9c27b0; }
+.num-5 { background: radial-gradient(circle at 0% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), radial-gradient(circle at 100% 50%, rgba(255,255,255,0.7) 12%, transparent 14%), linear-gradient(135deg, #4bd17d 48%, #9c27b0 52%); }
+.num-5 span { color: #9c27b0; }
 
 .big-small { display: flex; gap: 10px; margin-top: 15px;}
 .bs-btn { flex: 1; padding: 15px; border: none; border-radius: 30px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
 .btn-big { background-color: #ff9800; } .btn-small { background-color: #2196f3; }
+
 .tabs { display: flex; margin: 15px; gap: 10px; }
 .tab { flex: 1; padding: 12px; text-align: center; background: #e0e0e0; border-radius: 8px; font-weight: bold; color: #555; font-size: 15px; cursor: pointer; }
 .tab-active { background: #ff3e3e; color: white; }
@@ -55,22 +54,43 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .auth-input { width: 100%; box-sizing: border-box; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
 .auth-btn { width: 100%; background: #ff3e3e; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-/* POPUPS & NAVIGATION */
+/* 🌟 POPUPS CSS 🌟 */
 .popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
-.popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; position: relative; max-height: 90vh; overflow-y: auto;}
-.close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; }
+.popup-card { background: white; width: 92%; max-width: 360px; border-radius: 20px; padding: 20px; box-sizing: border-box; animation: popIn 0.3s ease-out; position: relative; max-height: 90vh; overflow-y: auto;}
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.close-btn { position: absolute; right: 15px; top: 15px; background: #f0f0f0; border: none; border-radius: 50%; width: 28px; height: 28px; font-weight: bold; color: #555; cursor: pointer; z-index: 5;}
 .pop-title { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
+.pop-period { text-align: center; font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px; }
 .deposit-input-box { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-size: 16px; text-align: center; outline: none; margin-bottom: 15px; }
-
 .popup-card div[style*="text-align: left;"] { text-align: center !important; }
 
-/* Preset Grid for Deposit */
-.preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-.preset-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 10px 0; border-radius: 6px; font-size: 14px; font-weight: bold; color: #333; cursor: pointer; }
-.preset-btn.active { background: #ff3e3e; color: white; border-color: #ff3e3e; }
+/* PREMIUM BETTING UI CSS */
+.sel-row { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; margin-bottom: 15px; margin-top: 10px;}
+.sel-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.stepper-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.stepper-input { flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; outline: none; }
+.stepper-btn { background: #f0f0f0; border: none; width: 40px; height: 40px; font-size: 20px; border-radius: 8px; cursor: pointer; color: #333; font-weight: bold;}
+.preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+.preset-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 10px 0; border-radius: 5px; font-size: 14px; color: #333; cursor: pointer; font-weight: bold;}
+.preset-btn.active { background: #ff3e3e; color: white; border-color: #ff3e3e;}
+.total-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; }
+.total-cost { font-weight: bold; font-size: 18px; color: #17b15e;}
+.toggle-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px; font-weight: bold;}
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #17b15e; }
+input:checked + .slider:before { transform: translateX(20px); }
+.mul-label { font-size: 14px; margin-bottom: 10px; display: block; text-align: left; font-weight: bold;}
+.mul-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 20px; }
+.m-btn { background: #f0f0f0; border: none; padding: 8px 0; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; }
+.m-btn.active { background: #ff3e3e; color: white; }
+.pop-footer { text-align: center; font-size: 14px; color: #333; margin-top: 10px;}
+.pop-rules { color: #1772b1; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; font-size: 13px; }
 
 .confirm-btn { width: 100%; background: #17b15e; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
-.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+.cancel-btn { width: 100%; background: #e0e0e0; color: #555; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px;}
 
 .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 900; }
 .nav-item { text-align: center; color: #888; font-size: 12px; cursor: pointer; flex: 1; font-weight: bold; }
@@ -125,15 +145,15 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
         </div>
         <div class="number-grid">
             <div class="num-ball num-0" onclick="openPopup('0', '#9c27b0')"><span>0</span></div>
-            <div class="num-ball num-1" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
-            <div class="num-ball num-2" onclick="openPopup('2', '#ff2a2a')"><span>2</span></div>
-            <div class="num-ball num-3" onclick="openPopup('3', '#17b15e')"><span>3</span></div>
-            <div class="num-ball num-4" onclick="openPopup('4', '#ff2a2a')"><span>4</span></div>
+            <div class="num-ball num-green" onclick="openPopup('1', '#17b15e')"><span>1</span></div>
+            <div class="num-ball num-red" onclick="openPopup('2', '#ff2a2a')"><span>2</span></div>
+            <div class="num-ball num-green" onclick="openPopup('3', '#17b15e')"><span>3</span></div>
+            <div class="num-ball num-red" onclick="openPopup('4', '#ff2a2a')"><span>4</span></div>
             <div class="num-ball num-5" onclick="openPopup('5', '#9c27b0')"><span>5</span></div>
-            <div class="num-ball num-6" onclick="openPopup('6', '#ff2a2a')"><span>6</span></div>
-            <div class="num-ball num-7" onclick="openPopup('7', '#17b15e')"><span>7</span></div>
-            <div class="num-ball num-8" onclick="openPopup('8', '#ff2a2a')"><span>8</span></div>
-            <div class="num-ball num-9" onclick="openPopup('9', '#17b15e')"><span>9</span></div>
+            <div class="num-ball num-red" onclick="openPopup('6', '#ff2a2a')"><span>6</span></div>
+            <div class="num-ball num-green" onclick="openPopup('7', '#17b15e')"><span>7</span></div>
+            <div class="num-ball num-red" onclick="openPopup('8', '#ff2a2a')"><span>8</span></div>
+            <div class="num-ball num-green" onclick="openPopup('9', '#17b15e')"><span>9</span></div>
         </div>
         <div class="big-small">
             <button class="bs-btn btn-big" onclick="openPopup('Big', '#ff9800')">Big</button>
@@ -196,14 +216,14 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     <div class="nav-item" id="nav-wallet" onclick="switchNavPage('wallet')"><i class="fas fa-wallet"></i><span>Wallet</span></div>
 </div>
 
-<!-- NEW DEPOSIT POPUP WITH CENTERED TEXT LABELS -->
+<!-- DEPOSIT POPUP WITH UPI FIX -->
 <div id="deposit-popup" class="popup-overlay">
     <div class="popup-card">
         <button class="close-btn" onclick="closeDepositPopup()">✕</button>
         <div class="pop-title">Deposit Funds</div>
         
         <div style="font-size: 13px; color: #666; margin-bottom: 8px; text-align: center;">Select Amount (Min ₹100):</div>
-        <div class="preset-grid">
+        <div class="preset-grid" id="deposit-preset-grid">
             <button class="preset-btn active" onclick="setDepositAmount(100, this)">₹100</button>
             <button class="preset-btn" onclick="setDepositAmount(200, this)">₹200</button>
             <button class="preset-btn" onclick="setDepositAmount(500, this)">₹500</button>
@@ -244,21 +264,69 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
     </div>
 </div>
 
-<!-- BET POPUP -->
+<!-- 🌟 PREMIUM BET POPUP MODAL 🌟 -->
 <div id="bet-popup" class="popup-overlay">
     <div class="popup-card">
         <button class="close-btn" onclick="closePopup()">✕</button>
         <div class="pop-title">Betting - Win Go 1Min</div>
         <div class="pop-period" id="pop-period-id">Period: Loading...</div>
-        <div style="font-size: 14px; margin-bottom: 15px;">Selection: <span id="pop-selection-text" style="font-weight: bold;">Green</span></div>
-        <input type="number" id="calc-qty" class="deposit-input-box" value="10" />
-        <button class="confirm-btn" onclick="placeFinalBet()">CONFIRM BET</button>
-        <button class="cancel-btn" onclick="closePopup()">Cancel</button>
+
+        <div class="sel-row">
+            Selection: <span class="sel-dot" id="pop-color-dot"></span> <span id="pop-selection-text" style="font-weight: bold;">Green</span>
+        </div>
+
+        <div style="font-size: 14px; margin-bottom: 8px; text-align: center; font-weight: bold;">Select Bet Quantity</div>
+        <div class="stepper-container">
+            <button class="stepper-btn" onclick="updateQty(-1)">−</button>
+            <input type="number" class="stepper-input" id="calc-qty" value="1" readonly>
+            <button class="stepper-btn" onclick="updateQty(1)">+</button>
+        </div>
+
+        <div class="preset-grid" id="bet-preset-grid">
+            <button class="preset-btn active" onclick="setBase(10, this)">₹10</button>
+            <button class="preset-btn" onclick="setBase(50, this)">₹50</button>
+            <button class="preset-btn" onclick="setBase(100, this)">₹100</button>
+            <button class="preset-btn" onclick="setBase(200, this)">₹200</button>
+            <button class="preset-btn" onclick="setBase(500, this)">₹500</button>
+            <button class="preset-btn" onclick="setBase(1000, this)">₹1000</button>
+            <button class="preset-btn" onclick="setBase(2000, this)">₹2000</button>
+            <button class="preset-btn" onclick="setBase(5000, this)">₹5000</button>
+        </div>
+
+        <div class="total-row">
+            <span>Total Cost:</span>
+            <span class="total-cost" id="pop-total-cost">₹10.00</span>
+        </div>
+
+        <div class="toggle-row">
+            <span>Check balance: ₹<span id="toggle-balance">0.00</span></span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+
+        <span class="mul-label">Multiplier:</span>
+        <div class="mul-grid">
+            <button class="m-btn active" onclick="setMul(1, this)">X1</button>
+            <button class="m-btn" onclick="setMul(5, this)">X5</button>
+            <button class="m-btn" onclick="setMul(10, this)">X10</button>
+            <button class="m-btn" onclick="setMul(20, this)">X20</button>
+            <button class="m-btn" onclick="setMul(50, this)">X50</button>
+            <button class="m-btn" onclick="setMul(100, this)">X100</button>
+        </div>
+
+        <button class="confirm-btn" id="confirmBetBtn" onclick="placeFinalBet()">CONFIRM BET</button>
+        
+        <div class="pop-footer">
+            Available Balance: ₹<span id="footer-balance-pop">0.00</span>
+            <a href="#" class="pop-rules">Rules</a>
+        </div>
     </div>
 </div>
 
 <!-- SCRIPTS -->
 <script>
+window.Telegram.WebApp.ready();
+window.Telegram.WebApp.expand();
+
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
 let currentMobile = localStorage.getItem("game_mobile") || "";
@@ -271,6 +339,13 @@ let activeBets = [];
 let lastProcessedPeriod = 0;
 let activeTab = 'game';
 let isSignupMode = false;
+
+// Bet Variables
+let popSelection = "";
+let popBaseBet = 10;
+let popQty = 1;
+let popMul = 1;
+let popTotal = 10;
 
 const urlParams = new URLSearchParams(window.location.search);
 const refParam = urlParams.get('ref');
@@ -347,11 +422,16 @@ async function fetchUserData() {
 
 function updateBalanceDisplays() {
     let totalTotal = mainBalance + depositBalance + bonusBalance;
-    document.getElementById("header-total-balance").innerText = totalTotal.toFixed(2);
-
+    let formattedBal = totalTotal.toFixed(2);
+    
+    document.getElementById("header-total-balance").innerText = formattedBal;
     document.getElementById("wallet-main-bal").innerText = mainBalance.toFixed(2);
     document.getElementById("wallet-dep-bal").innerText = depositBalance.toFixed(2);
     document.getElementById("wallet-bonus-bal").innerText = bonusBalance.toFixed(2);
+    
+    // UI elements in Bet Popup
+    if(document.getElementById("toggle-balance")) document.getElementById("toggle-balance").innerText = formattedBal;
+    if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = formattedBal;
 }
 
 function copyReferralLink() {
@@ -391,9 +471,83 @@ function renderMyHistory() {
     document.getElementById("my-history-body").innerHTML = myHistHTML || "<tr><td colspan='4'>No history</td></tr>";
 }
 
-let popSelection = "";
-function openPopup(sel) { popSelection = sel; document.getElementById("pop-selection-text").innerText = sel; document.getElementById("bet-popup").style.display = "flex"; }
+// 🌟 PREMIUM BET POPUP LOGIC 🌟
+function openPopup(sel, colorHex) { 
+    popSelection = sel; 
+    document.getElementById("pop-selection-text").innerText = sel; 
+    document.getElementById("pop-color-dot").style.backgroundColor = colorHex || "#17b15e";
+    document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod; 
+    
+    popBaseBet = 10; popQty = 1; popMul = 1;
+    
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#bet-preset-grid .preset-btn')[0].classList.add('active');
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.m-btn')[0].classList.add('active');
+    
+    calculateTotal();
+    updateBalanceDisplays();
+    document.getElementById("bet-popup").style.display = "flex"; 
+    
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
 function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
+
+function setBase(amt, btn) { 
+    popBaseBet = amt; 
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active')); 
+    btn.classList.add('active'); 
+    calculateTotal(); 
+}
+function updateQty(change) { 
+    if (popQty + change >= 1) popQty += change; 
+    calculateTotal(); 
+}
+function setMul(m, btn) { 
+    popMul = m; 
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active')); 
+    btn.classList.add('active'); 
+    calculateTotal(); 
+}
+function calculateTotal() { 
+    popTotal = popBaseBet * popQty * popMul; 
+    document.getElementById("calc-qty").value = popQty; 
+    document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2); 
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+}
+
+async function placeFinalBet() {
+    let totalTotal = mainBalance + depositBalance + bonusBalance;
+    if (totalTotal < popTotal) { alert("Insufficient Balance!"); return; }
+    
+    const btn = document.getElementById("confirmBetBtn");
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+    
+    try {
+        let res = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
+        });
+        let data = await res.json();
+        if(data.success) {
+            mainBalance = data.balance;
+            depositBalance = data.depositBalance;
+            bonusBalance = data.bonusBalance;
+            updateBalanceDisplays();
+            activeBets.push({ period: currentPeriod, selection: popSelection, amount: popTotal, status: 'Pending' });
+            closePopup();
+            alert("Bet Placed Successfully!");
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+        } else { alert(data.message); }
+    } catch(e) { alert("Error"); }
+    
+    btn.innerText = "CONFIRM BET";
+    btn.disabled = false;
+}
+
+// 🌟 DEPOSIT & WITHDRAW LOGIC 🌟
 function openDepositPopup() { document.getElementById("deposit-popup").style.display = "flex"; }
 function closeDepositPopup() { document.getElementById("deposit-popup").style.display = "none"; }
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
@@ -401,29 +555,28 @@ function closeWithdrawPopup() { document.getElementById("withdraw-popup").style.
 
 function setDepositAmount(amt, btn) {
     document.getElementById("deposit-input").value = amt;
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
-
 function clearPresetActive() {
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
 }
 
+// 🌟 100% WORKING TELEGRAM UPI DEEP LINK FIX 🌟
 function proceedToPaymentApp() {
     let amt = parseFloat(document.getElementById("deposit-input").value);
-    if(isNaN(amt) || amt < 100) {
-        alert("Minimum deposit amount is ₹100");
-        return;
-    }
+    if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
+    
+    // YAHAN APNA ASLI UPI ID DALEIN 
     let upiLink = `upi://pay?pa=merchant@upi&pn=WinGoGame&am=${amt}&cu=INR`;
     
-    // Fix for Telegram WebView (ERR_UNKNOWN_URL_SCHEME)
-    let tempLink = document.createElement('a');
-    tempLink.href = upiLink;
-    tempLink.target = "_top"; // Forces open outside iframe/webview
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
+    // Telegram WebView Native Link Opener
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+        window.Telegram.WebApp.openLink(upiLink);
+    } else {
+        // Fallback for standard browsers
+        window.location.href = upiLink;
+    }
 }
 
 async function submitDepositRequest() {
@@ -444,33 +597,8 @@ async function submitDepositRequest() {
             alert(data.message);
             closeDepositPopup();
             document.getElementById("utr-input").value = "";
-        } else {
-            alert(data.message);
-        }
-    } catch(e) { alert("Server error"); }
-}
-
-async function placeFinalBet() {
-    let amt = parseFloat(document.getElementById("calc-qty").value);
-    if(isNaN(amt) || amt <= 0) { alert("Invalid amount"); return; }
-    
-    try {
-        let res = await fetch(`${BACKEND_URL}/bet`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: amt, period: currentPeriod })
-        });
-        let data = await res.json();
-        if(data.success) {
-            mainBalance = data.balance;
-            depositBalance = data.depositBalance;
-            bonusBalance = data.bonusBalance;
-            updateBalanceDisplays();
-            activeBets.push({ period: currentPeriod, selection: popSelection, amount: amt, status: 'Pending' });
-            closePopup();
-            alert("Bet Placed Successfully!");
         } else { alert(data.message); }
-    } catch(e) { alert("Error"); }
+    } catch(e) { alert("Server error"); }
 }
 
 async function submitWithdrawRequest() {
