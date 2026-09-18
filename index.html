@@ -73,7 +73,7 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 .page-active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .wallet-card, .task-card { background: white; margin: 15px; border-radius: 15px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; }
-.wallet-balance { font-size: 26px; font-weight: bold; color: #ff3e3e; margin: 5px 0; }
+.wallet-balance { font-size: 28px; font-weight: bold; color: #ff3e3e; margin: 5px 0; }
 </style>
 </head>
 <body>
@@ -92,7 +92,6 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 
 <div class="header">
     <div><i class="fas fa-chevron-left"></i> <span id="page-title">Win Go</span></div>
-    <!-- Header mein Total Balance dikhega -->
     <div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-total-balance">0.00</span></div>
 </div>
 
@@ -166,13 +165,13 @@ body { font-family: 'Arial', sans-serif; background-color: #f7f8ff; margin: 0; p
 <div id="page-wallet" class="page-content">
     <div class="wallet-card">
         <i class="fas fa-wallet" style="font-size: 35px; color: #ff3e3e;"></i>
-        <div style="font-size: 13px; color: #666; margin-top: 5px;">Withdrawable Balance (Main)</div>
+        <div style="font-size: 13px; color: #666; margin-top: 5px;">Main Balance</div>
         <div class="wallet-balance">₹<span id="wallet-main-bal">0.00</span></div>
 
-        <!-- Wallet option click karne par alag-alag dikhega -->
-        <div style="font-size: 13px; color: #555; margin-top: 12px; background: #f9f9f9; padding: 10px; border-radius: 8px; text-align: left;">
-            <div><b>Deposit Balance:</b> ₹<span id="wallet-dep-bal">0.00</span></div>
-            <div style="margin-top: 5px;"><b>Bonus Balance:</b> ₹<span id="wallet-bonus-bal">0.00</span></div>
+        <!-- Deposit Balance aur Bonus Balance Main Balance ke niche middle mein -->
+        <div style="font-size: 13px; color: #555; margin-top: 12px; line-height: 1.8; text-align: center;">
+            <div>Deposit Balance (Bet only): ₹<span id="wallet-dep-bal">0.00</span></div>
+            <div>Bonus Balance (Bet only): ₹<span id="wallet-bonus-bal">0.00</span></div>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -324,10 +323,8 @@ async function fetchUserData() {
 
 function updateBalanceDisplays() {
     let totalTotal = mainBalance + depositBalance + bonusBalance;
-    // Header mein total balance ek sath dikhega
     document.getElementById("header-total-balance").innerText = totalTotal.toFixed(2);
 
-    // Wallet page par teeno alag-alag dikhenge
     document.getElementById("wallet-main-bal").innerText = mainBalance.toFixed(2);
     document.getElementById("wallet-dep-bal").innerText = depositBalance.toFixed(2);
     document.getElementById("wallet-bonus-bal").innerText = bonusBalance.toFixed(2);
