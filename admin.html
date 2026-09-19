@@ -11,38 +11,41 @@ body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; pad
 .login-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 350px; text-align: center; }
 .login-box h2 { color: #ff3e3e; margin-top: 0; margin-bottom: 5px; font-weight: 900; font-size: 24px; }
 .login-input { width: 100%; box-sizing: border-box; padding: 14px; margin: 15px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; outline: none; text-align: center; }
-.login-input:focus { border-color: #ff3e3e; }
 .login-btn { width: 100%; background: #ff3e3e; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-#admin-dashboard { display: none; padding: 20px; max-width: 1200px; margin: auto; }
+#admin-dashboard { display: none; padding: 20px; max-width: 1300px; margin: auto; }
 .header { background: #ff3e3e; color: white; padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
 .header h2 { margin: 0; font-size: 20px; }
 .action-btns { display: flex; gap: 10px; }
 .btn-style { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-.refresh-btn { color: #ff3e3e; }
-.logout-btn { color: #555; background: #f8f9fa; }
 .tabs { display: flex; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; flex-wrap: wrap;}
 .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; font-size: 14px; min-width: 110px;}
 .tab.active { background: #ff3e3e; color: white; }
 .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 800px; }
-th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th, td { padding: 10px 15px; border-bottom: 1px solid #eee; text-align: left; font-size: 14px;}
 th { background-color: #f8f9fa; color: #555; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-.card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-.card-dep { border-left: 5px solid #17b15e; }
-.card-with { border-left: 5px solid #ff9800; }
-.details { line-height: 1.6; font-size: 14px; }
-.details span { font-weight: bold; color: #333; }
+.card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #17b15e; }
 .btn-group { display: flex; gap: 10px; margin-top: 15px; }
 .btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; font-size: 13px; }
 .btn-approve { background: #17b15e; }
 .btn-reject { background: #ff2a2a; }
-.control-panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; max-width: 500px; margin: 0 auto;}
-.control-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-.color-btn { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-.bg-green { background-color: #17b15e; }
-.bg-violet { background-color: #9c27b0; }
-.bg-red { background-color: #ff2a2a; }
+
+/* 🌟 GAME CONTROL SPECIFIC CSS 🌟 */
+.game-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+.game-col { flex: 1; min-width: 320px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+.live-bet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
+.bet-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #ddd; }
+.bet-box span { display: block; font-size: 12px; color: #666; font-weight: bold;}
+.bet-box strong { display: block; font-size: 16px; margin-top: 5px; color: #17b15e;}
+.ctrl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-bottom: 15px;}
+.ctrl-btn { padding: 10px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; font-size: 14px;}
+.c-green { background: #17b15e; } .c-red { background: #ff2a2a; } .c-violet { background: #9c27b0; }
+.c-big { background: #ff9800; } .c-small { background: #2196f3; }
+.c-num { background: #34495e; }
+.status-box { background: #e3f2fd; color: #0b5394; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px;}
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: white; }
 </style>
 </head>
 <body>
@@ -69,7 +72,7 @@ th { background-color: #f8f9fa; color: #555; }
 <div class="tab active" id="tab-users" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</div>
 <div class="tab" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Deposits</div>
 <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Withdrawals</div>
-<div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control</div>
+<div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control & Live Bets</div>
 </div>
 
 <div id="users-section" class="table-container">
@@ -82,21 +85,78 @@ th { background-color: #f8f9fa; color: #555; }
 <div id="deposit-section" class="card-grid" style="display: none;"></div>
 <div id="withdraw-section" class="card-grid" style="display: none;"></div>
 
-<div id="game-section" style="display: none;">
-    <div class="control-panel">
-        <h2 style="margin-top: 0; color: #333;"><i class="fas fa-magic"></i> Set Next Result</h2>
-        <p style="color: #666; font-size: 14px;">Select the color you want to win in the upcoming round.</p>
+<!-- 🌟 NEW: ADVANCED GAME CONTROL & MONITOR 🌟 -->
+<div id="game-section" class="game-layout" style="display: none;">
+    
+    <!-- LEFT: Live Bets & History -->
+    <div class="game-col">
+        <h3><i class="fas fa-chart-line"></i> Live Bets (Period: <span id="live-period-id" style="color:#ff3e3e;">---</span>)</h3>
         
-        <div class="control-grid">
-            <button class="color-btn bg-green" onclick="forceResult('Green', 1)">Force Green (1)</button>
-            <button class="color-btn bg-violet" onclick="forceResult('Violet', 0)">Force Violet (0)</button>
-            <button class="color-btn bg-red" onclick="forceResult('Red', 2)">Force Red (2)</button>
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Colors & Sizes</div>
+        <div class="live-bet-grid">
+            <div class="bet-box"><span>Green</span><strong id="b-Green">₹0</strong></div>
+            <div class="bet-box"><span>Violet</span><strong id="b-Violet">₹0</strong></div>
+            <div class="bet-box"><span>Red</span><strong id="b-Red">₹0</strong></div>
+            <div class="bet-box"><span>Big (5-9)</span><strong id="b-Big">₹0</strong></div>
+            <div class="bet-box"><span>Small (0-4)</span><strong id="b-Small">₹0</strong></div>
         </div>
+
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Numbers (0-9)</div>
+        <div class="live-bet-grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="bet-box"><span>0</span><strong id="b-0">₹0</strong></div>
+            <div class="bet-box"><span>1</span><strong id="b-1">₹0</strong></div>
+            <div class="bet-box"><span>2</span><strong id="b-2">₹0</strong></div>
+            <div class="bet-box"><span>3</span><strong id="b-3">₹0</strong></div>
+            <div class="bet-box"><span>4</span><strong id="b-4">₹0</strong></div>
+            <div class="bet-box"><span>5</span><strong id="b-5">₹0</strong></div>
+            <div class="bet-box"><span>6</span><strong id="b-6">₹0</strong></div>
+            <div class="bet-box"><span>7</span><strong id="b-7">₹0</strong></div>
+            <div class="bet-box"><span>8</span><strong id="b-8">₹0</strong></div>
+            <div class="bet-box"><span>9</span><strong id="b-9">₹0</strong></div>
+        </div>
+
+        <h3 style="margin-top: 20px;"><i class="fas fa-history"></i> Last 10 Results</h3>
+        <table>
+            <thead><tr><th>Period</th><th>Number</th><th>Size</th><th>Color</th></tr></thead>
+            <tbody id="live-history-body"></tbody>
+        </table>
+    </div>
+
+    <!-- RIGHT: Force Controls -->
+    <div class="game-col">
+        <h3><i class="fas fa-magic"></i> Set Next Result</h3>
+        <p style="font-size: 13px; color: #666;">Select the outcome you want to force for the next round. (Applies to the current running period).</p>
         
-        <div style="background: #e3f2fd; color: #0b5394; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: 20px;" id="force-status">
-            Current Status: Random (No forced result)
+        <div class="status-box" id="force-status">Status: Random (No forced result)</div>
+
+        <div style="margin-top: 15px; font-weight: bold; font-size: 14px;">Force Color</div>
+        <div class="ctrl-grid">
+            <button class="ctrl-btn c-green" onclick="forceResult('color', 'Green')">Green</button>
+            <button class="ctrl-btn c-violet" onclick="forceResult('color', 'Violet')">Violet</button>
+            <button class="ctrl-btn c-red" onclick="forceResult('color', 'Red')">Red</button>
+        </div>
+
+        <div style="font-weight: bold; font-size: 14px;">Force Size</div>
+        <div class="ctrl-grid">
+            <button class="ctrl-btn c-big" onclick="forceResult('size', 'Big')">Big (5-9)</button>
+            <button class="ctrl-btn c-small" onclick="forceResult('size', 'Small')">Small (0-4)</button>
+        </div>
+
+        <div style="font-weight: bold; font-size: 14px;">Force Specific Number</div>
+        <div class="ctrl-grid" style="grid-template-columns: repeat(5, 1fr);">
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '0')">0</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '1')">1</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '2')">2</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '3')">3</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '4')">4</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '5')">5</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '6')">6</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '7')">7</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '8')">8</button>
+            <button class="ctrl-btn c-num" onclick="forceResult('number', '9')">9</button>
         </div>
     </div>
+
 </div>
 
 </div>
@@ -104,6 +164,7 @@ th { background-color: #f8f9fa; color: #555; }
 <script>
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com"; 
 let refreshInterval;
+let gameMonitorInterval;
 
 function loginAdmin() {
     let id = document.getElementById("admin-id").value;
@@ -117,6 +178,7 @@ function loginAdmin() {
 function logoutAdmin() {
     sessionStorage.removeItem("admin_logged_in");
     clearInterval(refreshInterval);
+    clearInterval(gameMonitorInterval);
     document.getElementById("admin-login-screen").style.display = "flex";
     document.getElementById("admin-dashboard").style.display = "none";
 }
@@ -138,11 +200,16 @@ function switchTab(tab) {
     document.getElementById('game-section').style.display = 'none';
 
     document.getElementById(`tab-${tab}`).classList.add('active');
+    clearInterval(gameMonitorInterval);
     
     if(tab === 'users') { document.getElementById('users-section').style.display = 'block'; fetchUsers(); }
     else if(tab === 'dep') { document.getElementById('deposit-section').style.display = 'grid'; fetchDeposits(); }
     else if(tab === 'with') { document.getElementById('withdraw-section').style.display = 'grid'; fetchWithdrawals(); }
-    else if(tab === 'game') { document.getElementById('game-section').style.display = 'block'; }
+    else if(tab === 'game') { 
+        document.getElementById('game-section').style.display = 'flex'; 
+        fetchGameLiveData();
+        gameMonitorInterval = setInterval(fetchGameLiveData, 2000); // 2 second auto-refresh for live bets
+    }
 }
 
 function manualRefresh() {
@@ -165,8 +232,7 @@ async function fetchUsers() {
 
 async function fetchDeposits() {
     try {
-        let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`); 
-        let data = await res.json(); 
+        let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`); let data = await res.json(); 
         let html = data.requests.length === 0 ? '<p style="text-align:center;">No pending deposits</p>' : ''; 
         data.requests.forEach(req => { 
             html += `<div class="card card-dep"><div class="details">Mobile: ${req.mobile}<br>Amt: ₹${req.amount}<br>UTR: ${req.utr}</div>
@@ -179,8 +245,7 @@ async function fetchDeposits() {
 
 async function fetchWithdrawals() {
     try {
-        let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`); 
-        let data = await res.json(); 
+        let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`); let data = await res.json(); 
         let html = data.requests.length === 0 ? '<p style="text-align:center;">No pending withdrawals</p>' : ''; 
         data.requests.forEach(req => { 
             html += `<div class="card card-with"><div class="details">Mobile: ${req.mobile}<br>Amt: ₹${req.amount}<br>UPI: ${req.upiId}</div>
@@ -195,32 +260,58 @@ async function processReq(type, id, action) {
     if(!confirm(`Proceed with ${action}?`)) return; 
     let endpoint = type === 'deposit' ? '/admin/approve-deposit' : '/admin/approve-withdraw'; 
     try { 
-        let res = await fetch(BACKEND_URL + endpoint, { 
-            method: 'POST', 
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({ requestId: id, action: action }) 
-        }); 
-        let data = await res.json(); 
-        alert(`✅ ${data.message}`); 
-        manualRefresh(); 
+        let res = await fetch(BACKEND_URL + endpoint, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ requestId: id, action: action }) }); 
+        let data = await res.json(); alert(`✅ ${data.message}`); manualRefresh(); 
     } catch(e) { alert('❌ Server Error'); }
 }
 
-async function forceResult(color, number) {
-    if(!confirm(`Are you sure you want to make ${color} win the next round?`)) return;
+// 🌟 LIVE GAME MONITOR & CONTROL LOGIC 🌟
+async function fetchGameLiveData() {
+    try {
+        let res = await fetch(`${BACKEND_URL}/admin/live-game-data`);
+        let data = await res.json();
+        
+        // Update Period
+        document.getElementById("live-period-id").innerText = data.period;
+
+        // Update Bets amounts
+        let b = data.bets;
+        let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        keys.forEach(k => { document.getElementById(`b-${k}`).innerText = `₹${b[k]}`; });
+
+        // Update History Table
+        let histHTML = "";
+        data.history.forEach(h => {
+            let badgeColor = h.color === 'Green' ? '#17b15e' : (h.color === 'Red' ? '#ff2a2a' : '#9c27b0');
+            histHTML += `<tr>
+                <td>${h.period}</td>
+                <td style="font-weight:bold; font-size:16px;">${h.number}</td>
+                <td>${h.size}</td>
+                <td><span class="badge" style="background:${badgeColor};">${h.color}</span></td>
+            </tr>`;
+        });
+        document.getElementById("live-history-body").innerHTML = histHTML;
+
+        // Update Status Box
+        if (data.nextForce) {
+            document.getElementById("force-status").innerHTML = `✅ Fixed Next Winner: <span style="color:red; text-transform:uppercase;">${data.nextForce.value}</span>`;
+        } else {
+            document.getElementById("force-status").innerHTML = "Status: Random (No forced result)";
+        }
+    } catch (e) {}
+}
+
+async function forceResult(type, value) {
+    if(!confirm(`Are you sure you want to FORCE ${value} to win?`)) return;
     try {
         let res = await fetch(`${BACKEND_URL}/admin/set-game-result`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ color: color, number: number })
+            body: JSON.stringify({ type: type, value: value })
         });
         let data = await res.json();
-        if(data.success) {
-            document.getElementById("force-status").innerHTML = `✅ Fixed Next Winner: <span style="color:red;">${color}</span>.`;
-        }
-    } catch(e) {
-        alert("Failed to connect to server!");
-    }
+        fetchGameLiveData(); // Instant refresh
+    } catch(e) { alert("Failed to connect!"); }
 }
 </script>
 </body>
