@@ -31,10 +31,10 @@ th { background-color: #f8f9fa; color: #555; }
 .btn-approve { background: #17b15e; }
 .btn-reject { background: #ff2a2a; }
 
-/* 🌟 GAME CONTROL SPECIFIC CSS 🌟 */
+/* 🌟 GAME CONTROL CSS 🌟 */
 .game-layout { display: flex; gap: 20px; flex-wrap: wrap; }
 .game-col { flex: 1; min-width: 320px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-.game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px; display:flex; justify-content: space-between;}
+.game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px; display:flex; justify-content: space-between; align-items: center;}
 .live-bet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
 .bet-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #ddd; }
 .bet-box span { display: block; font-size: 12px; color: #666; font-weight: bold;}
@@ -45,7 +45,8 @@ th { background-color: #f8f9fa; color: #555; }
 .c-big { background: #ff9800; } .c-small { background: #2196f3; }
 .c-num { background: #34495e; }
 .status-box { background: #e3f2fd; color: #0b5394; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px;}
-.badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: white; }
+.badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: white; display: inline-block; min-width: 40px; text-align: center;}
+#server-status { font-size: 12px; padding: 5px 10px; border-radius: 15px; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -72,7 +73,7 @@ th { background-color: #f8f9fa; color: #555; }
 <div class="tab active" id="tab-users" onclick="switchTab('users')"><i class="fas fa-users"></i> Users</div>
 <div class="tab" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Deposits</div>
 <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Withdrawals</div>
-<div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control & Live Bets</div>
+<div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control</div>
 </div>
 
 <div id="users-section" class="table-container">
@@ -85,20 +86,21 @@ th { background-color: #f8f9fa; color: #555; }
 <div id="deposit-section" class="card-grid" style="display: none;"></div>
 <div id="withdraw-section" class="card-grid" style="display: none;"></div>
 
-<!-- 🌟 NEW: ADVANCED GAME CONTROL & MONITOR 🌟 -->
+<!-- 🌟 GAME CONTROL & MONITOR 🌟 -->
 <div id="game-section" class="game-layout" style="display: none;">
     
     <!-- LEFT: Live Bets & History -->
     <div class="game-col">
         <h3>
-            <span><i class="fas fa-chart-line"></i> Live Bets</span>
-            <span style="font-size: 14px; background: #ffebee; color: #d32020; padding: 4px 10px; border-radius: 15px;">
-                Period: <span id="live-period-id">---</span> 
-                (<span id="live-timer-id">--</span>s)
-            </span>
+            <span><i class="fas fa-chart-line"></i> Live Game Monitor</span>
+            <span id="server-status" style="background:#fff3cd; color:#856404;">⏳ Connecting...</span>
         </h3>
         
-        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Colors & Sizes</div>
+        <div style="background: #ffebee; color: #d32020; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
+            Period: <span id="live-period-id">Loading...</span> | Timer: <span id="live-timer-id">--</span>s
+        </div>
+
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Colors & Sizes Bets</div>
         <div class="live-bet-grid">
             <div class="bet-box"><span>Green</span><strong id="b-Green">₹0</strong></div>
             <div class="bet-box"><span>Violet</span><strong id="b-Violet">₹0</strong></div>
@@ -107,7 +109,7 @@ th { background-color: #f8f9fa; color: #555; }
             <div class="bet-box"><span>Small (0-4)</span><strong id="b-Small">₹0</strong></div>
         </div>
 
-        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Numbers (0-9)</div>
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Numbers (0-9) Bets</div>
         <div class="live-bet-grid" style="grid-template-columns: repeat(5, 1fr);">
             <div class="bet-box"><span>0</span><strong id="b-0">₹0</strong></div>
             <div class="bet-box"><span>1</span><strong id="b-1">₹0</strong></div>
@@ -124,31 +126,33 @@ th { background-color: #f8f9fa; color: #555; }
         <h3 style="margin-top: 20px;"><i class="fas fa-history"></i> Last 10 Results</h3>
         <table>
             <thead><tr><th>Period</th><th>Number</th><th>Size</th><th>Color</th></tr></thead>
-            <tbody id="live-history-body"></tbody>
+            <tbody id="live-history-body">
+                <tr><td colspan='4' style='text-align:center;'>Fetching Data...</td></tr>
+            </tbody>
         </table>
     </div>
 
     <!-- RIGHT: Force Controls -->
     <div class="game-col">
         <h3><i class="fas fa-magic"></i> Set Next Result</h3>
-        <p style="font-size: 13px; color: #666;">Select the outcome you want to force for the next round. (Applies to the current running period).</p>
+        <p style="font-size: 13px; color: #666;">Click a button below to force the result for the CURRENT running period.</p>
         
         <div class="status-box" id="force-status">Status: Random (No forced result)</div>
 
-        <div style="margin-top: 15px; font-weight: bold; font-size: 14px;">Force Color</div>
+        <div style="margin-top: 15px; font-weight: bold; font-size: 14px; margin-bottom:5px;">Force Color</div>
         <div class="ctrl-grid">
             <button class="ctrl-btn c-green" onclick="forceResult('color', 'Green')">Green</button>
             <button class="ctrl-btn c-violet" onclick="forceResult('color', 'Violet')">Violet</button>
             <button class="ctrl-btn c-red" onclick="forceResult('color', 'Red')">Red</button>
         </div>
 
-        <div style="font-weight: bold; font-size: 14px;">Force Size</div>
+        <div style="font-weight: bold; font-size: 14px; margin-bottom:5px;">Force Size</div>
         <div class="ctrl-grid">
             <button class="ctrl-btn c-big" onclick="forceResult('size', 'Big')">Big (5-9)</button>
             <button class="ctrl-btn c-small" onclick="forceResult('size', 'Small')">Small (0-4)</button>
         </div>
 
-        <div style="font-weight: bold; font-size: 14px;">Force Specific Number</div>
+        <div style="font-weight: bold; font-size: 14px; margin-bottom:5px;">Force Specific Number</div>
         <div class="ctrl-grid" style="grid-template-columns: repeat(5, 1fr);">
             <button class="ctrl-btn c-num" onclick="forceResult('number', '0')">0</button>
             <button class="ctrl-btn c-num" onclick="forceResult('number', '1')">1</button>
@@ -191,7 +195,6 @@ function showDashboard() {
     document.getElementById("admin-login-screen").style.display = "none";
     document.getElementById("admin-dashboard").style.display = "block";
     switchTab('users'); 
-    refreshInterval = setInterval(manualRefresh, 5000);
 }
 
 window.onload = () => { if(sessionStorage.getItem("admin_logged_in") === "true") showDashboard(); };
@@ -204,24 +207,42 @@ function switchTab(tab) {
     document.getElementById('game-section').style.display = 'none';
 
     document.getElementById(`tab-${tab}`).classList.add('active');
+    
+    // Clear all intervals first
+    clearInterval(refreshInterval);
     clearInterval(gameMonitorInterval);
     
-    if(tab === 'users') { document.getElementById('users-section').style.display = 'block'; fetchUsers(); }
-    else if(tab === 'dep') { document.getElementById('deposit-section').style.display = 'grid'; fetchDeposits(); }
-    else if(tab === 'with') { document.getElementById('withdraw-section').style.display = 'grid'; fetchWithdrawals(); }
+    if(tab === 'users') { 
+        document.getElementById('users-section').style.display = 'block'; 
+        fetchUsers(); 
+        refreshInterval = setInterval(fetchUsers, 10000);
+    }
+    else if(tab === 'dep') { 
+        document.getElementById('deposit-section').style.display = 'grid'; 
+        fetchDeposits(); 
+        refreshInterval = setInterval(fetchDeposits, 10000);
+    }
+    else if(tab === 'with') { 
+        document.getElementById('withdraw-section').style.display = 'grid'; 
+        fetchWithdrawals(); 
+        refreshInterval = setInterval(fetchWithdrawals, 10000);
+    }
     else if(tab === 'game') { 
         document.getElementById('game-section').style.display = 'flex'; 
         fetchGameLiveData();
-        gameMonitorInterval = setInterval(fetchGameLiveData, 1000); // 1 second auto-refresh to show smooth timer
+        gameMonitorInterval = setInterval(fetchGameLiveData, 1500); // 1.5 second Auto-Refresh for Game
     }
 }
 
 function manualRefresh() {
-    if(document.getElementById('tab-users').classList.contains('active')) fetchUsers();
-    else if(document.getElementById('tab-dep').classList.contains('active')) fetchDeposits();
-    else if(document.getElementById('tab-with').classList.contains('active')) fetchWithdrawals();
+    let activeTab = document.querySelector('.tab.active').id;
+    if(activeTab === 'tab-users') fetchUsers();
+    else if(activeTab === 'tab-dep') fetchDeposits();
+    else if(activeTab === 'tab-with') fetchWithdrawals();
+    else if(activeTab === 'tab-game') fetchGameLiveData();
 }
 
+/* --- API CALLS (USERS, DEPOSITS, WITHDRAWALS) --- */
 async function fetchUsers() {
     try {
         let res = await fetch(`${BACKEND_URL}/admin/users`);
@@ -269,33 +290,50 @@ async function processReq(type, id, action) {
     } catch(e) { alert('❌ Server Error'); }
 }
 
-// 🌟 LIVE GAME MONITOR & CONTROL LOGIC 🌟
+/* 🌟 CRASH-PROOF LIVE GAME MONITOR LOGIC 🌟 */
 async function fetchGameLiveData() {
+    let statusEl = document.getElementById("server-status");
     try {
         let res = await fetch(`${BACKEND_URL}/admin/live-game-data`);
+        
+        if (!res.ok) throw new Error("Server disconnected");
+        
         let data = await res.json();
         
-        // Ensure EXACT period sync with the game
-        document.getElementById("live-period-id").innerText = data.period;
-        document.getElementById("live-timer-id").innerText = data.time; // Live Countdown Timer in Admin Panel
+        // Show Online Status
+        statusEl.innerHTML = "🟢 Connected";
+        statusEl.style.background = "#d4edda";
+        statusEl.style.color = "#155724";
+        
+        // Update Period & Timer
+        document.getElementById("live-period-id").innerText = data.period || "---";
+        document.getElementById("live-timer-id").innerText = data.time || "0";
 
-        // Update Bets amounts dynamically
-        let b = data.bets;
-        let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        keys.forEach(k => { document.getElementById(`b-${k}`).innerText = `₹${b[k]}`; });
+        // Update Bets amounts dynamically safely
+        if(data.bets) {
+            let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            keys.forEach(k => { 
+                let el = document.getElementById(`b-${k}`);
+                if(el) el.innerText = `₹${data.bets[k] || 0}`; 
+            });
+        }
 
-        // Build Last 10 Table
-        let histHTML = "";
-        data.history.forEach(h => {
-            let badgeColor = h.color === 'Green' ? '#17b15e' : (h.color === 'Red' ? '#ff2a2a' : '#9c27b0');
-            histHTML += `<tr>
-                <td>${h.period}</td>
-                <td style="font-weight:bold; font-size:16px;">${h.number}</td>
-                <td>${h.size}</td>
-                <td><span class="badge" style="background:${badgeColor};">${h.color}</span></td>
-            </tr>`;
-        });
-        document.getElementById("live-history-body").innerHTML = histHTML;
+        // Build Last 10 Table Safely
+        if(data.history && data.history.length > 0) {
+            let histHTML = "";
+            data.history.forEach(h => {
+                let badgeColor = h.color === 'Green' ? '#17b15e' : (h.color === 'Red' ? '#ff2a2a' : '#9c27b0');
+                histHTML += `<tr>
+                    <td>${h.period}</td>
+                    <td style="font-weight:bold; font-size:16px;">${h.number}</td>
+                    <td>${h.size}</td>
+                    <td><span class="badge" style="background:${badgeColor};">${h.color}</span></td>
+                </tr>`;
+            });
+            document.getElementById("live-history-body").innerHTML = histHTML;
+        } else {
+            document.getElementById("live-history-body").innerHTML = "<tr><td colspan='4' style='text-align:center;'>Waiting for history...</td></tr>";
+        }
 
         // Display current forced status if any
         if (data.nextForce) {
@@ -303,11 +341,17 @@ async function fetchGameLiveData() {
         } else {
             document.getElementById("force-status").innerHTML = "Status: Random (No forced result)";
         }
-    } catch (e) {}
+        
+    } catch (e) {
+        // Show Offline Status if fetch fails
+        statusEl.innerHTML = "🔴 Disconnected";
+        statusEl.style.background = "#f8d7da";
+        statusEl.style.color = "#721c24";
+    }
 }
 
 async function forceResult(type, value) {
-    if(!confirm(`Are you sure you want to FORCE ${value} to win?`)) return;
+    if(!confirm(`Are you sure you want to FORCE ${value} to win this period?`)) return;
     try {
         let res = await fetch(`${BACKEND_URL}/admin/set-game-result`, {
             method: 'POST',
@@ -316,7 +360,7 @@ async function forceResult(type, value) {
         });
         let data = await res.json();
         fetchGameLiveData(); // Instant refresh after setting result
-    } catch(e) { alert("Failed to connect!"); }
+    } catch(e) { alert("❌ Failed to connect to Server!"); }
 }
 </script>
 </body>
