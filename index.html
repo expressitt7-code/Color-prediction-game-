@@ -163,7 +163,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <!-- 🌟 HEADER 🌟 -->
-<div class="header">
+<div class="header" id="main-header" style="display:none;">
 <div class="header-left"><i class="fas fa-chevron-left" style="margin-right: 5px;"></i> <span id="page-title">Win Go</span></div>
 
 <!-- MIDDLE ID SECTION -->
@@ -173,11 +173,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <div class="header-right">
 <div class="balance-box"><i class="fas fa-wallet"></i> ₹<span id="header-total-balance">0.00</span></div>
+<i class="fas fa-sign-out-alt" style="margin-left: 10px; cursor: pointer;" onclick="logoutUser()" title="Logout"></i>
 </div>
 </div>
 
 <!-- PAGE 1: GAME -->
-<div id="page-game" class="page-content page-active">
+<div id="page-game" class="page-content">
 <div class="ticket-banner">
 <div class="ticket-left">
 <div style="font-size: 14px;"><i class="fas fa-book"></i> How to play</div>
@@ -220,7 +221,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <table class="history-table" id="table-game-history">
-<thead><tr><th>Period</th><th>Number</th><th>Big Small</th><th>Color</th></tr></thead>
+<thead><tr><th>Period</th><th>Number</th><th>Size</th><th>Color</th></tr></thead>
 <tbody id="history-body"></tbody>
 </table>
 <table class="history-table" id="table-my-history" style="display: none;">
@@ -300,7 +301,7 @@ Your UID: <span id="display-uid" style="color: #ff3e3e;">---</span>
 </div>
 
 <!-- 🌟 BOTTOM NAV (4 Tabs) 🌟 -->
-<div class="bottom-nav">
+<div class="bottom-nav" id="main-nav" style="display:none;">
 <div class="nav-item nav-active" id="nav-game" onclick="switchNavPage('game')"><i class="fas fa-gamepad"></i><span>Win Go</span></div>
 <div class="nav-item" id="nav-task" onclick="switchNavPage('task')"><i class="fas fa-tasks"></i><span>Task</span></div>
 <div class="nav-item" id="nav-invite" onclick="switchNavPage('invite')"><i class="fas fa-share-alt"></i><span>Invite</span></div>
@@ -454,69 +455,30 @@ Available Balance: ₹<span id="footer-balance-pop">0.00</span>
 </div>
 </div>
 
-<!-- SCRIPTS -->
+<!-- SCRIPTS (LOGIC INTEGRATION) -->
 <script>
 window.Telegram.WebApp.ready();
 window.Telegram.WebApp.expand();
 
-// 🌟 URL YAHAN UPDATE KIYA GAYA HAI 🌟
+// 🌟 UPDATED BACKEND URL 🌟
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
 
 let currentMobile = localStorage.getItem("game_mobile") || "";
 
-// ==========================================
-// 🌟 ID & BALANCE LOCAL STORAGE SETUP 🌟
-// ==========================================
-let uniqueId = localStorage.getItem("game_unique_id");
-if(!uniqueId) {
-uniqueId = "UTR" + Math.floor(10000000 + Math.random() * 90000000);
-localStorage.setItem("game_unique_id", uniqueId);
-}
-
-let mainBalance = parseFloat(localStorage.getItem("game_main_balance"));
-if(isNaN(mainBalance)) {
-mainBalance = 150.50; // New user starting balance
-localStorage.setItem("game_main_balance", mainBalance);
-}
-
-// 🌟 BONUS BALANCE LOCAL STORAGE FIX 🌟
-let bonusBalance = parseFloat(localStorage.getItem("game_bonus_balance"));
-if(isNaN(bonusBalance)) {
-bonusBalance = 0.00;
-localStorage.setItem("game_bonus_balance", bonusBalance);
-}
-
+// 🌟 VARIABLES FROM DATABASE 🌟
+let mainBalance = 0.00;
 let depositBalance = 0.00;
+let bonusBalance = 0.00;
+let uniqueId = "---";
 
-function updateBalanceDisplays() {
-localStorage.setItem("game_main_balance", mainBalance);
-localStorage.setItem("game_bonus_balance", bonusBalance);
-
-// Header me total balance (Main + Bonus + Deposit) dikhane ke liye
-let totalBal = mainBalance + depositBalance + bonusBalance;
-document.getElementById('header-total-balance').innerText = totalBal.toFixed(2);
-
-// Wallet screen par sabhi alag alag balance
-document.getElementById('wallet-main-bal').innerText = mainBalance.toFixed(2);
-document.getElementById('wallet-dep-bal').innerText = depositBalance.toFixed(2);
-document.getElementById('wallet-bonus-bal').innerText = bonusBalance.toFixed(2);
-
-// IDs update
-document.getElementById("header-uid").innerText = uniqueId;
-document.getElementById("display-uid").innerText = uniqueId;
-
-if(document.getElementById("toggle-balance")) document.getElementById("toggle-balance").innerText = totalBal.toFixed(2);
-if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = totalBal.toFixed(2);
-}
-
-updateBalanceDisplays(); // Load on start
-
-// Balance / Game Variables
 let currentPeriod = 0;
 let activeBets = [];
+let dbDepositHistory = [];
+let dbWithdrawHistory = [];
 let lastProcessedPeriod = 0;
 let activeTab = 'game';
 let isSignupMode = false;
+let gameTimerInterval;
 
 // Bet Variables
 let popSelection = "";
@@ -525,478 +487,509 @@ let popQty = 1;
 let popMul = 1;
 let popTotal = 10;
 
+// ==========================================
+// 🌟 INITIALIZATION & AUTH 🌟
+// ==========================================
+function initApp() {
+    if(currentMobile) {
+        document.getElementById("auth-screen").style.display = "none";
+        document.getElementById("main-header").style.display = "flex";
+        document.getElementById("main-nav").style.display = "flex";
+        switchNavPage('game');
+        fetchAccountData();
+        gameTimerInterval = setInterval(fetchGameStatus, 1000);
+    } else {
+        document.getElementById("auth-screen").style.display = "flex";
+        document.getElementById("main-header").style.display = "none";
+        document.getElementById("main-nav").style.display = "none";
+    }
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const refParam = urlParams.get('ref');
 if (refParam) {
-isSignupMode = true;
-document.getElementById("auth-heading").innerText = "Sign Up";
-document.getElementById("auth-ref").style.display = "block";
-document.getElementById("auth-ref").value = refParam;
-document.getElementById("auth-submit-btn").innerText = "Sign Up";
-}
-
-if (currentMobile) {
-document.getElementById("auth-screen").style.display = "none";
+    isSignupMode = true;
+    document.getElementById("auth-heading").innerText = "Sign Up";
+    document.getElementById("auth-ref").style.display = "block";
+    document.getElementById("auth-ref").value = refParam;
+    document.getElementById("auth-submit-btn").innerText = "Sign Up";
 }
 
 function toggleAuthMode() {
-isSignupMode = !isSignupMode;
-document.getElementById("auth-heading").innerText = isSignupMode ? "Sign Up" : "Login";
-document.getElementById("auth-submit-btn").innerText = isSignupMode ? "Sign Up" : "Login";
-document.getElementById("auth-ref").style.display = isSignupMode ? "block" : "none";
-document.getElementById("auth-switch-text").innerText = isSignupMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
+    isSignupMode = !isSignupMode;
+    document.getElementById("auth-heading").innerText = isSignupMode ? "Sign Up" : "Login";
+    document.getElementById("auth-submit-btn").innerText = isSignupMode ? "Sign Up" : "Login";
+    document.getElementById("auth-ref").style.display = isSignupMode ? "block" : "none";
+    document.getElementById("auth-switch-text").innerText = isSignupMode ? "Already have an account? Login" : "Don't have an account? Sign Up";
 }
 
 async function handleAuth() {
-let mobile = document.getElementById("auth-mobile").value.trim();
-let password = document.getElementById("auth-password").value.trim();
-let refCode = document.getElementById("auth-ref").value.trim();
+    let mobile = document.getElementById("auth-mobile").value.trim();
+    let password = document.getElementById("auth-password").value.trim();
+    if(!mobile || !password) return alert("Enter mobile and password");
 
-if(!mobile || !password) { alert("Enter mobile and password"); return; }
+    let endpoint = isSignupMode ? '/register' : '/login';
+    let btn = document.getElementById("auth-submit-btn");
+    btn.innerText = "Processing...";
 
-let endpoint = isSignupMode ? '/register' : '/login';
-let payload = isSignupMode ? { mobile, password, refCode } : { mobile, password };
-
-try {
-let res = await fetch(`${BACKEND_URL}${endpoint}`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
-});
-let data = await res.json();
-
-if(data.success) {
-localStorage.setItem("game_mobile", mobile);
-currentMobile = mobile;
-document.getElementById("auth-screen").style.display = "none";
-alert(data.message);
-} else {
-alert(data.message);
+    try {
+        let res = await fetch(`${BACKEND_URL}${endpoint}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile, password })
+        });
+        let data = await res.json();
+        
+        if(data.success) {
+            localStorage.setItem("game_mobile", mobile);
+            currentMobile = mobile;
+            alert(data.message);
+            initApp();
+        } else {
+            alert(data.message);
+        }
+    } catch(e) { alert("Server error"); }
+    btn.innerText = isSignupMode ? "Sign Up" : "Login";
 }
-} catch(e) { alert("Server error"); }
+
+function logoutUser() {
+    localStorage.removeItem("game_mobile");
+    currentMobile = "";
+    clearInterval(gameTimerInterval);
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+    initApp();
+}
+
+// ==========================================
+// 🌟 DATA FETCHING (SERVER SYNC) 🌟
+// ==========================================
+async function fetchAccountData() {
+    if(!currentMobile) return;
+    try {
+        let res = await fetch(`${BACKEND_URL}/get-account-data`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ mobile: currentMobile })
+        });
+        let data = await res.json();
+        if(data.success) {
+            mainBalance = data.balance || 0;
+            depositBalance = data.depositBalance || 0;
+            bonusBalance = data.bonusBalance || 0;
+            uniqueId = data.uniqueId || "---";
+            
+            // Sync history from server if available
+            if(data.gameHistory) activeBets = data.gameHistory;
+            if(data.deposits) dbDepositHistory = data.deposits;
+            if(data.withdrawals) dbWithdrawHistory = data.withdrawals;
+            
+            updateBalanceDisplays();
+        } else {
+            logoutUser(); // If user not found on server
+        }
+    } catch(e) { console.log(e); }
+}
+
+function updateBalanceDisplays() {
+    let totalBal = mainBalance + depositBalance + bonusBalance;
+    document.getElementById('header-total-balance').innerText = totalBal.toFixed(2);
+    document.getElementById('wallet-main-bal').innerText = mainBalance.toFixed(2);
+    document.getElementById('wallet-dep-bal').innerText = depositBalance.toFixed(2);
+    document.getElementById('wallet-bonus-bal').innerText = bonusBalance.toFixed(2);
+    document.getElementById("header-uid").innerText = uniqueId;
+    document.getElementById("display-uid").innerText = uniqueId;
+
+    if(document.getElementById("toggle-balance")) document.getElementById("toggle-balance").innerText = totalBal.toFixed(2);
+    if(document.getElementById("footer-balance-pop")) document.getElementById("footer-balance-pop").innerText = totalBal.toFixed(2);
+    
+    if(activeTab === 'my') renderMyHistory();
 }
 
 function copyReferralLink() {
-let link = window.location.origin + window.location.pathname + "?ref=" + uniqueId;
-navigator.clipboard.writeText(link);
-alert("Referral Link Copied!");
+    let link = window.location.origin + window.location.pathname + "?ref=" + uniqueId;
+    navigator.clipboard.writeText(link);
+    alert("Referral Link Copied!");
 }
 
-// 🌟 DYNAMIC NAVIGATION LOGIC (4 TABS) 🌟
+// ==========================================
+// 🌟 NAVIGATION & TABS 🌟
+// ==========================================
 function switchNavPage(pageId) {
-document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
-document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-document.getElementById('page-' + pageId).classList.add('page-active');
-document.getElementById('nav-' + pageId).classList.add('nav-active');
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('page-active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+    document.getElementById('page-' + pageId).classList.add('page-active');
+    document.getElementById('nav-' + pageId).classList.add('nav-active');
 }
 
 function switchTab(tabName) {
-activeTab = tabName;
-document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
-if(tabName === 'game') {
-document.getElementById('tab-game-hist').classList.add('tab-active');
-document.getElementById('table-game-history').style.display = 'table';
-document.getElementById('table-my-history').style.display = 'none';
-} else {
-document.getElementById('tab-my-hist').classList.add('tab-active');
-document.getElementById('table-game-history').style.display = 'none';
-document.getElementById('table-my-history').style.display = 'table';
-renderMyHistory();
-}
+    activeTab = tabName;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+    if(tabName === 'game') {
+        document.getElementById('tab-game-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'table';
+        document.getElementById('table-my-history').style.display = 'none';
+    } else {
+        document.getElementById('tab-my-hist').classList.add('tab-active');
+        document.getElementById('table-game-history').style.display = 'none';
+        document.getElementById('table-my-history').style.display = 'table';
+        renderMyHistory();
+    }
 }
 
 function renderMyHistory() {
-let myHistHTML = "";
-activeBets.slice().reverse().forEach(bet => {
-let color = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
-myHistHTML += `<tr><td>${bet.period}</td><td>${bet.selection}</td><td>₹${bet.amount}</td><td style="color:${color}; font-weight:bold;">${bet.status}</td></tr>`;
-});
-document.getElementById("my-history-body").innerHTML = myHistHTML || "<tr><td colspan='4'>No history</td></tr>";
+    let myHistHTML = "";
+    // Show newest first
+    let reversedBets = [...activeBets].reverse();
+    reversedBets.forEach(bet => {
+        let color = bet.status === 'Won' ? '#17b15e' : (bet.status === 'Lost' ? '#ff2a2a' : '#ff9800');
+        myHistHTML += `<tr><td>${bet.period}</td><td style="font-weight:bold;">${bet.selection}</td><td>₹${bet.amount}</td><td style="color:${color}; font-weight:bold;">${bet.status}</td></tr>`;
+    });
+    document.getElementById("my-history-body").innerHTML = myHistHTML || "<tr><td colspan='4'>No history</td></tr>";
 }
 
-// 🌟 PREMIUM BET POPUP LOGIC 🌟
+// ==========================================
+// 🌟 BETTING POPUP & API 🌟
+// ==========================================
 function openPopup(sel, colorHex) {
-popSelection = sel;
-document.getElementById("pop-selection-text").innerText = sel;
-document.getElementById("pop-color-dot").style.backgroundColor = colorHex || "#17b15e";
-document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
+    popSelection = sel;
+    document.getElementById("pop-selection-text").innerText = sel;
+    document.getElementById("pop-color-dot").style.backgroundColor = colorHex || "#17b15e";
+    document.getElementById("pop-period-id").innerText = "Period: " + currentPeriod;
 
-popBaseBet = 10; popQty = 1; popMul = 1;
+    popBaseBet = 10; popQty = 1; popMul = 1;
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#bet-preset-grid .preset-btn')[0].classList.add('active');
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.m-btn')[0].classList.add('active');
 
-document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
-document.querySelectorAll('#bet-preset-grid .preset-btn')[0].classList.add('active');
-document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-document.querySelectorAll('.m-btn')[0].classList.add('active');
-
-calculateTotal();
-document.getElementById("bet-popup").style.display = "flex";
-
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    calculateTotal();
+    document.getElementById("bet-popup").style.display = "flex";
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 function closePopup() { document.getElementById("bet-popup").style.display = "none"; }
 
 function setBase(amt, btn) {
-popBaseBet = amt;
-document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-calculateTotal();
+    popBaseBet = amt;
+    document.querySelectorAll('#bet-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calculateTotal();
 }
 function updateQty(change) {
-if (popQty + change >= 1) popQty += change;
-calculateTotal();
+    if (popQty + change >= 1) popQty += change;
+    calculateTotal();
 }
 function setMul(m, btn) {
-popMul = m;
-document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-calculateTotal();
+    popMul = m;
+    document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calculateTotal();
 }
 function calculateTotal() {
-popTotal = popBaseBet * popQty * popMul;
-document.getElementById("calc-qty").value = popQty;
-document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2);
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    popTotal = popBaseBet * popQty * popMul;
+    document.getElementById("calc-qty").value = popQty;
+    document.getElementById("pop-total-cost").innerText = "₹" + popTotal.toFixed(2);
+    if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.selectionChanged();
 }
 
 async function placeFinalBet() {
-let totalTotal = mainBalance + depositBalance + bonusBalance;
-if (totalTotal < popTotal) { alert("Insufficient Balance!"); return; }
+    let totalTotal = mainBalance + depositBalance + bonusBalance;
+    if (totalTotal < popTotal) { alert("Insufficient Balance!"); return; }
 
-const btn = document.getElementById("confirmBetBtn");
-btn.innerText = "Processing...";
-btn.disabled = true;
+    const btn = document.getElementById("confirmBetBtn");
+    btn.innerText = "Processing...";
+    btn.disabled = true;
 
-try {
-let res = await fetch(`${BACKEND_URL}/bet`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
-});
-let data = await res.json();
-if(data.success) {
-mainBalance = data.balance;
-depositBalance = data.depositBalance;
-bonusBalance = data.bonusBalance;
-updateBalanceDisplays();
-activeBets.push({ period: currentPeriod, selection: popSelection, amount: popTotal, status: 'Pending' });
-closePopup();
-alert("Bet Placed Successfully!");
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
-} else { alert(data.message); }
-} catch(e) { alert("Error"); }
+    try {
+        let res = await fetch(`${BACKEND_URL}/bet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, betSelection: popSelection, betAmount: popTotal, period: currentPeriod })
+        });
+        let data = await res.json();
+        
+        if(data.success) {
+            alert(data.message);
+            fetchAccountData(); // Refresh all balances & history from server
+            closePopup();
+            if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
+        } else { alert(data.message); }
+    } catch(e) { alert("Network Error"); }
 
-btn.innerText = "CONFIRM BET";
-btn.disabled = false;
+    btn.innerText = "CONFIRM BET";
+    btn.disabled = false;
 }
 
-// 🌟 DEPOSIT & WITHDRAW LOGIC 🌟
+// ==========================================
+// 🌟 DEPOSIT & WITHDRAW APIs 🌟
+// ==========================================
 function openDepositPopup() { document.getElementById("deposit-popup").style.display = "flex"; }
 function closeDepositPopup() { document.getElementById("deposit-popup").style.display = "none"; }
 function openWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "flex"; }
 function closeWithdrawPopup() { document.getElementById("withdraw-popup").style.display = "none"; }
 
 function setDepositAmount(amt, btn) {
-document.getElementById("deposit-input").value = amt;
-document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
+    document.getElementById("deposit-input").value = amt;
+    document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 }
-function clearPresetActive() {
-document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active'));
-}
+function clearPresetActive() { document.querySelectorAll('#deposit-preset-grid .preset-btn').forEach(b => b.classList.remove('active')); }
 
 function copyMerchantUPI() {
-navigator.clipboard.writeText("Username@ybl");
-alert("UPI ID Copied: Username@ybl");
-if(window.Telegram.WebApp.HapticFeedback) window.Telegram.WebApp.HapticFeedback.notificationOccurred("success");
+    navigator.clipboard.writeText("Username@ybl");
+    alert("UPI ID Copied!");
 }
 
 function proceedToPaymentApp() {
-let amt = parseFloat(document.getElementById("deposit-input").value);
-if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
-let upiId = "Username@ybl";
-let intentLink = `intent://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR#Intent;scheme=upi;end`;
-let upiLink = `upi://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR`;
-let isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
-let finalLink = isAndroid ? intentLink : upiLink;
-let tempLink = document.createElement('a');
-tempLink.href = finalLink;
-tempLink.target = "_top";
-document.body.appendChild(tempLink);
-tempLink.click();
-document.body.removeChild(tempLink);
+    let amt = parseFloat(document.getElementById("deposit-input").value);
+    if(isNaN(amt) || amt < 100) return alert("Minimum deposit is ₹100");
+    let upiId = "Username@ybl";
+    let intentLink = `intent://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR#Intent;scheme=upi;end`;
+    let upiLink = `upi://pay?pa=${upiId}&pn=WinGoGame&am=${amt}&cu=INR`;
+    let isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+    let tempLink = document.createElement('a');
+    tempLink.href = isAndroid ? intentLink : upiLink;
+    tempLink.target = "_top";
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
 }
 
 async function submitDepositRequest() {
-let amt = parseFloat(document.getElementById("deposit-input").value);
-let utr = document.getElementById("utr-input").value.trim();
+    let amt = parseFloat(document.getElementById("deposit-input").value);
+    let utr = document.getElementById("utr-input").value.trim();
 
-if(isNaN(amt) || amt < 100) { alert("Minimum deposit amount is ₹100"); return; }
-if(!utr || utr.length < 10) { alert("Please enter a valid 12-Digit UTR number"); return; }
+    if(isNaN(amt) || amt < 100) return alert("Minimum deposit is ₹100");
+    if(!utr || utr.length < 10) return alert("Enter valid 12-Digit UTR");
 
-try {
-let res = await fetch(`${BACKEND_URL}/deposit-request`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
-});
-let data = await res.json();
-if(data.success) {
-alert(data.message);
-closeDepositPopup();
-document.getElementById("utr-input").value = "";
-} else { alert(data.message); }
-} catch(e) { alert("Server error"); }
+    try {
+        let res = await fetch(`${BACKEND_URL}/deposit-request`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, amount: amt, utr })
+        });
+        let data = await res.json();
+        alert(data.message);
+        if(data.success) {
+            closeDepositPopup();
+            document.getElementById("utr-input").value = "";
+            fetchAccountData(); // refresh history
+        }
+    } catch(e) { alert("Server error"); }
 }
 
 async function submitWithdrawRequest() {
-let amt = parseFloat(document.getElementById("withdraw-amount-input").value);
-let upiId = document.getElementById("withdraw-upi-input").value;
+    let amt = parseFloat(document.getElementById("withdraw-amount-input").value);
+    let upiId = document.getElementById("withdraw-upi-input").value.trim();
 
-if(isNaN(amt) || amt < 500) { alert("Withdrawal amount must be at least ₹500"); return; }
+    if(isNaN(amt) || amt < 500) return alert("Min Withdraw ₹500");
+    if(!upiId) return alert("Enter UPI ID");
 
-try {
-let res = await fetch(`${BACKEND_URL}/withdraw-request`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ mobile: currentMobile, amount: amt, upiId })
-});
-let data = await res.json();
-if(data.success) {
-mainBalance = data.balance;
-updateBalanceDisplays();
-alert("Withdrawal submitted!");
-closeWithdrawPopup();
-} else { alert(data.message); }
-} catch(e) { alert("Server error"); }
+    try {
+        let res = await fetch(`${BACKEND_URL}/withdraw-request`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mobile: currentMobile, amount: amt, upiId })
+        });
+        let data = await res.json();
+        alert(data.message);
+        if(data.success) {
+            closeWithdrawPopup();
+            fetchAccountData(); // Updates balance and history
+        }
+    } catch(e) { alert("Server error"); }
 }
 
+// ==========================================
+// 🌟 TRANSACTION HISTORY POPUP 🌟
+// ==========================================
 function openHistoryPopup() { 
-document.getElementById("history-popup").style.display = "flex"; 
-loadHistoryData(); 
+    document.getElementById("history-popup").style.display = "flex"; 
+    fetchAccountData().then(() => loadHistoryData()); 
 }
-function closeHistoryPopup() { 
-document.getElementById("history-popup").style.display = "none"; 
-}
+function closeHistoryPopup() { document.getElementById("history-popup").style.display = "none"; }
 
 function switchHistTab(tabId, btn) {
-document.querySelectorAll(".hist-tab-content").forEach(tab => tab.classList.remove("active"));
-document.querySelectorAll(".hist-tab-btn").forEach(t => t.classList.remove("active"));
-
-document.getElementById(tabId).classList.add("active");
-btn.classList.add("active");
+    document.querySelectorAll(".hist-tab-content").forEach(tab => tab.classList.remove("active"));
+    document.querySelectorAll(".hist-tab-btn").forEach(t => t.classList.remove("active"));
+    document.getElementById(tabId).classList.add("active");
+    btn.classList.add("active");
 }
 
-const dummyDepositHistory = [
-{ id: "DEP90812", amount: 500, date: "18 Sep 2026", status: "approved" },
-{ id: "DEP90813", amount: 1000, date: "17 Sep 2026", status: "pending" }
-];
-
-const dummyWithdrawHistory = [
-{ id: "WDR70123", amount: 200, date: "16 Sep 2026", status: "approved" },
-{ id: "WDR70124", amount: 1500, date: "14 Sep 2026", status: "rejected" }
-];
-
 function loadHistoryData() {
-renderHistList(dummyDepositHistory, "depositHistList", "dep");
-renderHistList(dummyWithdrawHistory, "withdrawHistList", "wid");
+    // Uses data fetched directly from server DB
+    renderHistList(dbDepositHistory.slice().reverse(), "depositHistList", "dep");
+    renderHistList(dbWithdrawHistory.slice().reverse(), "withdrawHistList", "wid");
 }
 
 function renderHistList(data, containerId, type) {
-const container = document.getElementById(containerId);
-container.innerHTML = ""; 
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; 
 
-if (data.length === 0) {
-container.innerHTML = "<p style='text-align:center; color:#777; margin-top:20px;'>No records found.</p>";
-return;
+    if (!data || data.length === 0) {
+        container.innerHTML = "<p style='text-align:center; color:#777; margin-top:20px;'>No records found.</p>";
+        return;
+    }
+
+    data.forEach(txn => {
+        let sign = type === 'dep' ? '+' : '-';
+        let amountClass = type === 'dep' ? 'dep' : 'wid';
+        let html = `
+        <div class="txn-item">
+            <div class="txn-info">
+                <h4>ID: ${txn.id}</h4>
+                <p>${txn.date}</p>
+                <span class="txn-status ${txn.status}">${txn.status}</span>
+            </div>
+            <div class="txn-amount ${amountClass}">
+                ${sign} ₹${txn.amount}
+            </div>
+        </div>`;
+        container.innerHTML += html;
+    });
 }
 
-data.forEach(txn => {
-let sign = type === 'dep' ? '+' : '-';
-let amountClass = type === 'dep' ? 'dep' : 'wid';
-
-let html = `
-<div class="txn-item">
-<div class="txn-info">
-<h4>ID: ${txn.id}</h4>
-<p>${txn.date}</p>
-<span class="txn-status ${txn.status}">${txn.status}</span>
-</div>
-<div class="txn-amount ${amountClass}">
-${sign} ₹${txn.amount}
-</div>
-</div>
-`;
-container.innerHTML += html;
-});
-}
-
+// ==========================================
+// 🌟 MATH GAME (LOCAL BONUS REWARD) 🌟
+// ==========================================
 let adCallback = null;
 function playAd(type, callback) {
-adCallback = callback;
-document.getElementById('ad-sim-screen').style.display = 'flex';
-document.getElementById('ad-sim-title').innerText = (type === 'video') ? "Video Reward Ad Playing..." : "Interstitial Ad Playing...";
+    adCallback = callback;
+    document.getElementById('ad-sim-screen').style.display = 'flex';
+    document.getElementById('ad-sim-title').innerText = (type === 'video') ? "Video Reward Ad Playing..." : "Interstitial Ad Playing...";
+    let timeLeft = 3; 
+    document.getElementById('ad-sim-timer').innerText = timeLeft;
+    document.getElementById('ad-close-btn').style.display = 'none';
 
-let timeLeft = 3; 
-document.getElementById('ad-sim-timer').innerText = timeLeft;
-document.getElementById('ad-close-btn').style.display = 'none';
-
-let timer = setInterval(() => {
-timeLeft--;
-document.getElementById('ad-sim-timer').innerText = timeLeft;
-if(timeLeft <= 0) {
-clearInterval(timer);
-document.getElementById('ad-sim-timer').innerText = "Done";
-document.getElementById('ad-close-btn').style.display = 'block';
-document.getElementById('ad-close-btn').innerText = (type === 'video') ? "Claim Reward & Close" : "Close Ad";
-}
-}, 1000);
+    let timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('ad-sim-timer').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timer);
+            document.getElementById('ad-sim-timer').innerText = "Done";
+            document.getElementById('ad-close-btn').style.display = 'block';
+            document.getElementById('ad-close-btn').innerText = (type === 'video') ? "Claim Reward & Close" : "Close Ad";
+        }
+    }, 1000);
 }
 
 function closeAdSim() {
-document.getElementById('ad-sim-screen').style.display = 'none';
-if(adCallback) adCallback();
+    document.getElementById('ad-sim-screen').style.display = 'none';
+    if(adCallback) adCallback();
 }
 
-let mathStep = 1;
-let mathScore = 0;
-let correctAnswer = 0;
-let selectedDiv = null;
-let selectedVal = null;
-let mathOptionsArr = [];
+let mathStep = 1; let mathScore = 0; let correctAnswer = 0; let selectedVal = null; let mathOptionsArr = [];
 
 function startMathTask() {
-playAd('interstitial', () => {
-document.getElementById('task-start-screen').style.display = 'none';
-document.getElementById('task-game-screen').style.display = 'block';
-mathStep = 1;
-mathScore = 0;
-generateMathQuestion();
-});
+    playAd('interstitial', () => {
+        document.getElementById('task-start-screen').style.display = 'none';
+        document.getElementById('task-game-screen').style.display = 'block';
+        mathStep = 1; mathScore = 0; generateMathQuestion();
+    });
 }
 
 function generateMathQuestion() {
-document.getElementById('math-q-title').innerText = `Question ${mathStep}/5`;
+    document.getElementById('math-q-title').innerText = `Question ${mathStep}/5`;
+    let n1 = Math.floor(Math.random() * 9) + 1;
+    let n2 = Math.floor(Math.random() * 9) + 1;
+    let isPlus = Math.random() > 0.5;
 
-let n1 = Math.floor(Math.random() * 9) + 1;
-let n2 = Math.floor(Math.random() * 9) + 1;
-let isPlus = Math.random() > 0.5;
+    if(!isPlus && n1 < n2) { let temp = n1; n1 = n2; n2 = temp; }
+    document.getElementById('m-n1').innerText = n1;
+    document.getElementById('m-n2').innerText = n2;
+    document.getElementById('m-op').innerText = isPlus ? "+" : "-";
 
-if(!isPlus && n1 < n2) { let temp = n1; n1 = n2; n2 = temp; }
+    correctAnswer = isPlus ? (n1 + n2) : (n1 - n2);
+    mathOptionsArr = [correctAnswer];
+    while(mathOptionsArr.length < 4) {
+        let fakeAns = correctAnswer + Math.floor(Math.random() * 10) - 5;
+        if(!mathOptionsArr.includes(fakeAns) && fakeAns >= 0) mathOptionsArr.push(fakeAns);
+    }
+    mathOptionsArr.sort(() => Math.random() - 0.5);
 
-document.getElementById('m-n1').innerText = n1;
-document.getElementById('m-n2').innerText = n2;
-document.getElementById('m-op').innerText = isPlus ? "+" : "-";
-
-correctAnswer = isPlus ? (n1 + n2) : (n1 - n2);
-
-mathOptionsArr = [correctAnswer];
-while(mathOptionsArr.length < 4) {
-let fakeAns = correctAnswer + Math.floor(Math.random() * 10) - 5;
-if(!mathOptionsArr.includes(fakeAns) && fakeAns >= 0) {
-mathOptionsArr.push(fakeAns);
-}
-}
-mathOptionsArr.sort(() => Math.random() - 0.5);
-
-let optDivs = document.querySelectorAll('.m-opt');
-optDivs.forEach((div, index) => {
-div.innerText = mathOptionsArr[index];
-div.className = "m-opt"; 
-});
-
-selectedDiv = null;
-selectedVal = null;
+    let optDivs = document.querySelectorAll('.m-opt');
+    optDivs.forEach((div, index) => {
+        div.innerText = mathOptionsArr[index];
+        div.className = "m-opt"; 
+    });
+    selectedVal = null;
 }
 
 function selectMathOption(div, index) {
-document.querySelectorAll('.m-opt').forEach(d => d.classList.remove('selected'));
-div.classList.add('selected');
-selectedDiv = div;
-selectedVal = mathOptionsArr[index];
+    document.querySelectorAll('.m-opt').forEach(d => d.classList.remove('selected'));
+    div.classList.add('selected');
+    selectedVal = mathOptionsArr[index];
 }
 
 function submitMathAnswer() {
-if(selectedVal === null) {
-alert("Please select an answer first!");
-return;
-}
+    if(selectedVal === null) return alert("Please select an answer!");
+    
+    let selectedDiv = document.querySelector('.m-opt.selected');
+    if(selectedVal === correctAnswer) { selectedDiv.classList.add('correct'); mathScore++; } 
+    else { selectedDiv.classList.add('wrong'); }
 
-if(selectedVal === correctAnswer) {
-selectedDiv.classList.add('correct');
-mathScore++; 
-} else {
-selectedDiv.classList.add('wrong');
-}
-
-setTimeout(() => {
-playAd('interstitial', () => {
-mathStep++;
-if(mathStep > 5) {
-endMathGame();
-} else {
-generateMathQuestion();
-}
-});
-}, 1000); 
+    setTimeout(() => {
+        playAd('interstitial', () => {
+            mathStep++;
+            if(mathStep > 5) endMathGame();
+            else generateMathQuestion();
+        });
+    }, 1000); 
 }
 
 function endMathGame() {
-document.getElementById('task-game-screen').style.display = 'none';
-document.getElementById('final-score-text').innerText = mathScore;
-document.getElementById('final-reward-amt').innerText = mathScore; 
-
-document.getElementById('math-reward-popup').style.display = 'flex';
+    document.getElementById('task-game-screen').style.display = 'none';
+    document.getElementById('final-score-text').innerText = mathScore;
+    document.getElementById('final-reward-amt').innerText = mathScore; 
+    document.getElementById('math-reward-popup').style.display = 'flex';
 }
 
 function claimTaskReward() {
-if(mathScore === 0) {
-alert("You scored 0. No reward to claim.");
-document.getElementById('math-reward-popup').style.display = 'none';
-document.getElementById('task-start-screen').style.display = 'block';
-return;
+    if(mathScore === 0) {
+        alert("You scored 0. No reward.");
+        document.getElementById('math-reward-popup').style.display = 'none';
+        document.getElementById('task-start-screen').style.display = 'block';
+        return;
+    }
+    playAd('video', () => {
+        document.getElementById('math-reward-popup').style.display = 'none';
+        document.getElementById('task-start-screen').style.display = 'block';
+        
+        bonusBalance += mathScore;
+        updateBalanceDisplays();
+        alert(`Congratulations! ₹${mathScore} added to your Bonus Balance.`);
+    });
 }
 
-playAd('video', () => {
-document.getElementById('math-reward-popup').style.display = 'none';
-document.getElementById('task-start-screen').style.display = 'block';
-
-// 🌟 REWARD ADDITION TO BONUS BALANCE 🌟
-bonusBalance += mathScore;
-updateBalanceDisplays();
-
-alert(`Congratulations! ₹${mathScore} added to your Bonus Balance.`);
-});
-}
-
+// ==========================================
+// 🌟 GAME STATUS (1 MIN TIMER LOGIC) 🌟
+// ==========================================
 function fetchGameStatus() {
-fetch(`${BACKEND_URL}/game-status`)
-.then(res => res.json())
-.then(data => {
-currentPeriod = data.period;
-document.getElementById("period-display").innerText = currentPeriod;
-let timeStr = data.time.toString().padStart(2, '0');
-document.getElementById("sec1").innerText = timeStr[0];
-document.getElementById("sec2").innerText = timeStr[1];
+    fetch(`${BACKEND_URL}/game-status`)
+    .then(res => res.json())
+    .then(data => {
+        currentPeriod = data.period;
+        document.getElementById("period-display").innerText = currentPeriod;
+        let timeStr = data.time.toString().padStart(2, '0');
+        document.getElementById("sec1").innerText = timeStr[0];
+        document.getElementById("sec2").innerText = timeStr[1];
+        
+        let historyHTML = "";
+        data.results.forEach(res => {
+            let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
+            historyHTML += `<tr><td>${res.period}</td><td style="color:${fontColor}; font-weight:bold; font-size: 16px;">${res.number}</td><td>${res.size}</td><td><span class="dot" style="background:${fontColor};"></span></td></tr>`;
+        });
+        document.getElementById("history-body").innerHTML = historyHTML;
 
-let historyHTML = "";
-data.results.forEach(res => {
-let fontColor = res.color === 'Red' ? '#ff2a2a' : (res.color === 'Green' ? '#17b15e' : '#9c27b0');
-historyHTML += `<tr><td>${res.period}</td><td style="color:${fontColor}; font-weight:bold;">${res.number}</td><td>${res.number > 4 ? "Big" : "Small"}</td><td><span class="dot" style="background:${fontColor};"></span></td></tr>`;
-});
-document.getElementById("history-body").innerHTML = historyHTML;
-
-if(data.results.length > 0) {
-let latest = data.results[0];
-if(lastProcessedPeriod !== latest.period) {
-lastProcessedPeriod = latest.period;
-}
-}
-})
-.catch(err => console.log(err));
+        // Check if a new period has just started (result arrived)
+        if(data.results.length > 0) {
+            let latest = data.results[0];
+            if(lastProcessedPeriod !== latest.period) {
+                lastProcessedPeriod = latest.period;
+                // Fetch fresh data from server (to update balance and My History automatically)
+                fetchAccountData(); 
+            }
+        }
+    })
+    .catch(err => console.log(err));
 }
 
-setInterval(fetchGameStatus, 1000);
-fetchGameStatus();
+initApp(); // Run on Page Load
 </script>
 </body>
 </html>
