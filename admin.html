@@ -20,14 +20,14 @@
     .header { background: #ff3e3e; color: white; padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     .header h2 { margin: 0; font-size: 20px; }
     .action-btns { display: flex; gap: 10px; }
-    .btn-style { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    .btn-style { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #333; }
     
     /* Tabs */
     .tabs { display: flex; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; flex-wrap: wrap;}
     .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; font-size: 14px; min-width: 110px;}
     .tab.active { background: #ff3e3e; color: white; }
     
-    /* Transaction Cards */
+    /* Transaction Cards (Deposit/Withdraw) */
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
     .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #17b15e; }
     .card.wid { border-left-color: #ff2a2a; }
@@ -54,16 +54,11 @@
     
     .status-box { background: #e3f2fd; color: #0b5394; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px;}
     #server-status { font-size: 12px; padding: 5px 10px; border-radius: 15px; font-weight: bold; }
-    
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; font-size: 13px; }
-    th { background-color: #f8f9fa; color: #555; }
-    .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
+<!-- 👑 LOGIN SCREEN -->
 <div id="admin-login-screen">
     <div class="login-box">
         <h2>👑 Admin Login</h2>
@@ -73,33 +68,33 @@
     </div>
 </div>
 
-<!-- Main Dashboard -->
+<!-- 🚀 MAIN DASHBOARD -->
 <div id="admin-dashboard">
     <div class="header">
         <h2><i class="fas fa-user-shield"></i> Win Go Admin</h2>
         <div class="action-btns">
-            <button class="btn-style" onclick="manualRefresh()">🔄 Refresh</button>
-            <button class="btn-style" onclick="logoutAdmin()">🚪 Logout</button>
+            <button class="btn-style" onclick="manualRefresh()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="btn-style" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- TABS -->
     <div class="tabs">
         <div class="tab active" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Pending Deposits</div>
         <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Pending Withdrawals</div>
         <div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control</div>
     </div>
 
-    <!-- Deposit Section -->
+    <!-- 1. DEPOSIT SECTION -->
     <div id="deposit-section" class="card-grid"></div>
 
-    <!-- Withdraw Section -->
+    <!-- 2. WITHDRAW SECTION -->
     <div id="withdraw-section" class="card-grid" style="display: none;"></div>
 
-    <!-- Game Control Section -->
+    <!-- 3. GAME CONTROL SECTION -->
     <div id="game-section" class="game-layout" style="display: none;">
         
-        <!-- Live Monitor (Left) -->
+        <!-- LIVE BET MONITOR (KISPE KITNA BET LAGA) -->
         <div class="game-col">
             <h3>
                 <span><i class="fas fa-chart-line"></i> Live Game Monitor</span>
@@ -108,10 +103,6 @@
             
             <div style="background: #ffebee; color: #d32020; padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
                 Period: <span id="live-period-id">Loading...</span> | Timer: <span id="live-timer-id">--</span>s
-            </div>
-
-            <div style="text-align: center; font-size: 16px; font-weight: bold; color: #17b15e; margin-bottom: 15px;">
-                Total Pool Money: ₹<span id="total-money-pool">0</span>
             </div>
 
             <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Colors & Sizes Bets</div>
@@ -138,7 +129,7 @@
             </div>
         </div>
 
-        <!-- Result Forcing (Right) -->
+        <!-- FORCE RESULT CONTROL -->
         <div class="game-col">
             <h3><i class="fas fa-magic"></i> Set Next Result</h3>
             <p style="font-size: 13px; color: #666;">Click a button below to force the result for the CURRENT running period.</p>
@@ -176,11 +167,13 @@
 </div>
 
 <script>
+// 🌟 YOUR BACKEND URL 🌟
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com"; 
+
 let refreshInterval;
 let gameMonitorInterval;
 
-// 1. Auth Logic
+// --- LOGIN LOGIC ---
 function loginAdmin() {
     let id = document.getElementById("admin-id").value;
     let pass = document.getElementById("admin-pass").value;
@@ -206,7 +199,7 @@ function showDashboard() {
 
 window.onload = () => { if(sessionStorage.getItem("admin_logged_in") === "true") showDashboard(); };
 
-// 2. Tab Logic
+// --- TAB SWITCH LOGIC ---
 function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('deposit-section').style.display = 'none';
@@ -221,17 +214,17 @@ function switchTab(tab) {
     if(tab === 'dep') { 
         document.getElementById('deposit-section').style.display = 'grid'; 
         fetchDeposits(); 
-        refreshInterval = setInterval(fetchDeposits, 10000);
+        refreshInterval = setInterval(fetchDeposits, 10000); // Refresh every 10s
     }
     else if(tab === 'with') { 
         document.getElementById('withdraw-section').style.display = 'grid'; 
         fetchWithdrawals(); 
-        refreshInterval = setInterval(fetchWithdrawals, 10000);
+        refreshInterval = setInterval(fetchWithdrawals, 10000); // Refresh every 10s
     }
     else if(tab === 'game') { 
         document.getElementById('game-section').style.display = 'flex'; 
         fetchGameLiveData();
-        gameMonitorInterval = setInterval(fetchGameLiveData, 1500); 
+        gameMonitorInterval = setInterval(fetchGameLiveData, 1500); // Refresh game data every 1.5s
     }
 }
 
@@ -242,41 +235,47 @@ function manualRefresh() {
     else if(activeTab === 'tab-game') fetchGameLiveData();
 }
 
-// 3. Deposit & Withdraw APIs
+// --- DEPOSIT & WITHDRAW API FETCHING ---
 async function fetchDeposits() {
     try {
         let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`); 
         let data = await res.json(); 
-        let html = data.requests.length === 0 ? '<p style="text-align:center; width:100%;">No pending deposits</p>' : ''; 
-        data.requests.forEach(req => { 
-            html += `<div class="card">
-                <div class="details"><b>User TG ID:</b> ${req.telegramId}<br><b>Amt:</b> ₹${req.amount}<br><b>UTR:</b> ${req.utr}</div>
-                <div class="btn-group">
-                    <button class="btn btn-approve" onclick="processReq('deposit','${req.id}','approve')">Approve</button>
-                    <button class="btn btn-reject" onclick="processReq('deposit','${req.id}','reject')">Reject</button>
-                </div>
-            </div>`;
-        });
+        let html = (!data.requests || data.requests.length === 0) ? '<p style="text-align:center; width:100%; color:#777;">No pending deposits</p>' : ''; 
+        
+        if(data.requests) {
+            data.requests.forEach(req => { 
+                html += `<div class="card">
+                    <div class="details"><b>User ID/Mobile:</b> ${req.mobile || req.telegramId || 'Unknown'}<br><b>Amount:</b> ₹${req.amount}<br><b>UTR No:</b> ${req.utr}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-approve" onclick="processReq('deposit','${req.id || req._id}','approve')">Approve</button>
+                        <button class="btn btn-reject" onclick="processReq('deposit','${req.id || req._id}','reject')">Reject</button>
+                    </div>
+                </div>`;
+            });
+        }
         document.getElementById('deposit-section').innerHTML = html;
-    } catch(e) {}
+    } catch(e) { console.log("Deposit Fetch Error"); }
 }
 
 async function fetchWithdrawals() {
     try {
         let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`); 
         let data = await res.json(); 
-        let html = data.requests.length === 0 ? '<p style="text-align:center; width:100%;">No pending withdrawals</p>' : ''; 
-        data.requests.forEach(req => { 
-            html += `<div class="card wid">
-                <div class="details"><b>User TG ID:</b> ${req.telegramId}<br><b>Amt:</b> ₹${req.amount}<br><b>UPI ID:</b> ${req.upiId}</div>
-                <div class="btn-group">
-                    <button class="btn btn-approve" onclick="processReq('withdraw','${req.id}','approve')">Approve</button>
-                    <button class="btn btn-reject" onclick="processReq('withdraw','${req.id}','reject')">Reject</button>
-                </div>
-            </div>`;
-        });
+        let html = (!data.requests || data.requests.length === 0) ? '<p style="text-align:center; width:100%; color:#777;">No pending withdrawals</p>' : ''; 
+        
+        if(data.requests) {
+            data.requests.forEach(req => { 
+                html += `<div class="card wid">
+                    <div class="details"><b>User ID/Mobile:</b> ${req.mobile || req.telegramId || 'Unknown'}<br><b>Amount:</b> ₹${req.amount}<br><b>UPI ID:</b> ${req.upiId}</div>
+                    <div class="btn-group">
+                        <button class="btn btn-approve" onclick="processReq('withdraw','${req.id || req._id}','approve')">Approve</button>
+                        <button class="btn btn-reject" onclick="processReq('withdraw','${req.id || req._id}','reject')">Reject</button>
+                    </div>
+                </div>`;
+            });
+        }
         document.getElementById('withdraw-section').innerHTML = html;
-    } catch(e) {}
+    } catch(e) { console.log("Withdraw Fetch Error"); }
 }
 
 async function processReq(type, id, action) {
@@ -289,12 +288,12 @@ async function processReq(type, id, action) {
             body: JSON.stringify({ requestId: id, action: action }) 
         }); 
         let data = await res.json(); 
-        alert(`✅ ${data.message}`); 
+        alert(`✅ ${data.message || data.success}`); 
         manualRefresh(); 
     } catch(e) { alert('❌ Server Error'); }
 }
 
-// 4. Live Game Monitor & Control
+// --- LIVE GAME MONITOR & CONTROL ---
 async function fetchGameLiveData() {
     let statusEl = document.getElementById("server-status");
     try {
@@ -308,8 +307,8 @@ async function fetchGameLiveData() {
         
         document.getElementById("live-period-id").innerText = data.period || "---";
         document.getElementById("live-timer-id").innerText = data.time || "0";
-        document.getElementById("total-money-pool").innerText = data.totalMoney || "0";
 
+        // Update Live Bets Amount (Kis par kitna paisa laga hai)
         if(data.bets) {
             let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
             keys.forEach(k => { 
@@ -318,6 +317,7 @@ async function fetchGameLiveData() {
             });
         }
 
+        // Show Admin Fixed Status
         if (data.nextForce) {
             document.getElementById("force-status").innerHTML = `✅ Fixed Next Winner: <span style="color:red; text-transform:uppercase;">${data.nextForce.value}</span>`;
         } else {
@@ -330,6 +330,7 @@ async function fetchGameLiveData() {
     }
 }
 
+// Result set karne ki API request
 async function forceResult(type, value) {
     if(!confirm(`Are you sure you want to FORCE ${value} to win this period?`)) return;
     try {
