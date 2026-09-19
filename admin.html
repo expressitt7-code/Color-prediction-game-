@@ -34,7 +34,7 @@ th { background-color: #f8f9fa; color: #555; }
 /* 🌟 GAME CONTROL SPECIFIC CSS 🌟 */
 .game-layout { display: flex; gap: 20px; flex-wrap: wrap; }
 .game-col { flex: 1; min-width: 320px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-.game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+.game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px; display:flex; justify-content: space-between;}
 .live-bet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;}
 .bet-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #ddd; }
 .bet-box span { display: block; font-size: 12px; color: #666; font-weight: bold;}
@@ -90,7 +90,13 @@ th { background-color: #f8f9fa; color: #555; }
     
     <!-- LEFT: Live Bets & History -->
     <div class="game-col">
-        <h3><i class="fas fa-chart-line"></i> Live Bets (Period: <span id="live-period-id" style="color:#ff3e3e;">---</span>)</h3>
+        <h3>
+            <span><i class="fas fa-chart-line"></i> Live Bets</span>
+            <span style="font-size: 14px; background: #ffebee; color: #d32020; padding: 4px 10px; border-radius: 15px;">
+                Period: <span id="live-period-id">---</span> 
+                (<span id="live-timer-id">--</span>s)
+            </span>
+        </h3>
         
         <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Colors & Sizes</div>
         <div class="live-bet-grid">
@@ -156,9 +162,7 @@ th { background-color: #f8f9fa; color: #555; }
             <button class="ctrl-btn c-num" onclick="forceResult('number', '9')">9</button>
         </div>
     </div>
-
 </div>
-
 </div>
 
 <script>
@@ -208,7 +212,7 @@ function switchTab(tab) {
     else if(tab === 'game') { 
         document.getElementById('game-section').style.display = 'flex'; 
         fetchGameLiveData();
-        gameMonitorInterval = setInterval(fetchGameLiveData, 2000); // 2 second auto-refresh for live bets
+        gameMonitorInterval = setInterval(fetchGameLiveData, 1000); // 1 second auto-refresh to show smooth timer
     }
 }
 
@@ -271,15 +275,16 @@ async function fetchGameLiveData() {
         let res = await fetch(`${BACKEND_URL}/admin/live-game-data`);
         let data = await res.json();
         
-        // Update Period
+        // Ensure EXACT period sync with the game
         document.getElementById("live-period-id").innerText = data.period;
+        document.getElementById("live-timer-id").innerText = data.time; // Live Countdown Timer in Admin Panel
 
-        // Update Bets amounts
+        // Update Bets amounts dynamically
         let b = data.bets;
         let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         keys.forEach(k => { document.getElementById(`b-${k}`).innerText = `₹${b[k]}`; });
 
-        // Update History Table
+        // Build Last 10 Table
         let histHTML = "";
         data.history.forEach(h => {
             let badgeColor = h.color === 'Green' ? '#17b15e' : (h.color === 'Red' ? '#ff2a2a' : '#9c27b0');
@@ -292,7 +297,7 @@ async function fetchGameLiveData() {
         });
         document.getElementById("live-history-body").innerHTML = histHTML;
 
-        // Update Status Box
+        // Display current forced status if any
         if (data.nextForce) {
             document.getElementById("force-status").innerHTML = `✅ Fixed Next Winner: <span style="color:red; text-transform:uppercase;">${data.nextForce.value}</span>`;
         } else {
@@ -310,7 +315,7 @@ async function forceResult(type, value) {
             body: JSON.stringify({ type: type, value: value })
         });
         let data = await res.json();
-        fetchGameLiveData(); // Instant refresh
+        fetchGameLiveData(); // Instant refresh after setting result
     } catch(e) { alert("Failed to connect!"); }
 }
 </script>
