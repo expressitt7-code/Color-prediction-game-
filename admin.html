@@ -8,26 +8,22 @@
 <style>
     body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
     
-    /* Login Screen */
     #admin-login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 5000; }
     .login-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 350px; text-align: center; }
     .login-box h2 { color: #ff3e3e; margin-top: 0; margin-bottom: 5px; font-weight: 900; font-size: 24px; }
     .login-input { width: 100%; box-sizing: border-box; padding: 14px; margin: 15px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; outline: none; text-align: center; }
     .login-btn { width: 100%; background: #ff3e3e; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     
-    /* Dashboard */
     #admin-dashboard { display: none; padding: 20px; max-width: 1300px; margin: auto; }
     .header { background: #ff3e3e; color: white; padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     .header h2 { margin: 0; font-size: 20px; }
     .action-btns { display: flex; gap: 10px; }
     .btn-style { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #333; }
     
-    /* Tabs */
     .tabs { display: flex; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; flex-wrap: wrap;}
     .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; font-size: 14px; min-width: 110px;}
     .tab.active { background: #ff3e3e; color: white; }
     
-    /* Transaction Cards (Deposit/Withdraw) */
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
     .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #17b15e; }
     .card.wid { border-left-color: #ff2a2a; }
@@ -37,7 +33,6 @@
     .btn-approve { background: #17b15e; }
     .btn-reject { background: #ff2a2a; }
 
-    /* Game Control Monitor */
     .game-layout { display: flex; gap: 20px; flex-wrap: wrap; }
     .game-col { flex: 1; min-width: 320px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .game-col h3 { margin-top: 0; color: #1a237e; border-bottom: 2px solid #eee; padding-bottom: 10px; display:flex; justify-content: space-between; align-items: center;}
@@ -54,11 +49,17 @@
     
     .status-box { background: #e3f2fd; color: #0b5394; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px;}
     #server-status { font-size: 12px; padding: 5px 10px; border-radius: 15px; font-weight: bold; }
+
+    .table-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; font-size: 14px; }
+    th { background-color: #f8f9fa; color: #333; font-weight: bold; }
+    tr:hover { background-color: #f1f1f1; }
+    .pwd-text { color: #d32020; font-family: monospace; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<!-- 👑 LOGIN SCREEN -->
 <div id="admin-login-screen">
     <div class="login-box">
         <h2>👑 Admin Login</h2>
@@ -68,7 +69,6 @@
     </div>
 </div>
 
-<!-- 🚀 MAIN DASHBOARD -->
 <div id="admin-dashboard">
     <div class="header">
         <h2><i class="fas fa-user-shield"></i> Win Go Admin</h2>
@@ -78,23 +78,17 @@
         </div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
-        <div class="tab active" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Pending Deposits</div>
-        <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Pending Withdrawals</div>
+        <div class="tab active" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Deposits</div>
+        <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Withdrawals</div>
         <div class="tab" id="tab-game" onclick="switchTab('game')"><i class="fas fa-gamepad"></i> Game Control</div>
+        <div class="tab" id="tab-users" onclick="switchTab('users')"><i class="fas fa-users"></i> Users Data</div>
     </div>
 
-    <!-- 1. DEPOSIT SECTION -->
     <div id="deposit-section" class="card-grid"></div>
-
-    <!-- 2. WITHDRAW SECTION -->
     <div id="withdraw-section" class="card-grid" style="display: none;"></div>
 
-    <!-- 3. GAME CONTROL SECTION -->
     <div id="game-section" class="game-layout" style="display: none;">
-        
-        <!-- LIVE BET MONITOR (KISPE KITNA BET LAGA) -->
         <div class="game-col">
             <h3>
                 <span><i class="fas fa-chart-line"></i> Live Game Monitor</span>
@@ -129,7 +123,6 @@
             </div>
         </div>
 
-        <!-- FORCE RESULT CONTROL -->
         <div class="game-col">
             <h3><i class="fas fa-magic"></i> Set Next Result</h3>
             <p style="font-size: 13px; color: #666;">Click a button below to force the result for the CURRENT running period.</p>
@@ -164,16 +157,30 @@
             </div>
         </div>
     </div>
+
+    <div id="users-section" class="table-container" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Unique ID</th>
+                    <th>Phone / Mobile</th>
+                    <th>Password</th>
+                    <th>Wallet Balance</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                <tr><td colspan="4" style="text-align: center;">Loading users...</td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-// 🌟 YOUR BACKEND URL 🌟
 const BACKEND_URL = "https://game-backend-1-fgug.onrender.com"; 
 
 let refreshInterval;
 let gameMonitorInterval;
 
-// --- LOGIN LOGIC ---
 function loginAdmin() {
     let id = document.getElementById("admin-id").value;
     let pass = document.getElementById("admin-pass").value;
@@ -199,12 +206,12 @@ function showDashboard() {
 
 window.onload = () => { if(sessionStorage.getItem("admin_logged_in") === "true") showDashboard(); };
 
-// --- TAB SWITCH LOGIC ---
 function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('deposit-section').style.display = 'none';
     document.getElementById('withdraw-section').style.display = 'none';
     document.getElementById('game-section').style.display = 'none';
+    document.getElementById('users-section').style.display = 'none';
 
     document.getElementById(`tab-${tab}`).classList.add('active');
     
@@ -214,17 +221,21 @@ function switchTab(tab) {
     if(tab === 'dep') { 
         document.getElementById('deposit-section').style.display = 'grid'; 
         fetchDeposits(); 
-        refreshInterval = setInterval(fetchDeposits, 10000); // Refresh every 10s
+        refreshInterval = setInterval(fetchDeposits, 10000);
     }
     else if(tab === 'with') { 
         document.getElementById('withdraw-section').style.display = 'grid'; 
         fetchWithdrawals(); 
-        refreshInterval = setInterval(fetchWithdrawals, 10000); // Refresh every 10s
+        refreshInterval = setInterval(fetchWithdrawals, 10000);
     }
     else if(tab === 'game') { 
         document.getElementById('game-section').style.display = 'flex'; 
         fetchGameLiveData();
-        gameMonitorInterval = setInterval(fetchGameLiveData, 1500); // Refresh game data every 1.5s
+        gameMonitorInterval = setInterval(fetchGameLiveData, 1500);
+    }
+    else if(tab === 'users') {
+        document.getElementById('users-section').style.display = 'block'; 
+        fetchUsersData();
     }
 }
 
@@ -233,9 +244,32 @@ function manualRefresh() {
     if(activeTab === 'tab-dep') fetchDeposits();
     else if(activeTab === 'tab-with') fetchWithdrawals();
     else if(activeTab === 'tab-game') fetchGameLiveData();
+    else if(activeTab === 'tab-users') fetchUsersData();
 }
 
-// --- DEPOSIT & WITHDRAW API FETCHING ---
+async function fetchUsersData() {
+    try {
+        let res = await fetch(`${BACKEND_URL}/admin/users`);
+        let data = await res.json();
+        let html = '';
+        if(data.users && data.users.length > 0) {
+            data.users.forEach(user => {
+                html += `<tr>
+                    <td><b>${user.uniqueId || 'N/A'}</b></td>
+                    <td>${user.mobile}</td>
+                    <td class="pwd-text">${user.password}</td>
+                    <td style="color:#17b15e; font-weight:bold;">₹${user.mainBalance.toFixed(2)}</td>
+                </tr>`;
+            });
+        } else {
+            html = `<tr><td colspan="4" style="text-align: center; color: #777;">No users found.</td></tr>`;
+        }
+        document.getElementById('users-tbody').innerHTML = html;
+    } catch(e) {
+        document.getElementById('users-tbody').innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Failed to load users data. Check server connection.</td></tr>`;
+    }
+}
+
 async function fetchDeposits() {
     try {
         let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`); 
@@ -293,7 +327,6 @@ async function processReq(type, id, action) {
     } catch(e) { alert('❌ Server Error'); }
 }
 
-// --- LIVE GAME MONITOR & CONTROL ---
 async function fetchGameLiveData() {
     let statusEl = document.getElementById("server-status");
     try {
@@ -301,14 +334,12 @@ async function fetchGameLiveData() {
         if (!res.ok) throw new Error("Disconnected");
         
         let data = await res.json();
-        
         statusEl.innerHTML = "🟢 Connected";
         statusEl.style.background = "#d4edda"; statusEl.style.color = "#155724";
         
         document.getElementById("live-period-id").innerText = data.period || "---";
         document.getElementById("live-timer-id").innerText = data.time || "0";
 
-        // Update Live Bets Amount (Kis par kitna paisa laga hai)
         if(data.bets) {
             let keys = ['Green', 'Violet', 'Red', 'Big', 'Small', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
             keys.forEach(k => { 
@@ -317,20 +348,17 @@ async function fetchGameLiveData() {
             });
         }
 
-        // Show Admin Fixed Status
         if (data.nextForce) {
             document.getElementById("force-status").innerHTML = `✅ Fixed Next Winner: <span style="color:red; text-transform:uppercase;">${data.nextForce.value}</span>`;
         } else {
             document.getElementById("force-status").innerHTML = "Status: Random (No forced result)";
         }
-        
     } catch (e) {
         statusEl.innerHTML = "🔴 Disconnected";
         statusEl.style.background = "#f8d7da"; statusEl.style.color = "#721c24";
     }
 }
 
-// Result set karne ki API request
 async function forceResult(type, value) {
     if(!confirm(`Are you sure you want to FORCE ${value} to win this period?`)) return;
     try {
