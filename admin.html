@@ -6,175 +6,276 @@
     <title>Admin Panel - Win Go</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
         
         /* 🌟 LOGIN SCREEN CSS 🌟 */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-box { background: white; padding: 25px; border-radius: 12px; text-align: center; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 90%; max-width: 320px; box-sizing: border-box; }
-        .login-input { padding: 12px; margin: 15px 0; width: 100%; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; text-align: center;}
-        .login-input:focus { outline: none; border-color: #ff3e3e; }
-        .login-btn { background: #ff3e3e; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.2s; }
-        .login-btn:active { transform: scale(0.98); }
+        #admin-login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2c3e50; display: flex; justify-content: center; align-items: center; z-index: 5000; }
+        .login-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 350px; text-align: center; }
+        .login-box h2 { color: #ff3e3e; margin-top: 0; margin-bottom: 5px; font-weight: 900; font-size: 24px; }
+        .login-input { width: 100%; box-sizing: border-box; padding: 14px; margin: 15px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; outline: none; text-align: center; transition: 0.3s; }
+        .login-input:focus { border-color: #ff3e3e; }
+        .login-btn { width: 100%; background: #ff3e3e; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .login-btn:hover { background: #d32020; }
+
+        /* 🌟 DASHBOARD CSS 🌟 */
+        #admin-dashboard { display: none; padding: 20px; max-width: 1200px; margin: auto; }
+        .header { background: #ff3e3e; color: white; padding: 15px 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .header h2 { margin: 0; font-size: 20px; }
+        .action-btns { display: flex; gap: 10px; }
+        .btn-style { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .refresh-btn { color: #ff3e3e; }
+        .logout-btn { color: #555; background: #f8f9fa; }
+        .btn-style:active { transform: scale(0.95); }
         
-        .header { text-align: center; margin-bottom: 20px; color: #ff3e3e; }
-        .tabs { display: flex; margin-bottom: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
-        .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; transition: 0.3s;}
+        /* 🌟 TABS CSS 🌟 */
+        .tabs { display: flex; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #555; background: #eee; transition: 0.3s; font-size: 15px; }
         .tab.active { background: #ff3e3e; color: white; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+        /* 🌟 USERS TABLE CSS 🌟 */
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background-color: #f8f9fa; color: #555; }
+        .uid-badge { background: #e3f2fd; color: #0b5394; padding: 3px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .balance { color: #17b15e; font-weight: bold; }
+        .action-btn-sm { background: #2196f3; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+
+        /* 🌟 DEPOSIT / WITHDRAW CARDS CSS 🌟 */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .card-dep { border-left: 5px solid #17b15e; }
         .card-with { border-left: 5px solid #ff9800; }
-        .details { line-height: 1.6; }
+        .details { line-height: 1.6; font-size: 14px; }
         .details span { font-weight: bold; color: #333; }
         .highlight { font-weight: bold; font-size: 16px; }
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; color: white; cursor: pointer; font-size: 13px; }
         .btn-approve { background: #17b15e; }
         .btn-reject { background: #ff2a2a; }
     </style>
 </head>
 <body>
 
-<!-- 🌟 ADMIN LOGIN SCREEN 🌟 -->
-<div id="login-screen">
-    <div class="login-box">
-        <h2 style="margin-top:0; color:#ff3e3e;"><i class="fas fa-lock"></i> Admin Login</h2>
-        <div style="font-size: 14px; color: #666; margin-bottom: 10px;">Security Check</div>
-        <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password">
-        <button class="login-btn" onclick="checkPassword()">LOGIN TO DASHBOARD</button>
-    </div>
-</div>
-
-<!-- 🌟 MAIN ADMIN PANEL (Hides until login is successful) 🌟 -->
-<div id="main-admin" style="display: none;">
-    
-    <div class="header">
-        <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+    <!-- 🌟 LOGIN SCREEN 🌟 -->
+    <div id="admin-login-screen">
+        <div class="login-box">
+            <h2>👑 Admin Login</h2>
+            <div style="font-size: 13px; color: #666; margin-bottom: 15px;">Security Check</div>
+            <input type="text" id="admin-id" class="login-input" placeholder="Admin ID">
+            <input type="password" id="admin-pass" class="login-input" placeholder="Password">
+            <button class="login-btn" onclick="loginAdmin()">LOGIN TO DASHBOARD</button>
+        </div>
     </div>
 
-    <!-- TABS -->
-    <div class="tabs">
-        <div class="tab active" id="tab-dep" onclick="switchTab('dep')">Deposits</div>
-        <div class="tab" id="tab-with" onclick="switchTab('with')">Withdrawals</div>
+    <!-- 🌟 MAIN DASHBOARD 🌟 -->
+    <div id="admin-dashboard">
+        <div class="header">
+            <h2><i class="fas fa-user-shield"></i> Win Go Admin</h2>
+            <div class="action-btns">
+                <button class="btn-style refresh-btn" onclick="manualRefresh()">🔄 Refresh</button>
+                <button class="btn-style logout-btn" onclick="logoutAdmin()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- 🌟 TABS 🌟 -->
+        <div class="tabs">
+            <div class="tab active" id="tab-users" onclick="switchTab('users')"><i class="fas fa-users"></i> All Users</div>
+            <div class="tab" id="tab-dep" onclick="switchTab('dep')"><i class="fas fa-arrow-down"></i> Deposits</div>
+            <div class="tab" id="tab-with" onclick="switchTab('with')"><i class="fas fa-arrow-up"></i> Withdrawals</div>
+        </div>
+
+        <!-- 🌟 SECTION 1: USERS LIST 🌟 -->
+        <div id="users-section" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID (UID)</th>
+                        <th>Mobile No.</th>
+                        <th>Main Balance</th>
+                        <th>Bonus Balance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <tr><td colspan="5" style="text-align:center; padding: 20px;">Loading users...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 🌟 SECTION 2: PENDING DEPOSITS 🌟 -->
+        <div id="deposit-section" class="card-grid" style="display: none;"></div>
+
+        <!-- 🌟 SECTION 3: PENDING WITHDRAWALS 🌟 -->
+        <div id="withdraw-section" class="card-grid" style="display: none;"></div>
+
     </div>
 
-    <!-- DEPOSIT SECTION -->
-    <div id="deposit-section"></div>
+    <script>
+        const BACKEND_URL = "http://localhost:3000"; // Jab live karein toh isko badal dein apni hosting link se
+        let refreshInterval;
 
-    <!-- WITHDRAW SECTION -->
-    <div id="withdraw-section" style="display: none;"></div>
+        // 🌟 1. LOGIN LOGIC 🌟
+        function loginAdmin() {
+            let id = document.getElementById("admin-id").value;
+            let pass = document.getElementById("admin-pass").value;
 
-</div>
+            if(id === "New_admin" && pass === "h2VMUsM7a3W39J4E") {
+                sessionStorage.setItem("admin_logged_in", "true");
+                showDashboard();
+            } else {
+                alert("❌ Invalid Admin ID or Password!");
+            }
+        }
 
-<script>
-    // APKA BACKEND URL
-    const BACKEND_URL = "https://game-backend-1-fgug.onrender.com";
-    let refreshInterval;
+        function logoutAdmin() {
+            sessionStorage.removeItem("admin_logged_in");
+            clearInterval(refreshInterval);
+            document.getElementById("admin-login-screen").style.display = "flex";
+            document.getElementById("admin-dashboard").style.display = "none";
+            document.getElementById("admin-id").value = "";
+            document.getElementById("admin-pass").value = "";
+        }
 
-    // 🔒 PASSWORD CHECKING LOGIC 
-    function checkPassword() {
-        let pass = document.getElementById("admin-pass").value;
-        if (pass === "SD@zxcvbnm987654321") {
-            document.getElementById("login-screen").style.display = "none";
-            document.getElementById("main-admin").style.display = "block";
+        function showDashboard() {
+            document.getElementById("admin-login-screen").style.display = "none";
+            document.getElementById("admin-dashboard").style.display = "block";
+            switchTab('users'); // Default tab open
             
-            // Login hone ke turant baad data fetch karein
-            fetchDeposits();
+            // Auto refresh har 5 second me (Jo tab khula hai wahi update hoga)
+            refreshInterval = setInterval(manualRefresh, 5000);
+        }
+
+        // Page load check
+        window.onload = () => {
+            if(sessionStorage.getItem("admin_logged_in") === "true") {
+                showDashboard();
+            }
+        };
+
+        // 🌟 2. TAB SWITCHING LOGIC 🌟
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('deposit-section').style.display = 'none';
+            document.getElementById('withdraw-section').style.display = 'none';
             
-            // Background me har 5 second me naye requests check karne ke liye auto-refresh chalu
-            refreshInterval = setInterval(() => {
-                if(document.getElementById('tab-dep').classList.contains('active')) {
-                    fetchDeposits();
+            if(tab === 'users') {
+                document.getElementById('tab-users').classList.add('active');
+                document.getElementById('users-section').style.display = 'block';
+                fetchUsers();
+            } else if(tab === 'dep') {
+                document.getElementById('tab-dep').classList.add('active');
+                document.getElementById('deposit-section').style.display = 'grid';
+                fetchDeposits();
+            } else {
+                document.getElementById('tab-with').classList.add('active');
+                document.getElementById('withdraw-section').style.display = 'grid';
+                fetchWithdrawals();
+            }
+        }
+
+        function manualRefresh() {
+            if(document.getElementById('tab-users').classList.contains('active')) fetchUsers();
+            else if(document.getElementById('tab-dep').classList.contains('active')) fetchDeposits();
+            else fetchWithdrawals();
+        }
+
+        // 🌟 3. FETCH ALL USERS 🌟
+        async function fetchUsers() {
+            try {
+                let response = await fetch(`${BACKEND_URL}/admin/users`);
+                let data = await response.json();
+
+                if(data.success) {
+                    let html = "";
+                    data.users.forEach(user => {
+                        html += `
+                            <tr>
+                                <td><span class="uid-badge">${user.uniqueId}</span></td>
+                                <td><b>${user.mobile}</b></td>
+                                <td class="balance">₹${(user.mainBalance || 0).toFixed(2)}</td>
+                                <td>₹${(user.bonusBalance || 0).toFixed(2)}</td>
+                                <td><button class="action-btn-sm" onclick="viewDetails('${user.mobile}')">View</button></td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById("user-table-body").innerHTML = html;
                 } else {
-                    fetchWithdrawals();
+                    document.getElementById("user-table-body").innerHTML = "<tr><td colspan='5' style='text-align:center;'>No users found.</td></tr>";
                 }
-            }, 5000);
-        } else {
-            alert("Wrong Password! ❌ Access Denied.");
+            } catch(e) {
+                document.getElementById("user-table-body").innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Error fetching user data.</td></tr>";
+            }
         }
-    }
 
-    function switchTab(tab) {
-        document.getElementById('tab-dep').classList.remove('active');
-        document.getElementById('tab-with').classList.remove('active');
-        document.getElementById('deposit-section').style.display = 'none';
-        document.getElementById('withdraw-section').style.display = 'none';
-        
-        if(tab === 'dep') {
-            document.getElementById('tab-dep').classList.add('active');
-            document.getElementById('deposit-section').style.display = 'block';
-            fetchDeposits();
-        } else {
-            document.getElementById('tab-with').classList.add('active');
-            document.getElementById('withdraw-section').style.display = 'block';
-            fetchWithdrawals();
+        function viewDetails(mobile) {
+            alert("Future Feature: Full history panel for " + mobile);
         }
-    }
 
-    async function fetchDeposits() {
-        try {
-            let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`);
-            let data = await res.json();
-            let html = data.requests.length === 0 ? '<p style="text-align:center; color:#888;">No pending deposits</p>' : '';
-            data.requests.forEach(req => {
-                html += `
-                <div class="card card-dep">
-                    <div class="details">
-                        User ID: <span>${req.telegramId}</span><br>
-                        Amount: <span style="color:#17b15e;">₹${req.amount}</span><br>
-                        UTR: <span class="highlight" style="color:#d32020;">${req.utr}</span>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-approve" onclick="processReq('deposit', '${req.id}', 'approve')"><i class="fas fa-check"></i> Approve</button>
-                        <button class="btn btn-reject" onclick="processReq('deposit', '${req.id}', 'reject')"><i class="fas fa-times"></i> Reject</button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('deposit-section').innerHTML = html;
-        } catch(e) {
-            console.log("Error fetching deposits: ", e);
+        // 🌟 4. FETCH PENDING DEPOSITS 🌟
+        async function fetchDeposits() {
+            try {
+                let res = await fetch(`${BACKEND_URL}/admin/pending-deposits`);
+                let data = await res.json();
+                let html = data.requests.length === 0 ? '<p style="text-align:center; grid-column: 1 / -1; color:#888;">No pending deposits</p>' : '';
+                data.requests.forEach(req => {
+                    html += `
+                    <div class="card card-dep">
+                        <div class="details">
+                            User Mobile: <span>${req.mobile || req.telegramId}</span><br>
+                            Amount: <span style="color:#17b15e; font-size: 16px;">₹${req.amount}</span><br>
+                            UTR No: <span class="highlight" style="color:#d32020;">${req.utr}</span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-approve" onclick="processReq('deposit', '${req.id}', 'approve')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-reject" onclick="processReq('deposit', '${req.id}', 'reject')"><i class="fas fa-times"></i> Reject</button>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('deposit-section').innerHTML = html;
+            } catch(e) { console.log(e); }
         }
-    }
 
-    async function fetchWithdrawals() {
-        try {
-            let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`);
-            let data = await res.json();
-            let html = data.requests.length === 0 ? '<p style="text-align:center; color:#888;">No pending withdrawals</p>' : '';
-            data.requests.forEach(req => {
-                html += `
-                <div class="card card-with">
-                    <div class="details">
-                        User ID: <span>${req.telegramId}</span><br>
-                        Amount to Pay: <span class="highlight" style="color:#ff9800; font-size:18px;">₹${req.amount}</span><br>
-                        Send to UPI: <span class="highlight" style="color:#2196f3; user-select:all;">${req.upiId}</span>
-                    </div>
-                    <p style="font-size:12px; color:#888; margin-top:8px;">*Pehle is UPI par ₹${req.amount} bhejein, uske baad Approve dabayein.</p>
-                    <div class="btn-group">
-                        <button class="btn btn-approve" onclick="processReq('withdraw', '${req.id}', 'approve')">Paid & Approve</button>
-                        <button class="btn btn-reject" onclick="processReq('withdraw', '${req.id}', 'reject')">Reject & Refund</button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('withdraw-section').innerHTML = html;
-        } catch(e) {
-            console.log("Error fetching withdrawals: ", e);
+        // 🌟 5. FETCH PENDING WITHDRAWALS 🌟
+        async function fetchWithdrawals() {
+            try {
+                let res = await fetch(`${BACKEND_URL}/admin/pending-withdrawals`);
+                let data = await res.json();
+                let html = data.requests.length === 0 ? '<p style="text-align:center; grid-column: 1 / -1; color:#888;">No pending withdrawals</p>' : '';
+                data.requests.forEach(req => {
+                    html += `
+                    <div class="card card-with">
+                        <div class="details">
+                            User Mobile: <span>${req.mobile || req.telegramId}</span><br>
+                            Amount to Pay: <span class="highlight" style="color:#ff9800; font-size:18px;">₹${req.amount}</span><br>
+                            Send to UPI: <span class="highlight" style="color:#2196f3; user-select:all;">${req.upiId}</span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-approve" onclick="processReq('withdraw', '${req.id}', 'approve')">Paid & Approve</button>
+                            <button class="btn btn-reject" onclick="processReq('withdraw', '${req.id}', 'reject')">Reject & Refund</button>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('withdraw-section').innerHTML = html;
+            } catch(e) { console.log(e); }
         }
-    }
 
-    async function processReq(type, id, action) {
-        if(!confirm(`Are you sure you want to ${action} this request?`)) return;
-        let endpoint = type === 'deposit' ? '/admin/approve-deposit' : '/admin/approve-withdraw';
-        try {
-            let res = await fetch(BACKEND_URL + endpoint, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ requestId: id, action: action })
-            });
-            let data = await res.json();
-            alert(`✅ ${data.message}`);
-            type === 'deposit' ? fetchDeposits() : fetchWithdrawals();
-        } catch(e) { alert('❌ Server Error'); }
-    }
-</script>
+        // 🌟 6. APPROVE / REJECT LOGIC 🌟
+        async function processReq(type, id, action) {
+            if(!confirm(`Are you sure you want to ${action} this request?`)) return;
+            let endpoint = type === 'deposit' ? '/admin/approve-deposit' : '/admin/approve-withdraw';
+            try {
+                let res = await fetch(BACKEND_URL + endpoint, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ requestId: id, action: action })
+                });
+                let data = await res.json();
+                alert(`✅ ${data.message}`);
+                manualRefresh(); // Refresh active tab
+            } catch(e) { alert('❌ Server Error processing request'); }
+        }
+    </script>
 </body>
 </html>
